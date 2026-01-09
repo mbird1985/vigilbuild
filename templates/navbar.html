@@ -1,0 +1,213 @@
+<!--navbar.html-->
+<!DOCTYPE html>
+<html lang="en">
+{% set current_year = '2025' %}
+<head>
+    <!-- Make sure Tailwind CSS is loaded -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Dropdowns hidden by default; visibility controlled via JS */
+        .dropdown-menu { display: none; }
+        .dropdown-container { position: relative; }
+    </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const groups = document.querySelectorAll('.nav-dropdown');
+            let currentOpen = null;
+
+            function openMenu(menu) {
+                if (currentOpen && currentOpen !== menu) {
+                    currentOpen.style.display = 'none';
+                }
+                menu.style.display = 'block';
+                currentOpen = menu;
+            }
+
+            function closeMenu(menu) {
+                if (menu) {
+                    menu.style.display = 'none';
+                    if (currentOpen === menu) currentOpen = null;
+                }
+            }
+
+            groups.forEach(group => {
+                const trigger = group.querySelector('.nav-trigger');
+                const menu = group.querySelector('.dropdown-menu');
+                if (!trigger || !menu) return;
+                let leaveTimer = null;
+
+                // Hover behavior: open; only close if the pointer truly leaves the group
+                group.addEventListener('mouseenter', () => {
+                    if (leaveTimer) { clearTimeout(leaveTimer); leaveTimer = null; }
+                    openMenu(menu);
+                });
+                group.addEventListener('mouseleave', (e) => {
+                    const toEl = e.relatedTarget;
+                    if (!toEl || !group.contains(toEl)) {
+                        // slight delay to make it easier to move the mouse
+                        leaveTimer = setTimeout(() => closeMenu(menu), 200);
+                    }
+                });
+
+                // Click toggling keeps menu open for keyboard/mouse users
+                trigger.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    if (menu.style.display === 'block') {
+                        closeMenu(menu);
+                    } else {
+                        openMenu(menu);
+                    }
+                });
+            });
+
+            // Close when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!currentOpen) return;
+                const parent = currentOpen.closest('.nav-dropdown');
+                if (parent && !parent.contains(e.target)) {
+                    closeMenu(currentOpen);
+                }
+            });
+        });
+    </script>
+</head>
+<nav class="bg-gray-800 text-white p-4 relative z-[1000]">
+    <div class="container mx-auto flex justify-between items-center">
+        <a href="{{ url_for('system.dashboard') }}">
+            <img src="{{ url_for('static', filename='VigilBuildStaticLogo.png') }}" alt="Vigil Build Logo" class="h-10 w-auto">
+        </a>
+        <ul class="flex flex-wrap space-x-4">
+            <!-- Project Management Dropdown -->
+            <li class="relative nav-dropdown">
+                <a class="block hover:bg-orange-600 px-4 py-2 rounded-md nav-trigger" href="{{ url_for('pm.dashboard') }}">Project Management</a>
+                <div class="dropdown-menu absolute bg-white text-gray-900 rounded-md shadow-lg mt-1 min-w-[220px] z-50">
+                    <a class="block px-4 py-2 hover:bg-gray-100" href="{{ url_for('pm.dashboard') }}">Dashboard</a>
+                    <a class="block px-4 py-2 hover:bg-gray-100" href="{{ url_for('pm.boards') }}">Boards</a>
+                    <a class="block px-4 py-2 hover:bg-gray-100" href="{{ url_for('pm.bidding') }}">Bidding</a>
+                    <a class="block px-4 py-2 hover:bg-gray-100" href="{{ url_for('pm.job_templates') }}">Job Templates</a>
+                    <a class="block px-4 py-2 hover:bg-gray-100" href="{{ url_for('pm.powerbi_list') }}">Power BI</a>
+                    <a class="block px-4 py-2 hover:bg-gray-100" href="{{ url_for('pm.salesforce_list') }}">Salesforce</a>
+                    <a class="block px-4 py-2 hover:bg-gray-100" href="{{ url_for('pm.imports') }}">Imports</a>
+                    <a class="block px-4 py-2 hover:bg-gray-100" href="{{ url_for('pm.schedule_view') }}">Schedule</a>
+                    <a class="block px-4 py-2 hover:bg-gray-100" href="{{ url_for('pm.risks') }}">Risk Register</a>
+                </div>
+            </li>
+
+            <!-- Users Dropdown -->
+            <li class="relative nav-dropdown">
+                <a class="block hover:bg-orange-600 px-4 py-2 rounded-md nav-trigger" href="{{ url_for('users.people') }}">Users</a>
+                <div class="dropdown-menu absolute bg-white text-gray-900 rounded-md shadow-lg mt-1 min-w-[220px] z-50">
+                    <a class="block px-4 py-2 hover:bg-gray-100" href="{{ url_for('users.roles') }}">User Roles</a>
+                    <a class="block px-4 py-2 hover:bg-gray-100" href="{{ url_for('users.people') }}">People</a>
+                    <a class="block px-4 py-2 hover:bg-gray-100" href="{{ url_for('users.certifications') }}">Certifications</a>
+                </div>
+            </li>
+
+            <!-- Billing Dropdown -->
+            <li class="relative nav-dropdown">
+                <a class="block hover:bg-orange-600 px-4 py-2 rounded-md nav-trigger" href="#">Billing</a>
+                <div class="dropdown-menu absolute bg-white text-gray-900 rounded-md shadow-lg mt-1 min-w-[220px] z-50">
+                    <a class="block px-4 py-2 hover:bg-gray-100" href="{{ url_for('billing.job_codes') }}">Job Codes</a>
+                    <a class="block px-4 py-2 hover:bg-gray-100" href="{{ url_for('billing.invoices') }}">Invoices</a>
+                </div>
+            </li>
+
+            <!-- Inventory Dropdown -->
+            <li class="relative nav-dropdown">
+                <a class="block hover:bg-orange-600 px-4 py-2 rounded-md nav-trigger" href="{{ url_for('inventory.inventory_list') }}">Inventory</a>
+                <div class="dropdown-menu absolute bg-white text-gray-900 rounded-md shadow-lg mt-1 min-w-[220px] z-50">
+                    <a class="block px-4 py-2 hover:bg-gray-100" href="{{ url_for('inventory.inventory_list') }}">Inventory List</a>
+                    <a class="block px-4 py-2 hover:bg-gray-100" href="{{ url_for('inventory.inventory_metrics') }}">Metrics Dashboard</a>
+                    <a class="block px-4 py-2 hover:bg-gray-100" href="{{ url_for('inventory.suppliers_page') }}">Suppliers</a>
+                    <a class="block px-4 py-2 hover:bg-gray-100" href="{{ url_for('inventory.purchase_orders_list') }}">Purchase Orders</a>
+                    <a class="block px-4 py-2 hover:bg-gray-100" href="{{ url_for('inventory.transfers_list') }}">Transfers</a>
+                    <a class="block px-4 py-2 hover:bg-gray-100" href="{{ url_for('inventory.locations_list') }}">Locations</a>
+                    <a class="block px-4 py-2 hover:bg-gray-100" href="{{ url_for('inventory.price_history_list') }}">Price History</a>
+                    <a class="block px-4 py-2 hover:bg-gray-100" href="{{ url_for('inventory.reorders_page') }}">Reorder Queue</a>
+                    <a class="block px-4 py-2 hover:bg-gray-100" href="{{ url_for('inventory.inventory_reports') }}">Reports</a>
+                    <a class="block px-4 py-2 hover:bg-gray-100" href="{{ url_for('inventory.barcode_scan') }}">Barcode Scanner</a>
+                </div>
+            </li>
+            <li class="relative nav-dropdown">
+              <a class="block hover:bg-orange-600 px-4 py-2 rounded-md nav-trigger" href="{{ url_for('equipment.maintenance_landing') }}">Maintenance</a>
+              <div class="dropdown-menu absolute bg-white text-gray-900 rounded-md shadow-lg mt-1 min-w-[220px] z-50 max-h-[80vh] overflow-y-auto">
+                <div class="px-4 py-1 text-xs font-semibold text-gray-500 uppercase border-b">Jobs & Dashboard</div>
+                <a class="block px-4 py-2 hover:bg-gray-100" href="{{ url_for('equipment.maintenance_landing') }}">Dashboard</a>
+                <a class="block px-4 py-2 hover:bg-gray-100" href="{{ url_for('equipment.maintenance_calendar') }}">Calendar</a>
+                <a class="block px-4 py-2 hover:bg-gray-100" href="{{ url_for('equipment.maintenance_my_jobs') }}">My Jobs</a>
+                <a class="block px-4 py-2 hover:bg-gray-100" href="{{ url_for('equipment.maintenance_job_create') }}">Create Job</a>
+                <a class="block px-4 py-2 hover:bg-gray-100" href="{{ url_for('equipment.maintenance_job_from_template') }}">Job from Template</a>
+                <a class="block px-4 py-2 hover:bg-gray-100" href="{{ url_for('equipment.maintenance_report_issue') }}">Report Breakdown</a>
+
+                <div class="px-4 py-1 text-xs font-semibold text-gray-500 uppercase border-b border-t mt-2">Inspections</div>
+                <a class="block px-4 py-2 hover:bg-gray-100" href="{{ url_for('equipment.maintenance_inspections_list') }}">Inspections</a>
+                <a class="block px-4 py-2 hover:bg-gray-100" href="{{ url_for('equipment.maintenance_inspection_new') }}">New Inspection</a>
+                <a class="block px-4 py-2 hover:bg-gray-100" href="{{ url_for('equipment.maintenance_checklists') }}">Checklist Templates</a>
+
+                <div class="px-4 py-1 text-xs font-semibold text-gray-500 uppercase border-b border-t mt-2">Templates & Setup</div>
+                <a class="block px-4 py-2 hover:bg-gray-100" href="{{ url_for('equipment.maintenance_wo_templates') }}">Work Order Templates</a>
+                <a class="block px-4 py-2 hover:bg-gray-100" href="{{ url_for('equipment.equipment_list') }}">Equipment</a>
+
+                <div class="px-4 py-1 text-xs font-semibold text-gray-500 uppercase border-b border-t mt-2">Vendors & Compliance</div>
+                <a class="block px-4 py-2 hover:bg-gray-100" href="{{ url_for('equipment.maintenance_vendors') }}">Vendors</a>
+                <a class="block px-4 py-2 hover:bg-gray-100" href="{{ url_for('equipment.maintenance_compliance') }}">Compliance</a>
+
+                <div class="px-4 py-1 text-xs font-semibold text-gray-500 uppercase border-b border-t mt-2">Telematics & Fleet</div>
+                <a class="block px-4 py-2 hover:bg-gray-100" href="{{ url_for('equipment.maintenance_fleet_map') }}">Fleet Map</a>
+                <a class="block px-4 py-2 hover:bg-gray-100" href="{{ url_for('equipment.maintenance_telematics_providers') }}">GPS Providers</a>
+
+                <div class="px-4 py-1 text-xs font-semibold text-gray-500 uppercase border-b border-t mt-2">311 / Public Requests</div>
+                <a class="block px-4 py-2 hover:bg-gray-100" href="{{ url_for('equipment.maintenance_citizen_requests') }}">Citizen Requests</a>
+
+                <div class="px-4 py-1 text-xs font-semibold text-gray-500 uppercase border-b border-t mt-2">CRM & Billing</div>
+                <a class="block px-4 py-2 hover:bg-gray-100" href="{{ url_for('equipment.maintenance_customers') }}">Customers</a>
+                <a class="block px-4 py-2 hover:bg-gray-100" href="{{ url_for('equipment.maintenance_estimates') }}">Estimates</a>
+                <a class="block px-4 py-2 hover:bg-gray-100" href="{{ url_for('equipment.maintenance_invoices') }}">Invoices</a>
+
+                <div class="px-4 py-1 text-xs font-semibold text-gray-500 uppercase border-b border-t mt-2">Reports</div>
+                <a class="block px-4 py-2 hover:bg-gray-100" href="{{ url_for('equipment.maintenance_reports') }}">Reports & KPIs</a>
+              </div>
+            </li>
+            
+            <!-- Schedule Dropdown -->
+            <li class="relative nav-dropdown">
+                <a class="block hover:bg-orange-600 px-4 py-2 rounded-md nav-trigger" href="{{ url_for('schedule.schedule') }}">Schedule</a>
+                <div class="dropdown-menu absolute bg-white text-gray-900 rounded-md shadow-lg mt-1 min-w-[220px] z-50">
+                    <a class="block px-4 py-2 hover:bg-gray-100" href="{{ url_for('schedule.schedule') }}">Schedule</a>
+                    <a class="block px-4 py-2 hover:bg-gray-100" href="{{ url_for('jobs.jobs') }}">Jobs</a>
+                </div>
+            </li>
+            
+            <!-- Regular menu items -->
+            <li><a class="block hover:bg-orange-600 px-4 py-2 rounded-md" href="{{ url_for('equipment.equipment_list') }}">Equipment</a></li>
+            <li><a class="block hover:bg-orange-600 px-4 py-2 rounded-md" href="{{ url_for('towns.towns') }}">Towns</a></li>
+            <li class="relative nav-dropdown">
+                <a class="block hover:bg-orange-600 px-4 py-2 rounded-md nav-trigger" href="{{ url_for('documents.document_list') }}">Documents</a>
+                <div class="dropdown-menu absolute bg-white text-gray-900 rounded-md shadow-lg mt-1 min-w-[220px] z-50">
+                    <a class="block px-4 py-2 hover:bg-gray-100" href="{{ url_for('documents.document_list') }}">All Documents</a>
+                    <a class="block px-4 py-2 hover:bg-gray-100" href="{{ url_for('email.email_templates') }}">Email Templates</a>
+                    <a class="block px-4 py-2 hover:bg-gray-100" href="{{ url_for('reports.reports') }}">Reports</a>
+                    <a class="block px-4 py-2 hover:bg-gray-100" href="{{ url_for('serve_search') }}">Search</a>
+                    <a class="block px-4 py-2 hover:bg-gray-100" href="{{ url_for('serve_upload') }}">Upload</a>
+                </div>
+            </li>
+            <li><a class="block hover:bg-orange-600 px-4 py-2 rounded-md" href="{{ url_for('integration.integrate') }}">Integrate</a></li>
+            <li><a class="block hover:bg-orange-600 px-4 py-2 rounded-md" href="{{ url_for('chat.ask') }}">Chat</a></li>
+            {% if current_user.is_authenticated %}
+            <li><a class="block hover:bg-orange-600 px-4 py-2 rounded-md" href="{{ url_for('auth.logout') }}">{{ current_user.username }} | {{ _('nav.logout') }}</a></li>
+            {% else %}
+            <li><a class="block hover:bg-orange-600 px-4 py-2 rounded-md" href="{{ url_for('auth.login') }}">{{ _('nav.login') }}</a></li>
+            {% endif %}
+            <!-- Language Switcher -->
+            <li class="relative nav-dropdown">
+                <a class="block hover:bg-orange-600 px-4 py-2 rounded-md nav-trigger" href="#">
+                    {% if get_language() == 'es' %}ES{% else %}EN{% endif %}
+                </a>
+                <div class="dropdown-menu absolute right-0 bg-white text-gray-900 rounded-md shadow-lg mt-1 min-w-[120px] z-50">
+                    <a class="block px-4 py-2 hover:bg-gray-100 {% if get_language() == 'en' %}font-bold bg-gray-50{% endif %}" href="/set_language/en">English</a>
+                    <a class="block px-4 py-2 hover:bg-gray-100 {% if get_language() == 'es' %}font-bold bg-gray-50{% endif %}" href="/set_language/es">Español</a>
+                </div>
+            </li>
+        </ul>
+    </div>
+</nav>

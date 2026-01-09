@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="max-w-7xl mx-auto">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-3xl font-bold text-gray-800">Purchase Orders</h1>
+        <div class="flex space-x-2">
+            <a href="{{ url_for('inventory.create_purchase_order') }}" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded">
+                Create Order
+            </a>
+            <a href="{{ url_for('inventory.inventory_list') }}" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded">
+                Back to Inventory
+            </a>
+        </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="bg-white rounded-lg shadow p-4 mb-6">
+        <form method="GET" class="flex flex-wrap gap-4 items-end">
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
+                <select name="status" class="border border-gray-300 rounded px-3 py-2 w-40">
+                    <option value="">All Statuses</option>
+                    <option value="draft" {% if selected_status == 'draft' %}selected{% endif %}>Draft</option>
+                    <option value="submitted" {% if selected_status == 'submitted' %}selected{% endif %}>Submitted</option>
+                    <option value="acknowledged" {% if selected_status == 'acknowledged' %}selected{% endif %}>Acknowledged</option>
+                    <option value="shipped" {% if selected_status == 'shipped' %}selected{% endif %}>Shipped</option>
+                    <option value="partially_received" {% if selected_status == 'partially_received' %}selected{% endif %}>Partial</option>
+                    <option value="delivered" {% if selected_status == 'delivered' %}selected{% endif %}>Delivered</option>
+                    <option value="cancelled" {% if selected_status == 'cancelled' %}selected{% endif %}>Cancelled</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Supplier</label>
+                <select name="supplier_id" class="border border-gray-300 rounded px-3 py-2 w-48">
+                    <option value="">All Suppliers</option>
+                    {% for supplier in suppliers %}
+                    <option value="{{ supplier.id }}" {% if selected_supplier == supplier.id %}selected{% endif %}>
+                        {{ supplier.name }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">Filter</button>
+            <a href="{{ url_for('inventory.purchase_orders_list') }}" class="text-gray-600 hover:text-gray-800 px-3 py-2">Clear</a>
+        </form>
+    </div>
+
+    <!-- Orders Table -->
+    <div class="bg-white rounded-lg shadow overflow-hidden">
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">PO Number</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Supplier</th>
+                    <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Order Date</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Expected</th>
+                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Items</th>
+                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Total</th>
+                    <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+                {% for order in orders %}
+                <tr class="hover:bg-gray-50">
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <a href="{{ url_for('inventory.purchase_order_detail', po_id=order.id) }}" class="text-blue-600 hover:underline font-medium">
+                            {{ order.po_number }}
+                        </a>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">{{ order.supplier_name }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-center">
+                        {% set status_colors = {
+                            'draft': 'bg-gray-100 text-gray-800',
+                            'submitted': 'bg-blue-100 text-blue-800',
+                            'acknowledged': 'bg-indigo-100 text-indigo-800',
+                            'shipped': 'bg-purple-100 text-purple-800',
+                            'partially_received': 'bg-yellow-100 text-yellow-800',
+                            'delivered': 'bg-green-100 text-green-800',
+                            'cancelled': 'bg-red-100 text-red-800'
+                        } %}
+                        <span class="px-2 py-1 text-xs rounded-full {{ status_colors.get(order.status, 'bg-gray-100 text-gray-800') }}">
+                            {{ order.status|replace('_', ' ')|title }}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-gray-600">
+                        {{ order.order_date.strftime('%Y-%m-%d') if order.order_date else 'N/A' }}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-gray-600">
+                        {{ order.expected_delivery_date.strftime('%Y-%m-%d') if order.expected_delivery_date else 'N/A' }}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-right">{{ order.item_count }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-right font-medium">${{ "{:,.2f}".format(order.total_amount) }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-center">
+                        <a href="{{ url_for('inventory.purchase_order_detail', po_id=order.id) }}" class="text-blue-600 hover:underline text-sm mr-2">View</a>
+                        {% if order.status in ['shipped', 'partially_received'] %}
+                        <a href="{{ url_for('inventory.receive_order', po_id=order.id) }}" class="text-green-600 hover:underline text-sm">Receive</a>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="8" class="px-6 py-12 text-center text-gray-500">
+                        No purchase orders found.
+                        <a href="{{ url_for('inventory.create_purchase_order') }}" class="text-blue-600 hover:underline">Create one</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

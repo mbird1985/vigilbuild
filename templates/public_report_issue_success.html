@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Report Submitted - Vigil Build</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <div class="bg-green-600 text-white py-6">
+        <div class="container mx-auto px-4">
+            <h1 class="text-2xl font-bold">Thank You!</h1>
+            <p class="text-green-200">Your report has been submitted</p>
+        </div>
+    </div>
+
+    <div class="container mx-auto px-4 py-12">
+        <div class="max-w-xl mx-auto bg-white rounded-lg shadow-lg p-8 text-center">
+            <div class="text-6xl mb-4">✓</div>
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">Report Received</h2>
+            <p class="text-gray-600 mb-6">
+                Your issue has been submitted and will be reviewed by our team.
+            </p>
+            <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+                <div class="text-sm text-blue-600">Reference Number</div>
+                <div class="text-3xl font-bold text-blue-800">#{{ request_id }}</div>
+            </div>
+            <p class="text-sm text-gray-500 mb-6">
+                Please save this reference number if you need to follow up on your report.
+            </p>
+            <a href="{{ url_for('equipment.public_report_issue') }}" class="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700">
+                Submit Another Report
+            </a>
+        </div>
+    </div>
+</body>
+</html>

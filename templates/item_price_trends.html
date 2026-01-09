@@ -1,0 +1,270 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="max-w-6xl mx-auto">
+    <div class="flex justify-between items-center mb-6">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-800">{{ item.name }}</h1>
+            <p class="text-gray-600">Price History & Trends</p>
+        </div>
+        <div class="space-x-2">
+            <a href="{{ url_for('inventory.inventory_detail', item_id=item.id) }}" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">
+                View Item
+            </a>
+            <a href="{{ url_for('inventory.price_history_list') }}" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded">
+                Back to Price History
+            </a>
+        </div>
+    </div>
+
+    <!-- Item Summary -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+        <div class="bg-white rounded-lg shadow p-4">
+            <p class="text-sm text-gray-500">Current Price</p>
+            <p class="text-2xl font-bold text-gray-800">${{ "{:.2f}".format(item.unit_price or 0) }}</p>
+            <p class="text-xs text-gray-400">{{ item.unit or 'each' }}</p>
+        </div>
+        <div class="bg-white rounded-lg shadow p-4">
+            <p class="text-sm text-gray-500">Price Change ({{ months }}mo)</p>
+            {% if trends.price_change_pct %}
+            <p class="text-2xl font-bold {% if trends.price_change_pct > 0 %}text-red-600{% elif trends.price_change_pct < 0 %}text-green-600{% else %}text-gray-600{% endif %}">
+                {% if trends.price_change_pct > 0 %}+{% endif %}{{ "{:.1f}".format(trends.price_change_pct) }}%
+            </p>
+            {% else %}
+            <p class="text-2xl font-bold text-gray-400">N/A</p>
+            {% endif %}
+            <p class="text-xs text-gray-400">vs {{ months }} months ago</p>
+        </div>
+        <div class="bg-white rounded-lg shadow p-4">
+            <p class="text-sm text-gray-500">Avg Price</p>
+            <p class="text-2xl font-bold text-blue-600">${{ "{:.2f}".format(trends.avg_price or item.unit_price or 0) }}</p>
+            <p class="text-xs text-gray-400">Last {{ months }} months</p>
+        </div>
+        <div class="bg-white rounded-lg shadow p-4">
+            <p class="text-sm text-gray-500">Price Changes</p>
+            <p class="text-2xl font-bold text-purple-600">{{ trends.change_count or 0 }}</p>
+            <p class="text-xs text-gray-400">Last {{ months }} months</p>
+        </div>
+    </div>
+
+    <!-- Price Range -->
+    <div class="bg-white rounded-lg shadow p-6 mb-6">
+        <h2 class="text-lg font-semibold mb-4">Price Range ({{ months }} months)</h2>
+        <div class="flex items-center space-x-4">
+            <div class="text-center">
+                <p class="text-sm text-gray-500">Lowest</p>
+                <p class="text-xl font-bold text-green-600">${{ "{:.2f}".format(trends.min_price or item.unit_price or 0) }}</p>
+            </div>
+            <div class="flex-1 mx-4">
+                <div class="h-3 bg-gray-200 rounded-full relative">
+                    {% if trends.min_price and trends.max_price and trends.max_price != trends.min_price %}
+                    {% set range = trends.max_price - trends.min_price %}
+                    {% set current_pos = ((item.unit_price or 0) - trends.min_price) / range * 100 %}
+                    <div class="absolute h-5 w-5 bg-blue-600 rounded-full -top-1 transform -translate-x-1/2"
+                         style="left: {{ current_pos }}%;"
+                         title="Current: ${{ '{:.2f}'.format(item.unit_price or 0) }}"></div>
+                    {% endif %}
+                </div>
+                <p class="text-xs text-center text-gray-500 mt-1">Current price position</p>
+            </div>
+            <div class="text-center">
+                <p class="text-sm text-gray-500">Highest</p>
+                <p class="text-xl font-bold text-red-600">${{ "{:.2f}".format(trends.max_price or item.unit_price or 0) }}</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Price Trend Chart -->
+    <div class="bg-white rounded-lg shadow p-6 mb-6">
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="text-lg font-semibold">Price Trend</h2>
+            <div class="flex space-x-2">
+                <a href="?months=6" class="px-3 py-1 text-sm rounded {% if months == 6 %}bg-blue-600 text-white{% else %}bg-gray-200 text-gray-700 hover:bg-gray-300{% endif %}">6M</a>
+                <a href="?months=12" class="px-3 py-1 text-sm rounded {% if months == 12 %}bg-blue-600 text-white{% else %}bg-gray-200 text-gray-700 hover:bg-gray-300{% endif %}">1Y</a>
+                <a href="?months=24" class="px-3 py-1 text-sm rounded {% if months == 24 %}bg-blue-600 text-white{% else %}bg-gray-200 text-gray-700 hover:bg-gray-300{% endif %}">2Y</a>
+                <a href="?months=36" class="px-3 py-1 text-sm rounded {% if months == 36 %}bg-blue-600 text-white{% else %}bg-gray-200 text-gray-700 hover:bg-gray-300{% endif %}">3Y</a>
+            </div>
+        </div>
+        <div id="priceTrendChart" style="height: 350px;"></div>
+    </div>
+
+    <!-- Price History by Supplier -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+        <!-- Supplier Price Comparison -->
+        <div class="bg-white rounded-lg shadow p-6">
+            <h2 class="text-lg font-semibold mb-4">Supplier Price Comparison</h2>
+            {% if supplier_prices %}
+            <div class="space-y-3">
+                {% for sp in supplier_prices %}
+                <div class="flex justify-between items-center p-3 {% if loop.first %}bg-green-50{% else %}bg-gray-50{% endif %} rounded">
+                    <div>
+                        <a href="{{ url_for('inventory.supplier_detail', supplier_id=sp.supplier_id) }}" class="font-medium text-blue-600 hover:underline">
+                            {{ sp.supplier_name }}
+                        </a>
+                        {% if loop.first %}
+                        <span class="ml-2 px-2 py-0.5 text-xs bg-green-100 text-green-800 rounded">Best Price</span>
+                        {% endif %}
+                    </div>
+                    <div class="text-right">
+                        <p class="font-bold">${{ "{:.2f}".format(sp.unit_price) }}</p>
+                        {% if sp.last_updated %}
+                        <p class="text-xs text-gray-500">Updated {{ sp.last_updated.strftime('%Y-%m-%d') }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p class="text-gray-500 text-center py-4">No supplier pricing data available</p>
+            {% endif %}
+        </div>
+
+        <!-- Recent Price Changes -->
+        <div class="bg-white rounded-lg shadow p-6">
+            <h2 class="text-lg font-semibold mb-4">Recent Price Changes</h2>
+            {% if price_history %}
+            <div class="space-y-2 max-h-64 overflow-y-auto">
+                {% for change in price_history[:10] %}
+                <div class="flex justify-between items-center py-2 border-b border-gray-100">
+                    <div>
+                        <p class="text-sm text-gray-600">{{ change.effective_date.strftime('%Y-%m-%d') if change.effective_date else change.recorded_at.strftime('%Y-%m-%d') }}</p>
+                        <p class="text-xs text-gray-400">{{ change.supplier_name }}</p>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-sm">
+                            <span class="text-gray-500">${{ "{:.2f}".format(change.old_price) }}</span>
+                            <span class="text-gray-400 mx-1">&rarr;</span>
+                            <span class="font-medium">${{ "{:.2f}".format(change.new_price) }}</span>
+                        </p>
+                        <p class="text-xs {% if change.change_percentage > 0 %}text-red-500{% else %}text-green-500{% endif %}">
+                            {% if change.change_percentage > 0 %}+{% endif %}{{ "{:.1f}".format(change.change_percentage) }}%
+                        </p>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p class="text-gray-500 text-center py-4">No price change history</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Full Price History Table -->
+    <div class="bg-white rounded-lg shadow overflow-hidden">
+        <div class="px-6 py-4 border-b">
+            <h2 class="text-lg font-semibold">Complete Price History</h2>
+        </div>
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Supplier</th>
+                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Old Price</th>
+                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">New Price</th>
+                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Change</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Source</th>
+                </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+                {% for change in price_history %}
+                <tr class="hover:bg-gray-50">
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                        {{ change.effective_date.strftime('%Y-%m-%d') if change.effective_date else change.recorded_at.strftime('%Y-%m-%d %H:%M') }}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <a href="{{ url_for('inventory.supplier_detail', supplier_id=change.supplier_id) }}" class="text-blue-600 hover:underline">
+                            {{ change.supplier_name }}
+                        </a>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-right text-gray-600">
+                        ${{ "{:.2f}".format(change.old_price) }}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-right font-medium">
+                        ${{ "{:.2f}".format(change.new_price) }}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-right">
+                        {% if change.change_percentage > 0 %}
+                        <span class="text-red-600">+{{ "{:.1f}".format(change.change_percentage) }}%</span>
+                        {% elif change.change_percentage < 0 %}
+                        <span class="text-green-600">{{ "{:.1f}".format(change.change_percentage) }}%</span>
+                        {% else %}
+                        <span class="text-gray-400">0%</span>
+                        {% endif %}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {{ change.source or 'Unknown' }}
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="6" class="px-6 py-12 text-center text-gray-500">
+                        No price history recorded for this item.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+<script>
+    // Price trend data
+    const priceHistory = {{ price_history | tojson }};
+
+    if (priceHistory.length > 0) {
+        // Build price timeline - use effective_date when available
+        const pricePoints = priceHistory.map(h => ({
+            date: h.effective_date || h.recorded_at.split('T')[0],
+            price: h.new_price,
+            supplier: h.supplier_name
+        })).sort((a, b) => new Date(a.date) - new Date(b.date));
+
+        // Group by supplier for multi-line chart
+        const supplierData = {};
+        pricePoints.forEach(p => {
+            if (!supplierData[p.supplier]) {
+                supplierData[p.supplier] = { dates: [], prices: [] };
+            }
+            supplierData[p.supplier].dates.push(p.date);
+            supplierData[p.supplier].prices.push(p.price);
+        });
+
+        const traces = Object.entries(supplierData).map(([supplier, data]) => ({
+            x: data.dates,
+            y: data.prices,
+            name: supplier,
+            type: 'scatter',
+            mode: 'lines+markers',
+            line: { width: 2 },
+            marker: { size: 6 }
+        }));
+
+        // Add current price line
+        if (pricePoints.length > 0) {
+            const currentPrice = {{ item.unit_price or 0 }};
+            traces.push({
+                x: [pricePoints[0].date, pricePoints[pricePoints.length - 1].date],
+                y: [currentPrice, currentPrice],
+                name: 'Current Price',
+                type: 'scatter',
+                mode: 'lines',
+                line: { dash: 'dash', color: '#9CA3AF', width: 1 }
+            });
+        }
+
+        Plotly.newPlot('priceTrendChart', traces, {
+            legend: { orientation: 'h', y: 1.1 },
+            margin: { t: 30, r: 20, l: 60, b: 50 },
+            xaxis: { title: 'Date' },
+            yaxis: {
+                title: 'Price ($)',
+                tickformat: '$.2f'
+            },
+            hovermode: 'x unified'
+        }, { responsive: true });
+    } else {
+        document.getElementById('priceTrendChart').innerHTML =
+            '<div class="flex items-center justify-center h-full text-gray-500">No price history data to display</div>';
+    }
+</script>
+{% endblock %}

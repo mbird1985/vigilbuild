@@ -1,0 +1,298 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Edit' if template else 'New' }} Work Order Template{% endblock %}
+{% block content %}
+<div class="container mx-auto px-4 py-6">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-bold text-gray-800">{{ 'Edit' if template else 'New' }} Work Order Template</h1>
+        <a href="{{ url_for('equipment.maintenance_wo_templates') }}" class="text-gray-600 hover:text-gray-800">&larr; Back to Templates</a>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Template Details -->
+        <div class="lg:col-span-2">
+            <div class="bg-white rounded-lg shadow p-6 mb-6">
+                <h2 class="text-lg font-semibold mb-4">Template Details</h2>
+                <form method="POST" id="template-form">
+                    <input type="hidden" name="action" value="save_template">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-medium text-gray-700">Template Name *</label>
+                            <input type="text" name="name" value="{{ template.name if template else '' }}" required
+                                   class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2">
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-medium text-gray-700">Description</label>
+                            <textarea name="description" rows="2" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2">{{ template.description if template else '' }}</textarea>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Job Type *</label>
+                            <select name="job_type" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2">
+                                <option value="preventive" {% if template and template.job_type == 'preventive' %}selected{% endif %}>Preventive Maintenance</option>
+                                <option value="repair" {% if template and template.job_type == 'repair' %}selected{% endif %}>Repair</option>
+                                <option value="inspection" {% if template and template.job_type == 'inspection' %}selected{% endif %}>Inspection</option>
+                                <option value="service" {% if template and template.job_type == 'service' %}selected{% endif %}>Service</option>
+                                <option value="overhaul" {% if template and template.job_type == 'overhaul' %}selected{% endif %}>Overhaul</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Equipment Type</label>
+                            <select name="equipment_type" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2">
+                                <option value="">All Equipment Types</option>
+                                {% for etype in equipment_types %}
+                                <option value="{{ etype }}" {% if template and template.equipment_type == etype %}selected{% endif %}>{{ etype }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Estimated Hours</label>
+                            <input type="number" name="estimated_hours" step="0.5" value="{{ template.estimated_hours if template else '' }}"
+                                   class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Priority</label>
+                            <select name="priority" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2">
+                                <option value="low" {% if template and template.priority == 'low' %}selected{% endif %}>Low</option>
+                                <option value="normal" {% if template and template.priority == 'normal' or not template %}selected{% endif %}>Normal</option>
+                                <option value="high" {% if template and template.priority == 'high' %}selected{% endif %}>High</option>
+                                <option value="critical" {% if template and template.priority == 'critical' %}selected{% endif %}>Critical</option>
+                            </select>
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="flex items-center">
+                                <input type="checkbox" name="is_active" {% if not template or template.is_active %}checked{% endif %} class="mr-2">
+                                <span class="text-sm font-medium text-gray-700">Template is Active</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                            Save Template
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Procedure Steps -->
+            {% if template %}
+            <div class="bg-white rounded-lg shadow p-6 mb-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-lg font-semibold">Procedure Steps</h2>
+                    <button onclick="showAddStepModal()" class="text-blue-600 hover:underline text-sm">+ Add Step</button>
+                </div>
+                <div class="space-y-3" id="steps-list">
+                    {% for step in template.steps %}
+                    <div class="border rounded-lg p-4 bg-gray-50">
+                        <div class="flex justify-between items-start">
+                            <div class="flex-1">
+                                <div class="flex items-center gap-2">
+                                    <span class="bg-blue-600 text-white text-xs rounded-full w-6 h-6 flex items-center justify-center">{{ step.step_order }}</span>
+                                    <span class="font-medium">{{ step.title }}</span>
+                                    {% if step.is_required %}
+                                    <span class="text-xs bg-red-100 text-red-800 px-2 py-0.5 rounded">Required</span>
+                                    {% endif %}
+                                    {% if step.requires_photo %}
+                                    <span class="text-xs bg-yellow-100 text-yellow-800 px-2 py-0.5 rounded">Photo</span>
+                                    {% endif %}
+                                </div>
+                                {% if step.instructions %}
+                                <p class="text-sm text-gray-600 mt-1 ml-8">{{ step.instructions }}</p>
+                                {% endif %}
+                                {% if step.estimated_minutes %}
+                                <p class="text-xs text-gray-500 mt-1 ml-8">Est. {{ step.estimated_minutes }} min</p>
+                                {% endif %}
+                            </div>
+                            <div class="flex gap-2">
+                                <button onclick="editStep({{ step.id }})" class="text-blue-600 hover:underline text-sm">Edit</button>
+                                <form method="POST" class="inline" onsubmit="return confirm('Delete this step?')">
+                                    <input type="hidden" name="action" value="delete_step">
+                                    <input type="hidden" name="step_id" value="{{ step.id }}">
+                                    <button type="submit" class="text-red-600 hover:underline text-sm">Delete</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    {% else %}
+                    <p class="text-gray-500 text-center py-4">No procedure steps defined yet.</p>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Required Parts -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-lg font-semibold">Required Parts</h2>
+                    <button onclick="showAddPartModal()" class="text-blue-600 hover:underline text-sm">+ Add Part</button>
+                </div>
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Part</th>
+                            <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Quantity</th>
+                            <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200">
+                        {% for part in template.parts %}
+                        <tr>
+                            <td class="px-4 py-3">{{ part.inventory_name or part.part_number }}</td>
+                            <td class="px-4 py-3">{{ part.quantity }}</td>
+                            <td class="px-4 py-3">
+                                <form method="POST" class="inline" onsubmit="return confirm('Remove this part?')">
+                                    <input type="hidden" name="action" value="delete_part">
+                                    <input type="hidden" name="part_id" value="{{ part.id }}">
+                                    <button type="submit" class="text-red-600 hover:underline text-sm">Remove</button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="3" class="px-4 py-4 text-center text-gray-500">No parts specified</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Sidebar -->
+        <div class="lg:col-span-1">
+            {% if template %}
+            <div class="bg-white rounded-lg shadow p-6 mb-6">
+                <h3 class="font-semibold mb-3">Template Info</h3>
+                <dl class="space-y-2 text-sm">
+                    <div>
+                        <dt class="text-gray-500">Created</dt>
+                        <dd>{{ template.created_at.strftime('%Y-%m-%d') if template.created_at else '-' }}</dd>
+                    </div>
+                    <div>
+                        <dt class="text-gray-500">Steps</dt>
+                        <dd>{{ template.steps|length }}</dd>
+                    </div>
+                    <div>
+                        <dt class="text-gray-500">Parts</dt>
+                        <dd>{{ template.parts|length }}</dd>
+                    </div>
+                </dl>
+            </div>
+
+            <div class="bg-blue-50 rounded-lg p-4">
+                <h3 class="font-semibold text-blue-800 mb-2">Using Templates</h3>
+                <p class="text-sm text-blue-700">
+                    Work order templates help standardize maintenance procedures.
+                    When creating a new job, select this template to automatically populate
+                    procedure steps and required parts.
+                </p>
+            </div>
+            {% else %}
+            <div class="bg-yellow-50 rounded-lg p-4">
+                <h3 class="font-semibold text-yellow-800 mb-2">Getting Started</h3>
+                <p class="text-sm text-yellow-700">
+                    Save the template first to add procedure steps and required parts.
+                </p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Add Step Modal -->
+<div id="step-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div class="bg-white rounded-lg shadow-xl w-full max-w-lg mx-4">
+        <div class="p-6">
+            <h3 class="text-lg font-semibold mb-4">Add Procedure Step</h3>
+            <form method="POST">
+                <input type="hidden" name="action" value="add_step">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Step Title *</label>
+                        <input type="text" name="step_title" required class="mt-1 block w-full border border-gray-300 rounded-md p-2">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Instructions</label>
+                        <textarea name="step_instructions" rows="3" class="mt-1 block w-full border border-gray-300 rounded-md p-2"></textarea>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Step Order</label>
+                            <input type="number" name="step_order" value="{{ (template.steps|length + 1) if template else 1 }}" min="1"
+                                   class="mt-1 block w-full border border-gray-300 rounded-md p-2">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Est. Minutes</label>
+                            <input type="number" name="estimated_minutes" class="mt-1 block w-full border border-gray-300 rounded-md p-2">
+                        </div>
+                    </div>
+                    <div class="flex gap-4">
+                        <label class="flex items-center">
+                            <input type="checkbox" name="is_required" checked class="mr-2">
+                            <span class="text-sm">Required Step</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" name="requires_photo" class="mr-2">
+                            <span class="text-sm">Requires Photo</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="mt-6 flex justify-end gap-3">
+                    <button type="button" onclick="hideModal('step-modal')" class="px-4 py-2 border rounded text-gray-600">Cancel</button>
+                    <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Add Step</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Add Part Modal -->
+<div id="part-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div class="bg-white rounded-lg shadow-xl w-full max-w-lg mx-4">
+        <div class="p-6">
+            <h3 class="text-lg font-semibold mb-4">Add Required Part</h3>
+            <form method="POST">
+                <input type="hidden" name="action" value="add_part">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Select from Inventory</label>
+                        <select name="inventory_id" class="mt-1 block w-full border border-gray-300 rounded-md p-2">
+                            <option value="">-- Or enter part number below --</option>
+                            {% for item in inventory_items %}
+                            <option value="{{ item.id }}">{{ item.name }} ({{ item.part_number }})</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Or Part Number</label>
+                        <input type="text" name="part_number" placeholder="For non-inventory items"
+                               class="mt-1 block w-full border border-gray-300 rounded-md p-2">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Quantity *</label>
+                        <input type="number" name="quantity" value="1" min="1" required
+                               class="mt-1 block w-full border border-gray-300 rounded-md p-2">
+                    </div>
+                </div>
+                <div class="mt-6 flex justify-end gap-3">
+                    <button type="button" onclick="hideModal('part-modal')" class="px-4 py-2 border rounded text-gray-600">Cancel</button>
+                    <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Add Part</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+function showAddStepModal() {
+    document.getElementById('step-modal').classList.remove('hidden');
+}
+function showAddPartModal() {
+    document.getElementById('part-modal').classList.remove('hidden');
+}
+function hideModal(id) {
+    document.getElementById(id).classList.add('hidden');
+}
+function editStep(stepId) {
+    // In production, this would load step data into modal
+    alert('Edit step ' + stepId + ' - implement modal population');
+}
+</script>
+{% endblock %}

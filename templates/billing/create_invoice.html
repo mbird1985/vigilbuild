@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mx-auto p-4">
+  <h1 class="text-2xl font-bold mb-4">Create Invoice</h1>
+  
+  <form method="POST" class="space-y-4">
+    <div>
+      <label>Job</label>
+      <select name="job_id" class="border p-2 w-full">
+        {% for job in jobs %}
+        <option value="{{ job.id }}">{{ job.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div>
+      <label>Title</label>
+      <input type="text" name="title" class="border p-2 w-full">
+    </div>
+    <!-- Add line items dynamically via JS -->
+    <div id="line-items">
+      <!-- Example line -->
+      <div class="flex space-x-2">
+        <select name="service_unit_id[]" class="border p-2">
+          {% for unit in service_units %}
+          <option value="{{ unit.id }}">{{ unit.service_unit }}</option>
+          {% endfor %}
+        </select>
+        <input type="number" name="quantity[]" placeholder="Qty" class="border p-2">
+        <input type="number" name="unit_price[]" placeholder="Price" class="border p-2">
+      </div>
+    </div>
+    <button type="button" onclick="addLineItem()">Add Line</button>
+    <div>
+      <label>Notes</label>
+      <textarea name="notes" class="border p-2 w-full"></textarea>
+    </div>
+    <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded">Create</button>
+  </form>
+</div>
+
+<script>
+function addLineItem() {
+  const div = document.createElement('div');
+  div.className = 'flex space-x-2 mt-2';
+  div.innerHTML = document.getElementById('line-items').children[0].innerHTML;
+  document.getElementById('line-items').appendChild(div);
+}
+</script>
+{% endblock %}

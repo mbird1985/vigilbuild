@@ -1,0 +1,65 @@
+<!-- templates/dashboard.html -->
+{% extends "base.html" %}
+{% block content %}
+<div class="container mx-auto p-4">
+    <h1 class="text-2xl font-bold mb-4">Analytics Dashboard</h1>
+    {% if error %}
+    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+        Error: {{ error }}
+    </div>
+    {% endif %}
+    <h2 class="text-xl font-semibold mb-2">Welcome, {{ user.username }} ({{ user.role }})</h2>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+        <div class="bg-white p-4 rounded shadow">
+            <h3 class="text-lg font-medium">Jobs This Week</h3>
+            <p class="text-2xl">{{ jobs_this_week|default(0) }}</p>
+        </div>
+        <div class="bg-white p-4 rounded shadow">
+            <h3 class="text-lg font-medium">Total Days This Week</h3>
+            <p class="text-2xl">{{ total_days|default(0) }} days</p>
+        </div>
+        <div class="bg-white p-4 rounded shadow">
+            <h3 class="text-lg font-medium">Equipment Due for Maintenance</h3>
+            <p class="text-2xl">{{ maintenance_due_count|default(0) }}</p>
+        </div>
+    </div>
+    {% if maintenance_due_count > 0 %}
+    <h3 class="text-lg font-medium mb-2">Maintenance Due Details</h3>
+    <table class="w-full border mb-4">
+        <tr class="bg-gray-200">
+            <th class="border p-2">Equipment ID</th>
+            <th class="border p-2">Hours</th>
+        </tr>
+        {% for label, hours in maintenance_due_labels|zip(maintenance_due_hours) %}
+        <tr>
+            <td class="border p-2">{{ label }}</td>
+            <td class="border p-2">{{ hours }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% endif %}
+    <h3 class="text-lg font-medium mb-2">Scheduled Jobs</h3>
+    <table class="w-full border">
+        <tr class="bg-gray-200">
+            <th class="border p-2">Title</th>
+            <th class="border p-2">Start Date</th>
+            <th class="border p-2">End Date</th>
+            <th class="border p-2">Location</th>
+            <th class="border p-2">Status</th>
+            <th class="border p-2">Actions</th>
+        </tr>
+        {% for schedule in schedules %}
+        <tr>
+            <td class="border p-2">{{ schedule.title }}</td>
+            <td class="border p-2">{{ schedule.start_date }}</td>
+            <td class="border p-2">{{ schedule.end_date }}</td>
+            <td class="border p-2">{{ schedule.location or 'N/A' }}</td>
+            <td class="border p-2">{{ schedule.status }}</td>
+            <td class="border p-2">
+                <a href="{{ url_for('schedule.schedule_detail', event_id=schedule.id) }}" class="text-blue-500 hover:underline">Details</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+{% endblock %}

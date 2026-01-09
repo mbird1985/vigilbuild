@@ -1,0 +1,254 @@
+{% extends "base.html" %}
+{% block title %}Fleet Map - Maintenance{% endblock %}
+{% block content %}
+<div class="container mx-auto px-4 py-6">
+    <div class="flex justify-between items-center mb-6">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-800">Fleet Map</h1>
+            <p class="text-gray-600 text-sm mt-1">Real-time location tracking for your equipment fleet</p>
+        </div>
+        <div class="flex gap-2">
+            <a href="{{ url_for('equipment.maintenance_telematics_providers') }}"
+               class="bg-gray-100 text-gray-700 px-4 py-2 rounded hover:bg-gray-200 inline-flex items-center gap-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                </svg>
+                GPS Providers
+            </a>
+            <button onclick="syncProviders()" id="syncBtn" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 inline-flex items-center gap-2">
+                <svg class="w-5 h-5" id="syncIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                </svg>
+                Sync Now
+            </button>
+            <button onclick="refreshLocations()" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 inline-flex items-center gap-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                </svg>
+                Refresh Map
+            </button>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+        <!-- Map Container -->
+        <div class="lg:col-span-3">
+            <div class="bg-white rounded-lg shadow">
+                <div id="map" style="height: 600px; width: 100%;" class="rounded-lg"></div>
+            </div>
+        </div>
+
+        <!-- Equipment List -->
+        <div class="bg-white rounded-lg shadow overflow-hidden">
+            <div class="p-4 border-b">
+                <h2 class="font-semibold">Equipment</h2>
+                <input type="text" id="equipment-search" placeholder="Search..."
+                       class="mt-2 w-full border border-gray-300 rounded p-2 text-sm">
+            </div>
+            <div class="divide-y max-h-[500px] overflow-y-auto" id="equipment-list">
+                {% for eq in locations %}
+                <div class="p-3 hover:bg-gray-50 cursor-pointer equipment-item"
+                     onclick="focusEquipment({{ eq.id }})"
+                     data-id="{{ eq.id }}"
+                     data-name="{{ eq.unique_id }}">
+                    <div class="font-medium">{{ eq.unique_id }}</div>
+                    <div class="text-sm text-gray-500">{{ eq.brand }} {{ eq.model }}</div>
+                    <div class="flex items-center mt-1">
+                        <span class="w-2 h-2 rounded-full mr-2
+                            {% if eq.status == 'operational' %}bg-green-500
+                            {% elif eq.status == 'under maintenance' %}bg-yellow-500
+                            {% else %}bg-gray-500{% endif %}"></span>
+                        <span class="text-xs text-gray-500 capitalize">{{ eq.status }}</span>
+                    </div>
+                    {% if eq.recorded_at %}
+                    <div class="text-xs text-gray-400 mt-1">
+                        Last seen: {{ eq.recorded_at.strftime('%Y-%m-%d %H:%M') if eq.recorded_at else 'Unknown' }}
+                    </div>
+                    {% endif %}
+                </div>
+                {% else %}
+                <div class="p-4 text-center text-gray-500">No equipment with location data</div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Legend -->
+    <div class="mt-4 bg-white rounded-lg shadow p-4">
+        <h3 class="font-semibold mb-2">Legend</h3>
+        <div class="flex gap-6 text-sm">
+            <div class="flex items-center"><span class="w-3 h-3 rounded-full bg-green-500 mr-2"></span> Operational</div>
+            <div class="flex items-center"><span class="w-3 h-3 rounded-full bg-yellow-500 mr-2"></span> Under Maintenance</div>
+            <div class="flex items-center"><span class="w-3 h-3 rounded-full bg-red-500 mr-2"></span> Out of Service</div>
+            <div class="flex items-center"><span class="w-3 h-3 rounded-full bg-gray-400 mr-2"></span> Unknown</div>
+        </div>
+    </div>
+</div>
+
+<!-- Leaflet CSS -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<!-- Leaflet JS -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script>
+// Initialize map
+const map = L.map('map').setView([47.6062, -122.3321], 10); // Default to Seattle area
+
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap contributors'
+}).addTo(map);
+
+// Store markers for reference
+const markers = {};
+const equipmentData = {{ locations|tojson|safe }};
+
+// Create markers for each equipment
+equipmentData.forEach(eq => {
+    if (eq.location_data) {
+        // Parse location data if it's stored as JSON
+        let lat, lng;
+        try {
+            const locData = typeof eq.location_data === 'string' ? JSON.parse(eq.location_data) : eq.location_data;
+            lat = locData.lat || locData.latitude;
+            lng = locData.lng || locData.longitude;
+        } catch (e) {
+            // Try direct values
+            lat = eq.latitude;
+            lng = eq.longitude;
+        }
+
+        if (lat && lng) {
+            const color = eq.status === 'operational' ? 'green' :
+                         eq.status === 'under maintenance' ? 'orange' : 'gray';
+
+            const icon = L.divIcon({
+                className: 'custom-marker',
+                html: `<div style="background-color: ${color}; width: 12px; height: 12px; border-radius: 50%; border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.3);"></div>`,
+                iconSize: [16, 16],
+                iconAnchor: [8, 8]
+            });
+
+            const marker = L.marker([lat, lng], { icon: icon })
+                .bindPopup(`
+                    <strong>${eq.unique_id}</strong><br>
+                    ${eq.brand} ${eq.model}<br>
+                    Status: ${eq.status}<br>
+                    <a href="/maintenance/telematics/${eq.id}">View Details</a>
+                `);
+            marker.addTo(map);
+            markers[eq.id] = marker;
+        }
+    }
+});
+
+// Fit map to markers if we have any
+const markerArray = Object.values(markers);
+if (markerArray.length > 0) {
+    const group = new L.featureGroup(markerArray);
+    map.fitBounds(group.getBounds().pad(0.1));
+}
+
+function focusEquipment(id) {
+    if (markers[id]) {
+        map.setView(markers[id].getLatLng(), 15);
+        markers[id].openPopup();
+    }
+}
+
+function refreshLocations() {
+    fetch('{{ url_for("equipment.maintenance_api_fleet_locations") }}')
+        .then(response => response.json())
+        .then(data => {
+            // Clear existing markers
+            Object.values(markers).forEach(m => map.removeLayer(m));
+            Object.keys(markers).forEach(k => delete markers[k]);
+
+            // Add new markers
+            data.forEach(eq => {
+                if (eq.location_data) {
+                    let lat, lng;
+                    try {
+                        const locData = typeof eq.location_data === 'string' ? JSON.parse(eq.location_data) : eq.location_data;
+                        lat = locData.lat || locData.latitude;
+                        lng = locData.lng || locData.longitude;
+                    } catch (e) {
+                        lat = eq.latitude;
+                        lng = eq.longitude;
+                    }
+
+                    if (lat && lng) {
+                        const color = eq.status === 'operational' ? 'green' :
+                                     eq.status === 'under maintenance' ? 'orange' : 'gray';
+
+                        const icon = L.divIcon({
+                            className: 'custom-marker',
+                            html: `<div style="background-color: ${color}; width: 12px; height: 12px; border-radius: 50%; border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.3);"></div>`,
+                            iconSize: [16, 16],
+                            iconAnchor: [8, 8]
+                        });
+
+                        const marker = L.marker([lat, lng], { icon: icon })
+                            .bindPopup(`
+                                <strong>${eq.unique_id}</strong><br>
+                                ${eq.brand} ${eq.model}<br>
+                                Status: ${eq.status}<br>
+                                <a href="/equipment/maintenance/telematics/${eq.id}">View Details</a>
+                            `);
+                        marker.addTo(map);
+                        markers[eq.id] = marker;
+                    }
+                }
+            });
+
+            showNotification('Map refreshed with latest locations', 'success');
+        })
+        .catch(err => {
+            showNotification('Error refreshing locations', 'error');
+        });
+}
+
+function syncProviders() {
+    const btn = document.getElementById('syncBtn');
+    const icon = document.getElementById('syncIcon');
+    btn.disabled = true;
+    icon.classList.add('animate-spin');
+
+    fetch('{{ url_for("equipment.maintenance_api_sync_providers") }}')
+        .then(response => response.json())
+        .then(data => {
+            btn.disabled = false;
+            icon.classList.remove('animate-spin');
+
+            if (data.success) {
+                showNotification(`Synced ${data.total_synced} locations from GPS providers`, 'success');
+                refreshLocations();
+            } else {
+                showNotification(data.error || 'Sync failed', 'error');
+            }
+        })
+        .catch(err => {
+            btn.disabled = false;
+            icon.classList.remove('animate-spin');
+            showNotification('Error syncing providers', 'error');
+        });
+}
+
+function showNotification(message, type) {
+    const div = document.createElement('div');
+    div.className = `fixed top-4 right-4 px-4 py-2 rounded-lg shadow-lg z-50 ${type === 'success' ? 'bg-green-600' : 'bg-red-600'} text-white`;
+    div.textContent = message;
+    document.body.appendChild(div);
+    setTimeout(() => div.remove(), 3000);
+}
+
+// Search functionality
+document.getElementById('equipment-search').addEventListener('input', function(e) {
+    const search = e.target.value.toLowerCase();
+    document.querySelectorAll('.equipment-item').forEach(item => {
+        const name = item.dataset.name.toLowerCase();
+        item.style.display = name.includes(search) ? 'block' : 'none';
+    });
+});
+</script>
+{% endblock %}

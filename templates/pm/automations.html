@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="space-y-4">
+  <div class="flex items-center justify-between">
+    <h1 class="text-2xl font-bold">Automations</h1>
+  </div>
+  <div class="bg-white rounded shadow">
+    <table class="w-full text-left">
+      <thead class="bg-gray-100">
+        <tr>
+          <th class="px-4 py-2">Name</th>
+          <th class="px-4 py-2">Active</th>
+          <th class="px-4 py-2">Usage</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for a in automations %}
+        <tr class="border-t">
+          <td class="px-4 py-2">{{ a.name }}</td>
+          <td class="px-4 py-2">{{ 'Yes' if a.active else 'No' }}</td>
+          <td class="px-4 py-2">{{ a.used_this_month or 0 }}/{{ a.monthly_limit }}</td>
+        </tr>
+        {% else %}
+        <tr><td class="px-4 py-4 text-gray-600" colspan="3">No automations yet.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
+
+
+
+
+
+

@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}New Inspection - Maintenance{% endblock %}
+{% block content %}
+<div class="container mx-auto px-4 py-6">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-bold text-gray-800">Start New Inspection</h1>
+        <a href="{{ url_for('equipment.maintenance_inspections_list') }}" class="text-gray-600 hover:text-gray-800">&larr; Back to Inspections</a>
+    </div>
+
+    <div class="max-w-2xl">
+        <div class="bg-white rounded-lg shadow p-6">
+            <form method="POST">
+                <div class="space-y-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Equipment *</label>
+                        <select name="equipment_id" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2">
+                            <option value="">Select Equipment</option>
+                            {% for eq in equipment %}
+                            <option value="{{ eq.id }}">{{ eq.unique_id }} - {{ eq.brand }} {{ eq.model }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Use Checklist Template</label>
+                        <select name="template_id" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2">
+                            <option value="">No template (blank inspection)</option>
+                            {% for template in templates %}
+                            <option value="{{ template.id }}">{{ template.name }}{% if template.equipment_type %} ({{ template.equipment_type }}){% endif %}</option>
+                            {% endfor %}
+                        </select>
+                        <p class="text-sm text-gray-500 mt-1">Using a template will pre-populate the inspection items</p>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Inspection Type</label>
+                        <select name="inspection_type" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2">
+                            <option value="routine">Routine</option>
+                            <option value="pre-trip">Pre-Trip (DVI)</option>
+                            <option value="post-trip">Post-Trip</option>
+                            <option value="annual">Annual</option>
+                            <option value="safety">Safety</option>
+                            <option value="dot">DOT Compliance</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Notes</label>
+                        <textarea name="notes" rows="3" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" placeholder="Any initial notes..."></textarea>
+                    </div>
+
+                    <button type="submit" class="w-full bg-blue-600 text-white px-4 py-3 rounded hover:bg-blue-700 text-lg font-medium">
+                        Start Inspection
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

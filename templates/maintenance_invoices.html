@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="space-y-4">
+  <div class="flex items-center justify-between">
+    <h1 class="text-2xl font-bold">Invoices</h1>
+  </div>
+  <div class="bg-white rounded shadow">
+    <table class="w-full text-left">
+      <thead class="bg-gray-100"><tr><th class="px-3 py-2">ID</th><th class="px-3 py-2">Customer</th><th class="px-3 py-2">Equipment</th><th class="px-3 py-2">Total</th><th class="px-3 py-2">Status</th><th class="px-3 py-2">Actions</th></tr></thead>
+      <tbody>
+        {% for inv in invoices %}
+        <tr class="border-t">
+          <td class="px-3 py-2"><a class="text-blue-600 underline" href="{{ url_for('equipment.maintenance_invoice_view', invoice_id=inv.id) }}">#{{ inv.id }}</a></td>
+          <td class="px-3 py-2">{{ inv.customer_id or '-' }}</td>
+          <td class="px-3 py-2">{{ inv.equipment_id or '-' }}</td>
+          <td class="px-3 py-2">${{ '%.2f'|format(inv.total) }}</td>
+          <td class="px-3 py-2">{{ inv.status }}</td>
+          <td class="px-3 py-2">
+            {% if inv.status != 'paid' %}
+            <form method="post" action="{{ url_for('equipment.maintenance_invoice_mark_paid', invoice_id=inv.id) }}"><button class="btn-integration btn-teal">Mark Paid</button></form>
+            {% endif %}
+          </td>
+        </tr>
+        {% else %}
+        <tr><td class="px-3 py-2 text-gray-600" colspan="6">No invoices.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
+
+
+
+
+
+

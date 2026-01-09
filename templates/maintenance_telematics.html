@@ -1,0 +1,268 @@
+{% extends "base.html" %}
+{% block title %}Telematics & IoT - Maintenance{% endblock %}
+{% block content %}
+<div class="container mx-auto px-4 py-6">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-bold text-gray-800">Telematics & IoT Dashboard</h1>
+        <a href="{{ url_for('equipment.maintenance_fleet_map') }}" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+            View Fleet Map
+        </a>
+    </div>
+
+    <!-- Alert Summary -->
+    {% if active_alerts %}
+    <div class="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+        <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <svg class="w-6 h-6 text-red-600" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                </svg>
+                <span class="font-medium text-red-800">{{ active_alerts|length }} Active Alerts</span>
+            </div>
+            <a href="#alerts" class="text-red-600 hover:underline text-sm">View All</a>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Equipment Status Overview -->
+    <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 mb-6">
+        <div class="bg-white rounded-lg shadow p-4 text-center">
+            <div class="text-2xl font-bold text-gray-800">{{ stats.total_tracked }}</div>
+            <div class="text-sm text-gray-500">Tracked Equipment</div>
+        </div>
+        <div class="bg-white rounded-lg shadow p-4 text-center">
+            <div class="text-2xl font-bold text-green-600">{{ stats.online }}</div>
+            <div class="text-sm text-gray-500">Online</div>
+        </div>
+        <div class="bg-white rounded-lg shadow p-4 text-center">
+            <div class="text-2xl font-bold text-blue-600">{{ stats.in_motion }}</div>
+            <div class="text-sm text-gray-500">In Motion</div>
+        </div>
+        <div class="bg-white rounded-lg shadow p-4 text-center">
+            <div class="text-2xl font-bold text-yellow-600">{{ stats.idle }}</div>
+            <div class="text-sm text-gray-500">Idle</div>
+        </div>
+        <div class="bg-white rounded-lg shadow p-4 text-center">
+            <div class="text-2xl font-bold text-gray-600">{{ stats.offline }}</div>
+            <div class="text-sm text-gray-500">Offline</div>
+        </div>
+        <div class="bg-white rounded-lg shadow p-4 text-center">
+            <div class="text-2xl font-bold text-red-600">{{ stats.alerts }}</div>
+            <div class="text-sm text-gray-500">Active Alerts</div>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+        <!-- Recent Telemetry Data -->
+        <div class="bg-white rounded-lg shadow">
+            <div class="p-4 border-b">
+                <h2 class="text-lg font-semibold">Recent Telemetry</h2>
+            </div>
+            <div class="divide-y max-h-96 overflow-y-auto">
+                {% for data in recent_telemetry %}
+                <div class="p-4">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <a href="{{ url_for('equipment.equipment_detail', equipment_id=data.equipment_id) }}"
+                               class="font-medium text-blue-600 hover:underline">{{ data.equipment_unique_id }}</a>
+                            <p class="text-sm text-gray-600 capitalize">{{ data.data_type|replace('_', ' ') }}: <span class="font-medium">{{ data.value }} {{ data.unit or '' }}</span></p>
+                        </div>
+                        <span class="text-xs text-gray-500">{{ data.recorded_at.strftime('%H:%M:%S') if data.recorded_at else '' }}</span>
+                    </div>
+                </div>
+                {% else %}
+                <div class="p-8 text-center text-gray-500">No telemetry data received yet.</div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Equipment Health from Telematics -->
+        <div class="bg-white rounded-lg shadow">
+            <div class="p-4 border-b">
+                <h2 class="text-lg font-semibold">Equipment Health Indicators</h2>
+            </div>
+            <div class="p-4 space-y-4">
+                {% for eq in equipment_health %}
+                <div class="border rounded-lg p-3">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="font-medium">{{ eq.unique_id }}</span>
+                        {% if eq.health_status == 'good' %}
+                        <span class="px-2 py-1 text-xs rounded-full bg-green-100 text-green-800">Good</span>
+                        {% elif eq.health_status == 'warning' %}
+                        <span class="px-2 py-1 text-xs rounded-full bg-yellow-100 text-yellow-800">Warning</span>
+                        {% else %}
+                        <span class="px-2 py-1 text-xs rounded-full bg-red-100 text-red-800">Critical</span>
+                        {% endif %}
+                    </div>
+                    <div class="grid grid-cols-3 gap-2 text-sm">
+                        {% if eq.engine_hours %}
+                        <div>
+                            <span class="text-gray-500">Hours:</span>
+                            <span class="font-medium">{{ eq.engine_hours }}</span>
+                        </div>
+                        {% endif %}
+                        {% if eq.fuel_level %}
+                        <div>
+                            <span class="text-gray-500">Fuel:</span>
+                            <span class="font-medium {% if eq.fuel_level < 20 %}text-red-600{% endif %}">{{ eq.fuel_level }}%</span>
+                        </div>
+                        {% endif %}
+                        {% if eq.battery_voltage %}
+                        <div>
+                            <span class="text-gray-500">Battery:</span>
+                            <span class="font-medium {% if eq.battery_voltage < 12 %}text-yellow-600{% endif %}">{{ eq.battery_voltage }}V</span>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% else %}
+                <div class="text-center text-gray-500 py-8">No health data available.</div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Active Alerts -->
+    <div id="alerts" class="bg-white rounded-lg shadow mb-6">
+        <div class="p-4 border-b flex justify-between items-center">
+            <h2 class="text-lg font-semibold">Telematics Alerts</h2>
+            <a href="{{ url_for('equipment.maintenance_telematics_alert_rules') }}" class="text-blue-600 hover:underline text-sm">Manage Alert Rules</a>
+        </div>
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Equipment</th>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Alert Type</th>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Value</th>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Threshold</th>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Time</th>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200">
+                {% for alert in alerts %}
+                <tr class="{% if not alert.acknowledged_at %}bg-red-50{% endif %}">
+                    <td class="px-4 py-3">
+                        <a href="{{ url_for('equipment.equipment_detail', equipment_id=alert.equipment_id) }}"
+                           class="text-blue-600 hover:underline">{{ alert.equipment_unique_id }}</a>
+                    </td>
+                    <td class="px-4 py-3 capitalize">{{ alert.alert_type|replace('_', ' ') }}</td>
+                    <td class="px-4 py-3 font-medium">{{ alert.actual_value }}</td>
+                    <td class="px-4 py-3 text-gray-500">{{ alert.threshold_value }}</td>
+                    <td class="px-4 py-3 text-sm text-gray-500">{{ alert.created_at.strftime('%Y-%m-%d %H:%M') if alert.created_at else '' }}</td>
+                    <td class="px-4 py-3">
+                        {% if alert.acknowledged_at %}
+                        <span class="px-2 py-1 text-xs rounded-full bg-gray-100 text-gray-800">Acknowledged</span>
+                        {% else %}
+                        <span class="px-2 py-1 text-xs rounded-full bg-red-100 text-red-800">Active</span>
+                        {% endif %}
+                    </td>
+                    <td class="px-4 py-3">
+                        {% if not alert.acknowledged_at %}
+                        <form method="POST" class="inline">
+                            <input type="hidden" name="action" value="acknowledge_alert">
+                            <input type="hidden" name="alert_id" value="{{ alert.id }}">
+                            <button type="submit" class="text-blue-600 hover:underline text-sm">Acknowledge</button>
+                        </form>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="7" class="px-4 py-8 text-center text-gray-500">No alerts recorded.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Geofences -->
+    <div class="bg-white rounded-lg shadow">
+        <div class="p-4 border-b flex justify-between items-center">
+            <h2 class="text-lg font-semibold">Geofences</h2>
+            <button onclick="showGeofenceModal()" class="text-blue-600 hover:underline text-sm">+ Add Geofence</button>
+        </div>
+        <div class="p-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {% for fence in geofences %}
+                <div class="border rounded-lg p-4">
+                    <div class="flex justify-between items-start mb-2">
+                        <h3 class="font-medium">{{ fence.name }}</h3>
+                        {% if fence.is_active %}
+                        <span class="px-2 py-1 text-xs rounded-full bg-green-100 text-green-800">Active</span>
+                        {% else %}
+                        <span class="px-2 py-1 text-xs rounded-full bg-gray-100 text-gray-800">Inactive</span>
+                        {% endif %}
+                    </div>
+                    <p class="text-sm text-gray-600 capitalize">{{ fence.fence_type }} zone</p>
+                    <p class="text-sm text-gray-500">{{ fence.equipment_count }} equipment assigned</p>
+                    <div class="mt-3 flex gap-2">
+                        <a href="{{ url_for('equipment.maintenance_geofence_edit', geofence_id=fence.id) }}"
+                           class="text-blue-600 hover:underline text-sm">Edit</a>
+                    </div>
+                </div>
+                {% else %}
+                <div class="col-span-full text-center text-gray-500 py-8">
+                    No geofences configured. <button onclick="showGeofenceModal()" class="text-blue-600 hover:underline">Create one</button>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Geofence Modal -->
+<div id="geofence-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div class="bg-white rounded-lg shadow-xl w-full max-w-lg mx-4">
+        <div class="p-6">
+            <h3 class="text-lg font-semibold mb-4">Create Geofence</h3>
+            <form method="POST">
+                <input type="hidden" name="action" value="create_geofence">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Name *</label>
+                        <input type="text" name="name" required class="mt-1 block w-full border border-gray-300 rounded-md p-2">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Type</label>
+                        <select name="fence_type" class="mt-1 block w-full border border-gray-300 rounded-md p-2">
+                            <option value="work_zone">Work Zone</option>
+                            <option value="restricted">Restricted Area</option>
+                            <option value="yard">Equipment Yard</option>
+                            <option value="customer_site">Customer Site</option>
+                        </select>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Center Latitude</label>
+                            <input type="number" name="center_lat" step="0.000001" class="mt-1 block w-full border border-gray-300 rounded-md p-2">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Center Longitude</label>
+                            <input type="number" name="center_lon" step="0.000001" class="mt-1 block w-full border border-gray-300 rounded-md p-2">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Radius (meters)</label>
+                        <input type="number" name="radius" value="500" class="mt-1 block w-full border border-gray-300 rounded-md p-2">
+                    </div>
+                </div>
+                <div class="mt-6 flex justify-end gap-3">
+                    <button type="button" onclick="hideGeofenceModal()" class="px-4 py-2 border rounded text-gray-600">Cancel</button>
+                    <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Create Geofence</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+function showGeofenceModal() {
+    document.getElementById('geofence-modal').classList.remove('hidden');
+}
+function hideGeofenceModal() {
+    document.getElementById('geofence-modal').classList.add('hidden');
+}
+</script>
+{% endblock %}

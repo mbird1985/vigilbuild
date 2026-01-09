@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="space-y-4">
+  <h1 class="text-2xl font-bold">Job Templates</h1>
+  <div class="bg-white rounded shadow">
+    <table class="w-full text-left">
+      <thead class="bg-gray-100">
+        <tr>
+          <th class="px-4 py-2">Name</th>
+          <th class="px-4 py-2">Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for t in templates %}
+        <tr class="border-t">
+          <td class="px-4 py-2">{{ t.name }}</td>
+          <td class="px-4 py-2 text-gray-600">{{ t.description }}</td>
+        </tr>
+        {% else %}
+        <tr><td class="px-4 py-4 text-gray-600" colspan="2">No templates yet.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
+
+
+
+
+
+

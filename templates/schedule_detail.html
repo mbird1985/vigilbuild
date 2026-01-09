@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block content %}
+
+  Schedule Detail: {{ event.job }}
+
+  <p>Start: {{ event.start_date }} {{ event.start_time }}</p>
+  <p>End: {{ event.end_date }} {{ event.end_time }}</p>
+  <p>Location: {{ event.location }}</p>
+  <p>Status: {{ event.status }}</p>
+
+  <h3>Resources</h3>
+  <ul>
+    {% for res in resources %}
+    <li>{{ res.resource_type }}: {{ res.name }} (Qty: {{ res.quantity }})</li>
+    {% endfor %}
+  </ul>
+
+  {% if can_edit %}
+  <form method="POST" action="{{ url_for('schedule.schedule_detail_post', event_id=event.id) }}">
+    <label>Add Resource: 
+      <select name="resource_type">
+        <option value="equipment">Equipment</option>
+        <option value="person">Person</option>
+        <option value="consumable">Consumable</option>
+      </select>
+      <select name="resource_id">
+        {% if resource_type == 'equipment' %}
+        {% for eq in equipment %}
+        <option value="{{ eq.id }}">{{ eq.unique_id }}</option>
+        {% endfor %}
+        {% elif resource_type == 'person' %}
+        {% for p in people %}
+        <option value="{{ p.id }}">{{ p.name }}</option>
+        {% endfor %}
+        {% else %}
+        {% for con in consumables %}
+        <option value="{{ con.id }}">{{ con.name }}</option>
+        {% endfor %}
+        {% endif %}
+      </select>
+      <input name="quantity" type="number" value="1">
+      <button name="add_resource" type="submit">Add</button>
+    </label>
+  </form>
+  {% endif %}
+
+{% endblock %}

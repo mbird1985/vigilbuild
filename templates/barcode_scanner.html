@@ -1,0 +1,351 @@
+<!--templates/barcode_scanner.html-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Barcode Scanner - Inventory Lookup</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .scanner-container {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .scanner-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+            max-width: 500px;
+            width: 100%;
+        }
+        .scanner-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+        }
+        .scanner-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            opacity: 0.9;
+        }
+        .barcode-input {
+            font-size: 1.5rem;
+            font-family: 'Courier New', monospace;
+            text-align: center;
+            border: 3px dashed #dee2e6;
+            border-radius: 10px;
+            padding: 20px;
+        }
+        .barcode-input:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+        }
+        .scan-animation {
+            position: relative;
+            overflow: hidden;
+        }
+        .scan-line {
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, #667eea, transparent);
+            animation: scan 2s infinite;
+        }
+        @keyframes scan {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+        .result-card {
+            background: #f8f9fa;
+            border-radius: 10px;
+            margin-top: 20px;
+            overflow: hidden;
+        }
+        .status-success {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+        }
+        .status-error {
+            background: linear-gradient(135deg, #dc3545, #e83e8c);
+            color: white;
+        }
+        .quick-scan-buttons button {
+            border-radius: 25px;
+            margin: 5px;
+            padding: 8px 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="scanner-container">
+        <div class="scanner-card">
+            <div class="scanner-header">
+                <i class="fas fa-barcode scanner-icon"></i>
+                <h2 class="mb-0">Inventory Scanner</h2>
+                <p class="mb-0 opacity-75">Scan or enter barcode/SKU to lookup items</p>
+            </div>
+            
+            <div class="p-4">
+                <!-- Manual Input Form -->
+                <form id="scanForm">
+                    <div class="mb-4">
+                        <label for="barcodeInput" class="form-label">
+                            <i class="fas fa-keyboard me-2"></i>
+                            Enter Barcode/SKU
+                        </label>
+                        <div class="scan-animation">
+                            <input type="text" 
+                                   id="barcodeInput" 
+                                   class="form-control barcode-input" 
+                                   placeholder="Scan or type barcode..."
+                                   autocomplete="off"
+                                   autofocus>
+                            <div class="scan-line"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary btn-lg" disabled id="lookupBtn">
+                            <i class="fas fa-search me-2"></i>
+                            Looking up...
+                        </button>
+                    </div>
+                </form>
+
+                <!-- Quick Scan Buttons -->
+                <div class="quick-scan-buttons text-center mt-3">
+                    <small class="text-muted d-block mb-2">Quick Test Scans:</small>
+                    <button class="btn btn-sm btn-outline-secondary" onclick="testScan('SKU-001234')">SKU-001234</button>
+                    <button class="btn btn-sm btn-outline-secondary" onclick="testScan('FAST-AB12-00001')">FAST-AB12-00001</button>
+                    <button class="btn btn-sm btn-outline-secondary" onclick="testScan('ELEC-CD34-00002')">ELEC-CD34-00002</button>
+                </div>
+
+                <!-- Results Container -->
+                <div id="resultsContainer"></div>
+            </div>
+
+            <div class="p-3 text-center border-top">
+                <a href="{{ url_for('inventory.inventory_list') }}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left me-1"></i> Back to Inventory
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Audio for scan feedback -->
+    <audio id="successSound" preload="auto">
+        <source src="data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmQ+CzWb2+xWfC0FNHDP7x6XRAoXV6Pp4KhXEwpDn+Xyxm4+DDSy4e1XfSsEMWrM7+OAQAQYX6Pi46hYDw5Om+PwuG4cBzuT1/K6azMELWrJ8OeVQAQNYazl5qlMIgdHl+Dpu3UdBzOT1fK3czEELGfH7+SWQAIQYazi5axKKwZHjN/qxHMaADOO1POxdzEFLGPE7+OVPwcJY6ji5apHJgdEk+DitnEUB0OO1fCyYT4DMGvA6dXTXwUJUZTp4KdSKwd5mNfyv3AZCDyVxfDOZjIFJ2rH7uOSQLYGIF/jj0V+xQVQluf0w2KQEJ/X66YvAEuI1O/Nc0MFKWfI5+CWSwAIYary4qtWKwhTmODtvHAXBwKTyO1hXi0EJGPK7uKMPAATYqzn4qlVLAhEkt/qSGkfCT2Xy+ymXjAFJWrK7N2VOAYCYZjl5KlYKwRGkeTps27FBSOH1O/OYDQFKGXH6dqCCT2Vy+xFAAhTmOLwunAYBwWRxO1hXhgBEGLMVbDLDwASYZzl5KdNKwNTkePqvWIXAD2QzOzMhzUHKGZH6tuHCiqBzOzOg0QFKGXFPdqHCwyBzOyEgz8HKWzF6tuHCymBzOzQhzIHKWnF7duHCyqBzOwMVxIHKGjF6duHDCiBzO3MhzQG6WfE6t2HCweAyuzlf0UEK2nE6N2HDCiBzO6lRQYJY6fl56hVFAdGlt/stGsmE0aK2/HYhzADAGrG7dmICiqJwAAS64zl4KhOKwRHlt7SuGwfBjyQxfC5ZdwELGHE7N+ROSiVAgHiACoJQH4AAaEOxF6m" type="audio/wav">
+    </audio>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const barcodeInput = document.getElementById('barcodeInput');
+        const scanForm = document.getElementById('scanForm');
+        const lookupBtn = document.getElementById('lookupBtn');
+        const resultsContainer = document.getElementById('resultsContainer');
+        const successSound = document.getElementById('successSound');
+
+        let scanning = false;
+
+        // Enable/disable lookup button based on input
+        barcodeInput.addEventListener('input', function() {
+            const value = this.value.trim();
+            if (value.length > 0 && !scanning) {
+                lookupBtn.disabled = false;
+                lookupBtn.innerHTML = '<i class="fas fa-search me-2"></i>Lookup Item';
+            } else {
+                lookupBtn.disabled = true;
+                lookupBtn.innerHTML = '<i class="fas fa-search me-2"></i>Looking up...';
+            }
+        });
+
+        // Handle form submission
+        scanForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const barcode = barcodeInput.value.trim();
+            if (barcode && !scanning) {
+                lookupItem(barcode);
+            }
+        });
+
+        // Auto-submit on Enter or when barcode length suggests a complete scan
+        barcodeInput.addEventListener('keyup', function(e) {
+            const value = this.value.trim();
+            
+            // Auto-submit for typical barcode lengths or on Enter
+            if ((value.length >= 8 && value.length <= 20) || e.key === 'Enter') {
+                if (!scanning) {
+                    lookupItem(value);
+                }
+            }
+        });
+
+        function testScan(code) {
+            barcodeInput.value = code;
+            barcodeInput.dispatchEvent(new Event('input'));
+            lookupItem(code);
+        }
+
+        function lookupItem(barcode) {
+            if (scanning) return;
+            
+            scanning = true;
+            lookupBtn.disabled = true;
+            lookupBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Looking up...';
+            
+            resultsContainer.innerHTML = '';
+
+            fetch('/inventory/scan', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `barcode=${encodeURIComponent(barcode)}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                displayResult(data, barcode);
+                if (data.found) {
+                    playSuccessSound();
+                }
+            })
+            .catch(error => {
+                displayResult({
+                    found: false,
+                    error: 'Network error occurred'
+                }, barcode);
+                console.error('Lookup error:', error);
+            })
+            .finally(() => {
+                scanning = false;
+                lookupBtn.disabled = false;
+                lookupBtn.innerHTML = '<i class="fas fa-search me-2"></i>Lookup Item';
+                
+                // Clear input and focus for next scan
+                setTimeout(() => {
+                    barcodeInput.value = '';
+                    barcodeInput.focus();
+                }, 2000);
+            });
+        }
+
+        function displayResult(data, barcode) {
+            let resultHtml = '';
+            
+            if (data.found && data.item) {
+                const item = data.item;
+                const statusClass = getStatusClass(item.stock_status);
+                
+                resultHtml = `
+                    <div class="result-card">
+                        <div class="p-3 status-success">
+                            <h5 class="mb-1">
+                                <i class="fas fa-check-circle me-2"></i>
+                                Item Found
+                            </h5>
+                            <small class="opacity-75">Scanned: ${barcode}</small>
+                        </div>
+                        <div class="p-3">
+                            <h6 class="mb-2">${item.name}</h6>
+                            <div class="row text-sm">
+                                <div class="col-6">
+                                    <strong>Quantity:</strong><br>
+                                    <span class="h5 ${statusClass}">${item.quantity} ${item.unit}</span>
+                                </div>
+                                <div class="col-6">
+                                    <strong>Location:</strong><br>
+                                    <span class="text-muted">${item.location || 'Not specified'}</span>
+                                </div>
+                            </div>
+                            <div class="mt-3">
+                                <span class="badge ${getStatusBadgeClass(item.stock_status)} me-2">
+                                    ${item.stock_status.replace('_', ' ').toUpperCase()}
+                                </span>
+                            </div>
+                            <div class="mt-3 d-grid">
+                                <a href="${item.url}" class="btn btn-primary">
+                                    <i class="fas fa-eye me-1"></i>
+                                    View Details
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else {
+                resultHtml = `
+                    <div class="result-card">
+                        <div class="p-3 status-error">
+                            <h5 class="mb-1">
+                                <i class="fas fa-times-circle me-2"></i>
+                                Item Not Found
+                            </h5>
+                            <small class="opacity-75">Scanned: ${barcode}</small>
+                        </div>
+                        <div class="p-3">
+                            <p class="mb-2">${data.message || data.error || 'No item found with this barcode/SKU'}</p>
+                            <div class="d-grid">
+                                <a href="{{ url_for('inventory.add_inventory') }}" class="btn btn-outline-primary">
+                                    <i class="fas fa-plus me-1"></i>
+                                    Add New Item
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            resultsContainer.innerHTML = resultHtml;
+        }
+
+        function getStatusClass(status) {
+            switch(status) {
+                case 'out_of_stock': return 'text-danger';
+                case 'low_stock': return 'text-warning';
+                case 'in_stock': return 'text-success';
+                default: return 'text-muted';
+            }
+        }
+
+        function getStatusBadgeClass(status) {
+            switch(status) {
+                case 'out_of_stock': return 'bg-danger';
+                case 'low_stock': return 'bg-warning';
+                case 'in_stock': return 'bg-success';
+                default: return 'bg-secondary';
+            }
+        }
+
+        function playSuccessSound() {
+            try {
+                successSound.currentTime = 0;
+                successSound.play().catch(e => {
+                    // Ignore audio play errors (browser restrictions)
+                });
+            } catch (e) {
+                // Ignore audio errors
+            }
+        }
+
+        // Focus on input when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            barcodeInput.focus();
+        });
+
+        // Prevent form submission on page refresh
+        window.addEventListener('beforeunload', function() {
+            if (scanning) {
+                return 'Scan in progress...';
+            }
+        });
+    </script>
+</body>
+</html>

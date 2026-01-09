@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="bg-white p-6 rounded-lg shadow-md">
+  <h2 class="text-2xl font-semibold text-teal-800 mb-4">Documents</h2>
+  {% with messages = get_flashed_messages() %}
+    {% if messages %}
+      <p class="text-orange-500 mb-4">{{ messages[0] }}</p>
+    {% endif %}
+  {% endwith %}
+
+  {% if documents and documents|length > 0 %}
+  <table class="w-full border-collapse">
+    <thead class="bg-teal-800 text-white">
+      <tr>
+        <th class="p-3 text-left">Title</th>
+        <th class="p-3 text-left">Category</th>
+        <th class="p-3 text-left">Version</th>
+        <th class="p-3 text-left">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for doc in documents %}
+      <tr class="border-b hover:bg-gray-50">
+        <td class="p-3">{{ doc.title }}</td>
+        <td class="p-3">{{ doc.category }}</td>
+        <td class="p-3">{{ doc.version }}</td>
+        <td class="p-3 flex space-x-2">
+          <a href="{{ doc.url }}" target="_blank" class="text-teal-500 hover:underline">View</a>
+          <a href="/edit_document/{{ doc.id }}" class="text-orange-500 hover:underline">Edit</a>
+          <a href="/delete_document/{{ doc.id }}" onclick="return confirm('Are you sure?')" class="text-red-500 hover:underline">Delete</a>
+          <a href="/versions/{{ doc.title }}" class="text-teal-500 hover:underline">Versions</a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div class="text-center py-12">
+    <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+    </svg>
+    <h3 class="mt-2 text-sm font-medium text-gray-900">No documents</h3>
+    <p class="mt-1 text-sm text-gray-500">Get started by uploading a document.</p>
+    <div class="mt-6">
+      <a href="{{ url_for('documents.upload') }}" class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-teal-600 hover:bg-teal-700">
+        Upload Document
+      </a>
+    </div>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

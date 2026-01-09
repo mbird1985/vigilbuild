@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="space-y-6">
+  <h2 class="text-2xl font-semibold text-teal-800 text-center">Upload Documents</h2>
+
+  <div class="bg-white p-6 rounded-lg shadow-md max-w-2xl mx-auto">
+    <form id="upload-form" method="POST" action="/upload" enctype="multipart/form-data" class="space-y-4">
+      <div>
+        <label for="file" class="block text-teal-800 font-medium">Files:</label>
+        <input type="file" name="file" accept=".pdf,.docx,.txt" multiple required class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500">
+      </div>
+      <div>
+        <label for="title" class="block text-teal-800 font-medium">Title (optional):</label>
+        <input type="text" name="title" placeholder="Single file only; filenames used for bulk" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500">
+      </div>
+      <div>
+        <label for="category" class="block text-teal-800 font-medium">Category:</label>
+        <select name="category" required class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500">
+          <option value="Jobs">Jobs</option>
+          <option value="WAC">WAC</option>
+          <option value="HR">HR</option>
+          <option value="Handbook">Handbook</option>
+          <option value="Uncategorized">Uncategorized</option>
+        </select>
+      </div>
+      <div>
+        <label for="tags" class="block text-teal-800 font-medium">Tags:</label>
+        <input type="text" name="tags" placeholder="e.g., safety,training (comma-separated)" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500">
+      </div>
+      <div>
+        <label for="job_site" class="block text-teal-800 font-medium">Job Site:</label>
+        <input type="text" name="job_site" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500">
+      </div>
+      <div>
+        <label for="scope" class="block text-teal-800 font-medium">Scope:</label>
+        <input type="text" name="scope" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500">
+      </div>
+      <div>
+        <label for="people" class="block text-teal-800 font-medium">People:</label>
+        <input type="text" name="people" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500">
+      </div>
+      <div class="text-center">
+        <button type="submit" class="bg-teal-500 text-white px-4 py-2 rounded-lg hover:bg-teal-600">Upload</button>
+      </div>
+    </form>
+    <div id="upload-result" class="mt-4 text-gray-700"></div>
+  </div>
+</div>
+
+<script>
+  document.getElementById('upload-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    let formData = new FormData(this);
+    document.getElementById('upload-result').innerHTML = "<p>Uploading...</p>";
+    fetch('/upload', {
+      method: 'POST',
+      body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+      let resultDiv = document.getElementById('upload-result');
+      resultDiv.innerHTML = '';
+      data.forEach(item => {
+        let p = document.createElement('p');
+        p.textContent = item.message || item.error;
+        p.className = item.error ? 'text-red-500' : 'text-gray-700';
+        resultDiv.appendChild(p);
+      });
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      document.getElementById('upload-result').innerHTML = "<p class='text-red-500'>Error uploading. Please try again.</p>";
+    });
+  });
+</script>
+{% endblock %}

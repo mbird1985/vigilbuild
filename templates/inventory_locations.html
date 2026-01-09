@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="max-w-6xl mx-auto">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-3xl font-bold text-gray-800">Inventory Locations</h1>
+        <div class="flex space-x-2">
+            <a href="{{ url_for('inventory.add_location') }}" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded">
+                Add Location
+            </a>
+            <a href="{{ url_for('inventory.transfers_list') }}" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">
+                View Transfers
+            </a>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% for location in locations %}
+        <div class="bg-white rounded-lg shadow p-6 {% if location.is_primary %}border-2 border-green-500{% endif %}">
+            <div class="flex justify-between items-start mb-4">
+                <div>
+                    <h3 class="text-lg font-semibold">{{ location.name }}</h3>
+                    <span class="text-sm text-gray-500">{{ location.location_type|title }}</span>
+                </div>
+                <div class="flex space-x-2">
+                    {% if location.is_primary %}
+                    <span class="bg-green-100 text-green-800 px-2 py-1 rounded text-xs">Primary</span>
+                    {% endif %}
+                    {% if location.active %}
+                    <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs">Active</span>
+                    {% else %}
+                    <span class="bg-gray-100 text-gray-600 px-2 py-1 rounded text-xs">Inactive</span>
+                    {% endif %}
+                </div>
+            </div>
+
+            {% if location.address or location.city %}
+            <div class="text-sm text-gray-600 mb-3">
+                {% if location.address %}<p>{{ location.address }}</p>{% endif %}
+                {% if location.city %}<p>{{ location.city }}{% if location.state %}, {{ location.state }}{% endif %}</p>{% endif %}
+            </div>
+            {% endif %}
+
+            <div class="flex justify-between items-center text-sm border-t pt-3 mt-3">
+                <span class="text-gray-500">
+                    {% if location.manager %}Manager: {{ location.manager }}{% else %}No manager assigned{% endif %}
+                </span>
+                <span class="text-gray-500">{{ location.transfer_count }} transfers</span>
+            </div>
+        </div>
+        {% else %}
+        <div class="col-span-full bg-white rounded-lg shadow p-12 text-center">
+            <p class="text-gray-500 mb-4">No locations configured</p>
+            <a href="{{ url_for('inventory.add_location') }}" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded">
+                Add First Location
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

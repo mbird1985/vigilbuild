@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="space-y-4">
+  <div class="flex items-center justify-between">
+    <h1 class="text-2xl font-bold">Forms</h1>
+    <button id="createFormBtn" class="btn-integration btn-teal">New Form</button>
+  </div>
+  <div class="bg-white rounded shadow">
+    <table class="w-full text-left">
+      <thead class="bg-gray-100">
+        <tr>
+          <th class="px-4 py-2">Name</th>
+          <th class="px-4 py-2">Public URL</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for f in forms %}
+        <tr class="border-t">
+          <td class="px-4 py-2">{{ f.name }}</td>
+          <td class="px-4 py-2"><code>/pm/forms/{{ f.id }}/submit</code></td>
+        </tr>
+        {% else %}
+        <tr><td class="px-4 py-4 text-gray-600" colspan="2">No forms yet.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <dialog id="formDialog" class="p-0 rounded">
+    <form method="dialog" class="bg-white rounded shadow w-[36rem]">
+      <div class="p-4 border-b font-semibold">Create Form</div>
+      <div class="p-4 space-y-3">
+        <label class="block">
+          <span class="text-sm text-gray-700">Name</span>
+          <input id="formName" class="w-full border rounded p-2" />
+        </label>
+      </div>
+      <div class="p-4 border-t flex justify-end gap-2">
+        <button class="btn-integration btn-orange" value="cancel">Cancel</button>
+        <button class="btn-integration btn-teal" id="createForm">Create</button>
+      </div>
+    </form>
+  </dialog>
+
+</div>
+<script>
+const dialog = document.getElementById('formDialog');
+document.getElementById('createFormBtn').addEventListener('click', () => dialog.showModal());
+document.getElementById('createForm').addEventListener('click', async (e) => {
+  e.preventDefault();
+  const name = document.getElementById('formName').value.trim();
+  if (!name) return;
+  const res = await fetch(window.location.pathname, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ name, definition: { fields: [] } })
+  });
+  if (res.ok) location.reload();
+});
+</script>
+{% endblock %}
+
+
+
+
+
+

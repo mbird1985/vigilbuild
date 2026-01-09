@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mx-auto p-4">
+  <h1 class="text-2xl font-bold mb-4">Add Person</h1>
+  
+  <form method="POST">
+    <div class="mb-2">
+      <label class="block">Username</label>
+      <input type="text" name="username" class="border p-2 w-full" required>
+    </div>
+    <div class="mb-2">
+      <label class="block">Full Name</label>
+      <input type="text" name="full_name" class="border p-2 w-full" required>
+    </div>
+    <div class="mb-2">
+      <label class="block">Email</label>
+      <input type="email" name="email" class="border p-2 w-full" required>
+    </div>
+    <div class="mb-2">
+      <label class="block">Job Title</label>
+      <input type="text" name="job_title" class="border p-2 w-full">
+    </div>
+    <div class="mb-2">
+      <label class="block">Role</label>
+      <select name="role" class="border p-2 w-full">
+        {% for role in roles %}
+        <option value="{{ role }}">{{ role }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="mb-2">
+      <label class="block">Password</label>
+      <input type="password" name="password" class="border p-2 w-full" required>
+    </div>
+    <div class="mb-2">
+      <label class="block">Certifications</label>
+      {% for cert in certs %}
+      <label><input type="checkbox" name="certifications" value="{{ cert }}"> {{ cert }}</label><br>
+      {% endfor %}
+    </div>
+    <div class="mb-2">
+      <label class="block">Address</label>
+      <textarea name="address" class="border p-2 w-full"></textarea>
+    </div>
+    <div class="mb-2">
+      <label class="block">Home Phone</label>
+      <input type="tel" name="home_phone" class="border p-2 w-full">
+    </div>
+    <div class="mb-2">
+      <label class="block">Cell Phone</label>
+      <input type="tel" name="cell_phone" class="border p-2 w-full">
+    </div>
+    <div class="mb-2">
+      <label class="block">Work Phone</label>
+      <input type="tel" name="work_phone" class="border p-2 w-full">
+    </div>
+    <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded">Add</button>
+  </form>
+</div>
+{% endblock %}

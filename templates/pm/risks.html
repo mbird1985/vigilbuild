@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="space-y-4">
+  <h1 class="text-2xl font-bold">Risk Register</h1>
+
+  <form method="post" class="bg-white rounded shadow p-4 grid md:grid-cols-4 gap-3">
+    <label class="block col-span-2">
+      <span class="text-sm text-gray-700">Title</span>
+      <input name="title" class="w-full border rounded p-2" required />
+    </label>
+    <label class="block">
+      <span class="text-sm text-gray-700">Probability (1-5)</span>
+      <input name="probability" type="number" min="1" max="5" value="3" class="w-full border rounded p-2" />
+    </label>
+    <label class="block">
+      <span class="text-sm text-gray-700">Impact (1-5)</span>
+      <input name="impact" type="number" min="1" max="5" value="3" class="w-full border rounded p-2" />
+    </label>
+    <label class="block col-span-4">
+      <span class="text-sm text-gray-700">Mitigation</span>
+      <textarea name="mitigation" class="w-full border rounded p-2"></textarea>
+    </label>
+    <div class="col-span-4 text-right">
+      <button class="btn-integration btn-teal">Add Risk</button>
+    </div>
+  </form>
+
+  <div class="bg-white rounded shadow">
+    <table class="w-full text-left">
+      <thead class="bg-gray-100">
+        <tr>
+          <th class="px-4 py-2">Title</th>
+          <th class="px-4 py-2">P</th>
+          <th class="px-4 py-2">I</th>
+          <th class="px-4 py-2">Mitigation</th>
+          <th class="px-4 py-2">Status</th>
+          <th class="px-4 py-2">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for r in risks %}
+        <tr class="border-t">
+          <td class="px-4 py-2">{{ r.title }}</td>
+          <td class="px-4 py-2">{{ r.probability }}</td>
+          <td class="px-4 py-2">{{ r.impact }}</td>
+          <td class="px-4 py-2">{{ r.mitigation }}</td>
+          <td class="px-4 py-2">{{ r.status }}</td>
+          <td class="px-4 py-2">
+            <form method="post" action="{{ url_for('pm.delete_risk', risk_id=r.id) }}" onsubmit="return confirm('Delete risk?')">
+              <button class="text-red-600 hover:underline">Delete</button>
+            </form>
+          </td>
+        </tr>
+        {% else %}
+        <tr><td class="px-4 py-4 text-gray-600" colspan="6">No risks logged.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
+
+
+
+
+
+

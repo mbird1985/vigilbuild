@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="space-y-6">
+  <div class="flex justify-between items-center">
+    <h2 class="text-2xl font-semibold text-teal-800">Reorder Queue</h2>
+    <div class="flex space-x-2">
+      <button class="btn-integration btn-teal" onclick="runSuggest()">Run Suggestions</button>
+    </div>
+  </div>
+
+  <div class="bg-white rounded-lg shadow-md overflow-hidden">
+    <div class="overflow-x-auto">
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-50">
+          <tr>
+            <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Item</th>
+            <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">SKU</th>
+            <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Suggested</th>
+            <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Lead Time</th>
+            <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Est. Cost</th>
+            <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+            <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+          {% for r in queue %}
+          <tr class="hover:bg-gray-50">
+            <td class="px-3 py-3 text-sm font-medium text-gray-900">{{ r.item_name }}</td>
+            <td class="px-3 py-3 text-sm text-gray-700">{{ r.internal_sku or '-' }}</td>
+            <td class="px-3 py-3 text-sm text-gray-700">{{ r.suggested_quantity }} {{ r.unit or 'units' }}</td>
+            <td class="px-3 py-3 text-sm text-gray-700">{{ r.lead_time_days or '-' }} days</td>
+            <td class="px-3 py-3 text-sm text-gray-700">{% if r.estimated_cost %}${{ '%.2f'|format(r.estimated_cost) }}{% else %}-{% endif %}</td>
+            <td class="px-3 py-3">
+              <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full
+                {% if r.status == 'pending' or r.status == 'suggested' %}bg-yellow-100 text-yellow-800
+                {% elif r.status == 'approved' %}bg-green-100 text-green-800
+                {% else %}bg-gray-100 text-gray-700{% endif %}">
+                {{ r.status.title() }}
+              </span>
+            </td>
+            <td class="px-3 py-3 text-sm">
+              {% if r.status in ['pending','suggested'] %}
+              <div class="flex space-x-2">
+                <button class="btn-integration btn-blue" style="padding: 2px 6px; font-size: 11px;" onclick="approve({{ r.request_id }}, {{ r.suggested_quantity }})">Approve</button>
+                <button class="btn-integration btn-orange" style="padding: 2px 6px; font-size: 11px;" onclick="promptApprove({{ r.request_id }}, {{ r.suggested_quantity }})">Approve w/Qty</button>
+              </div>
+              {% else %}
+              <span class="text-xs text-gray-500">No actions</span>
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+async function runSuggest() {
+  const res = await fetch('/api/inventory/v1/reorder/suggest/run', {method: 'POST'});
+  const data = await res.json();
+  alert(`Created ${data.created} suggestions`);
+  location.reload();
+}
+async function approve(requestId, qty) {
+  const headers = {'Content-Type': 'application/json', 'Idempotency-Key': `${requestId}-${Date.now()}`};
+  const res = await fetch('/api/inventory/v1/reorder/approve', {method: 'POST', headers, body: JSON.stringify({request_id: requestId, approved_quantity: qty})});
+  if (res.ok) { location.reload(); } else { const e = await res.json(); alert(e.error || 'Failed'); }
+}
+async function promptApprove(requestId, defaultQty) {
+  const qty = parseInt(prompt('Enter approval quantity', defaultQty), 10);
+  if (!qty || qty < 1) return;
+  approve(requestId, qty);
+}
+</script>
+{% endblock %}
+
+

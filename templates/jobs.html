@@ -1,0 +1,23 @@
+<!-- templates/jobs.html -->
+{% extends "base.html" %}
+{% block content %}
+<div class="space-y-6">
+  <div class="flex items-center justify-between">
+    <h2 class="text-2xl font-semibold text-teal-800">Jobs</h2>
+    <a href="{{ url_for('jobs.create_job_route') }}" class="btn-integration btn-teal">Create Job</a>
+  </div>
+  <div class="bg-white rounded-lg shadow-md p-4">
+    <form method="GET" class="flex gap-2 items-center">
+      <label class="text-sm text-gray-700">Town</label>
+      <select name="town_id" class="px-2 py-1 border rounded">
+        <option value="">All</option>
+        {% for t in towns %}
+        <option value="{{ t.id }}" {{ 'selected' if request.args.get('town_id') == t.id|string else '' }}>{{ t.name }}</option>
+        {% endfor %}
+      </select>
+      <button type="submit" class="btn-integration btn-blue">Filter</button>
+    </form>
+  </div>
+  <p class="text-gray-600">(Jobs list rendering TBD)</p>
+</div>
+{% endblock %}

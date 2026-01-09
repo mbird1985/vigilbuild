@@ -1,0 +1,43 @@
+# Python cache
+__pycache__/
+*.py[cod]
+*.so
+*.pyd
+*.pyo
+
+# Environments
+.env
+.env.local
+.env.production
+.venv/
+env/
+venv/
+
+# IDE
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Uploads (user data)
+Uploads/
+uploads/
+
+# Logs
+*.log
+logs/
+
+# Local database
+*.db
+*.sqlite
+
+# Secrets
+secrets.json
+credentials.json
+
+# Build artifacts
+dist/
+build/
+*.egg-info/

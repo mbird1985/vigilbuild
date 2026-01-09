@@ -1,0 +1,59 @@
+<!-- templates/reports.html -->
+{% extends "base.html" %}
+{% block content %}
+<div class="container mx-auto p-4">
+    <h1 class="text-2xl font-bold mb-4">Generate Report</h1>
+    <form method="POST" action="{{ url_for('reports.generate_report') }}" class="mb-4">
+        <div class="mb-4">
+            <label for="category" class="block text-sm font-medium text-gray-700">Category</label>
+            <select name="category" id="category" class="border p-2 rounded w-full">
+                <option value="">All Categories</option>
+                <option value="Jobs">Jobs</option>
+                <option value="WAC">WAC</option>
+                <option value="HR">HR</option>
+                <option value="Handbook">Handbook</option>
+                <option value="Uncategorized">Uncategorized</option>
+            </select>
+        </div>
+        <div class="mb-4">
+            <label for="job_site" class="block text-sm font-medium text-gray-700">Job Site</label>
+            <input type="text" name="job_site" id="job_site" placeholder="Job Site" class="border p-2 rounded w-full">
+        </div>
+        <div class="mb-4">
+            <label for="people" class="block text-sm font-medium text-gray-700">People</label>
+            <input type="text" name="people" id="people" placeholder="People" class="border p-2 rounded w-full">
+        </div>
+        <div class="mb-4">
+            <label for="date_from" class="block text-sm font-medium text-gray-700">From Date</label>
+            <input type="date" name="date_from" id="date_from" class="border p-2 rounded w-full">
+        </div>
+        <div class="mb-4">
+            <label for="date_to" class="block text-sm font-medium text-gray-700">To Date</label>
+            <input type="date" name="date_to" id="date_to" class="border p-2 rounded w-full">
+        </div>
+        <div class="mb-4">
+            <label for="format" class="block text-sm font-medium text-gray-700">Format</label>
+            <select name="format" id="format" class="border p-2 rounded w-full">
+                <option value="pdf">PDF</option>
+                <option value="csv">CSV</option>
+            </select>
+        </div>
+        <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Download Report</button>
+    </form>
+    {% if data and data|length > 0 %}
+    <h2 class="text-lg font-medium mb-2">Recent Documents</h2>
+    <table class="w-full border">
+        <tr class="bg-gray-200">
+            <th class="border p-2">Title</th>
+            <th class="border p-2">Upload Date</th>
+        </tr>
+        {% for doc in data %}
+        <tr>
+            <td class="border p-2">{{ doc[0] }}</td>
+            <td class="border p-2">{{ doc[1] }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% endif %}
+</div>
+{% endblock %}

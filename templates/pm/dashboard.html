@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="space-y-4">
+  <div class="flex items-center justify-between">
+    <h1 class="text-2xl font-bold">Project Management Dashboard</h1>
+    <div class="space-x-2">
+      <a href="{{ url_for('integration.integrate') }}" class="btn-integration btn-blue">Manage Integrations</a>
+      <button id="addWidgetBtn" class="btn-integration btn-teal">Add Widget</button>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-12 gap-4" id="widgetsGrid">
+    {% for w in widgets %}
+    <div class="bg-white rounded shadow p-4 md:col-span-{{ w.width or 6 }}" data-id="{{ w.id }}">
+      <div class="flex items-center justify-between mb-2">
+        <h2 class="font-semibold">{{ w.widget_type|capitalize }}</h2>
+        <button class="text-red-600 hover:underline" onclick="deleteWidget({{ w.id }})">Remove</button>
+      </div>
+      <div>
+        {% if w.widget_type == 'kpis' %}
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <div class="bg-gray-50 rounded p-3"><div class="text-gray-500">Active Jobs</div><div class="text-2xl">--</div></div>
+            <div class="bg-gray-50 rounded p-3"><div class="text-gray-500">Open RFIs</div><div class="text-2xl">--</div></div>
+            <div class="bg-gray-50 rounded p-3"><div class="text-gray-500">Upcoming Milestones</div><div class="text-2xl">--</div></div>
+            <div class="bg-gray-50 rounded p-3"><div class="text-gray-500">Risks Open</div><div class="text-2xl">--</div></div>
+          </div>
+        {% elif w.widget_type == 'powerbi' %}
+          {% if status.powerbi %}
+          <a href="{{ url_for('pm.powerbi_list') }}" class="text-blue-600 underline">Browse Power BI Datasets</a>
+          {% else %}
+          <div class="text-gray-600">Connect Power BI in Integrations to show datasets.</div>
+          {% endif %}
+        {% elif w.widget_type == 'salesforce' %}
+          {% if status.salesforce %}
+          <a href="{{ url_for('pm.salesforce_list') }}" class="text-blue-600 underline">Browse Salesforce Accounts</a>
+          {% else %}
+          <div class="text-gray-600">Connect Salesforce in Integrations to show accounts.</div>
+          {% endif %}
+        {% elif w.widget_type == 'schedule' %}
+          <a href="{{ url_for('pm.schedule_view') }}" class="text-blue-600 underline">View Schedule Summary</a>
+        {% elif w.widget_type == 'embed' %}
+          <div class="prose max-w-none">{{ (w.config and w.config.html)|safe }}</div>
+        {% else %}
+          <div class="text-gray-600">No renderer for widget type: {{ w.widget_type }}</div>
+        {% endif %}
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <dialog id="addWidgetDialog" class="p-0 rounded">
+    <form method="dialog" class="bg-white rounded shadow w-[32rem]">
+      <div class="p-4 border-b font-semibold">Add Widget</div>
+      <div class="p-4 space-y-3">
+        <label class="block">
+          <span class="text-sm text-gray-700">Widget Type</span>
+          <select id="widgetType" class="w-full border rounded p-2">
+            <option value="kpis">KPIs</option>
+            <option value="powerbi">Power BI</option>
+            <option value="salesforce">Salesforce</option>
+            <option value="schedule">Schedule</option>
+          </select>
+        </label>
+        <label class="block">
+          <span class="text-sm text-gray-700">Width (1-12)</span>
+          <input id="widgetWidth" type="number" value="6" min="1" max="12" class="w-full border rounded p-2" />
+        </label>
+      </div>
+      <div class="p-4 border-t flex justify-end gap-2">
+        <button class="btn-integration btn-orange" value="cancel">Cancel</button>
+        <button class="btn-integration btn-teal" id="confirmAdd">Add</button>
+      </div>
+    </form>
+  </dialog>
+
+</div>
+
+<script>
+const dialog = document.getElementById('addWidgetDialog');
+document.getElementById('addWidgetBtn').addEventListener('click', () => dialog.showModal());
+document.getElementById('confirmAdd').addEventListener('click', async (e) => {
+  e.preventDefault();
+  const widgetType = document.getElementById('widgetType').value;
+  const width = parseInt(document.getElementById('widgetWidth').value || '6', 10);
+  const res = await fetch('/pm/api/widgets', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ widget_type: widgetType, width })
+  });
+  if (res.ok) {
+    location.reload();
+  }
+});
+
+async function deleteWidget(id) {
+  const res = await fetch(`/pm/api/widgets/${id}`, { method: 'DELETE' });
+  if (res.ok) location.reload();
+}
+</script>
+{% endblock %}
+
+

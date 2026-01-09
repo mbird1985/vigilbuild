@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="space-y-4">
+  <h1 class="text-2xl font-bold">New Customer</h1>
+  <form method="post" class="bg-white rounded shadow p-4 grid md:grid-cols-2 gap-3">
+    <label class="block"><span class="text-sm">Name</span><input name="name" class="w-full border rounded p-2" required></label>
+    <label class="block"><span class="text-sm">Company</span><input name="company" class="w-full border rounded p-2"></label>
+    <label class="block"><span class="text-sm">Email</span><input name="email" type="email" class="w-full border rounded p-2"></label>
+    <label class="block"><span class="text-sm">Phone</span><input name="phone" class="w-full border rounded p-2"></label>
+    <div class="md:col-span-2 text-right"><button class="btn-integration btn-teal">Save</button></div>
+  </form>
+</div>
+{% endblock %}
+
+
+
+
+
+

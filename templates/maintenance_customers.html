@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="space-y-4">
+  <div class="flex items-center justify-between">
+    <h1 class="text-2xl font-bold">Customers</h1>
+    <a class="btn-integration btn-teal" href="{{ url_for('equipment.maintenance_customers_new') }}">New Customer</a>
+  </div>
+  <div class="bg-white rounded shadow">
+    <table class="w-full text-left">
+      <thead class="bg-gray-100"><tr><th class="px-3 py-2">Name</th><th class="px-3 py-2">Company</th><th class="px-3 py-2">Email</th><th class="px-3 py-2">Phone</th></tr></thead>
+      <tbody>
+        {% for c in customers %}
+        <tr class="border-t">
+          <td class="px-3 py-2"><a class="text-blue-600 underline" href="{{ url_for('equipment.maintenance_customer_view', customer_id=c.id) }}">{{ c.name }}</a></td>
+          <td class="px-3 py-2">{{ c.company }}</td>
+          <td class="px-3 py-2">{{ c.email }}</td>
+          <td class="px-3 py-2">{{ c.phone }}</td>
+        </tr>
+        {% else %}
+        <tr><td class="px-3 py-2 text-gray-600" colspan="4">No customers.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
+
+
+
+
+
+

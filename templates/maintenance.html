@@ -1,0 +1,162 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="space-y-6">
+  <div class="flex items-center justify-between">
+    <h2 class="text-2xl font-semibold text-teal-800">Maintenance Dashboard</h2>
+  </div>
+
+  <!-- Summary Cards -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div class="bg-white rounded-lg shadow-md p-4">
+      <div class="text-sm text-gray-500">Under Maintenance</div>
+      <div class="text-2xl font-semibold text-gray-900">{{ counts.under_maintenance }}</div>
+    </div>
+    <div class="bg-white rounded-lg shadow-md p-4">
+      <div class="text-sm text-gray-500">Due Now</div>
+      <div class="text-2xl font-semibold text-gray-900">{{ counts.due_now }}</div>
+    </div>
+    <div class="bg-white rounded-lg shadow-md p-4">
+      <div class="text-sm text-gray-500">Due Soon (≤ 14 days)</div>
+      <div class="text-2xl font-semibold text-gray-900">{{ counts.due_soon }}</div>
+    </div>
+  </div>
+
+  <!-- Under Maintenance List -->
+  <div class="bg-white rounded-lg shadow-md overflow-hidden">
+    <div class="px-4 py-2 border-b bg-gray-50 text-gray-700 font-medium">Currently Under Maintenance</div>
+    <div class="overflow-x-auto">
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-50">
+          <tr>
+            <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">ID</th>
+            <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Equipment</th>
+            <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+            <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Last Maintenance</th>
+            <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+          {% for e in under_list %}
+          <tr class="hover:bg-gray-50 text-sm">
+            <td class="px-3 py-2 font-mono">{{ e.id }}</td>
+            <td class="px-3 py-2">{{ e.unique_id }} — {{ e.brand }} {{ e.model }} ({{ e.equipment_type }})</td>
+            <td class="px-3 py-2">{{ e.status }}</td>
+            <td class="px-3 py-2">{{ e.last_maintenance or '-' }}</td>
+            <td class="px-3 py-2">
+              <a class="btn-integration btn-blue" style="padding: 2px 6px; font-size: 11px;" href="{{ url_for('equipment.maintenance_detail', equipment_id=e.id) }}">View</a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Jobs Board -->
+  <div class="bg-white rounded-lg shadow-md overflow-hidden">
+    <div class="px-4 py-2 border-b bg-gray-50 text-gray-700 font-medium flex items-center justify-between">
+      <span>Maintenance Jobs</span>
+      <div class="flex gap-2">
+        <a class="btn-integration btn-blue" href="{{ url_for('equipment.maintenance_calendar') }}">Calendar</a>
+        <a class="btn-integration btn-teal" href="{{ url_for('equipment.maintenance_job_create') }}">Create Job</a>
+      </div>
+    </div>
+    <div class="px-4 py-2 border-b bg-gray-50">
+      <form method="GET" class="flex flex-wrap gap-2 items-center">
+        <label class="text-sm text-gray-700">Sort</label>
+        <select name="sort" class="px-2 py-1 border rounded">
+          <option value="importance" {{ 'selected' if sort_by == 'importance' else '' }}>Importance</option>
+          <option value="received" {{ 'selected' if sort_by == 'received' else '' }}>Time Received</option>
+          <option value="due" {{ 'selected' if sort_by == 'due' else '' }}>Due Date</option>
+        </select>
+        <label class="text-sm text-gray-700 ml-4">
+          <input type="checkbox" name="mine" value="1" {{ 'checked' if assigned_to_me else '' }}> Assigned to me
+        </label>
+        <button type="submit" class="btn-integration btn-blue">Apply</button>
+      </form>
+    </div>
+    <div class="overflow-x-auto">
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-50">
+          <tr>
+            <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">ID</th>
+            <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Equipment</th>
+            <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Type</th>
+            <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Priority</th>
+            <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+            <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Due</th>
+            <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Assignee</th>
+            <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+          {% for j in jobs %}
+          <tr class="hover:bg-gray-50 text-sm">
+            <td class="px-3 py-2">{{ j.id }}</td>
+            <td class="px-3 py-2"><a class="text-teal-700 hover:underline" href="{{ url_for('equipment.maintenance_detail', equipment_id=j.equipment_id) }}">#{{ j.equipment_id }}</a></td>
+            <td class="px-3 py-2">
+              {% if j.job_type == 'breakdown' %}
+                <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">Breakdown</span>
+              {% else %}
+                <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">Maintenance</span>
+              {% endif %}
+            </td>
+            <td class="px-3 py-2">{{ j.priority.title() }}</td>
+            <td class="px-3 py-2">{{ j.status.replace('_',' ').title() }}</td>
+            <td class="px-3 py-2">{{ j.due_date or '-' }}</td>
+            <td class="px-3 py-2">{{ j.assigned_to or '-' }}</td>
+            <td class="px-3 py-2">
+              <form method="POST" action="{{ url_for('equipment.maintenance_job_update', job_id=j.id) }}" class="flex flex-wrap gap-1">
+                <select name="status" class="px-2 py-1 border rounded">
+                  {% for s in ['new','in_progress','completed','deferred','cancelled'] %}
+                  <option value="{{ s }}" {{ 'selected' if j.status == s else '' }}>{{ s.replace('_',' ').title() }}</option>
+                  {% endfor %}
+                </select>
+                <select name="priority" class="px-2 py-1 border rounded">
+                  {% for p in ['low','normal','high','critical'] %}
+                  <option value="{{ p }}" {{ 'selected' if j.priority == p else '' }}>{{ p.title() }}</option>
+                  {% endfor %}
+                </select>
+                <input type="date" name="due_date" value="{{ j.due_date }}" class="px-2 py-1 border rounded">
+                <input type="text" name="notes" placeholder="Notes" class="px-2 py-1 border rounded">
+                <input type="number" name="assigned_to" placeholder="User ID" class="px-2 py-1 border rounded" value="{{ j.assigned_to or '' }}">
+                <button type="submit" class="btn-integration btn-orange">Update</button>
+              </form>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Workload Summary -->
+  <div class="bg-white rounded-lg shadow-md overflow-hidden">
+    <div class="px-4 py-2 border-b bg-gray-50 text-gray-700 font-medium">Workload Summary</div>
+    <div class="overflow-x-auto">
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-50">
+          <tr>
+            <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Assignee</th>
+            <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Total</th>
+            <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">New</th>
+            <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">In Progress</th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+          {% for w in workload %}
+          <tr class="hover:bg-gray-50 text-sm">
+            <td class="px-3 py-2">{{ w.assigned_to }}</td>
+            <td class="px-3 py-2">{{ w.total }}</td>
+            <td class="px-3 py-2">{{ w.new }}</td>
+            <td class="px-3 py-2">{{ w.in_progress }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+

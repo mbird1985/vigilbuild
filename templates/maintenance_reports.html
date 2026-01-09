@@ -1,0 +1,215 @@
+{% extends "base.html" %}
+{% block title %}Maintenance Reports & Analytics{% endblock %}
+{% block content %}
+<div class="container mx-auto px-4 py-6">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-bold text-gray-800">Maintenance Reports & Analytics</h1>
+        <a href="{{ url_for('equipment.maintenance_reports_export', format='csv', start_date=start_date or '', end_date=end_date or '') }}"
+           class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+            Export CSV
+        </a>
+    </div>
+
+    <!-- Date Filter -->
+    <div class="bg-white rounded-lg shadow p-4 mb-6">
+        <form method="GET" class="flex gap-4 items-end">
+            <div>
+                <label class="block text-sm font-medium text-gray-700">Start Date</label>
+                <input type="date" name="start_date" value="{{ start_date or '' }}" class="mt-1 border border-gray-300 rounded-md p-2">
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700">End Date</label>
+                <input type="date" name="end_date" value="{{ end_date or '' }}" class="mt-1 border border-gray-300 rounded-md p-2">
+            </div>
+            <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Apply Filter</button>
+            <a href="{{ url_for('equipment.maintenance_reports') }}" class="text-gray-600 hover:underline">Clear</a>
+        </form>
+    </div>
+
+    <!-- KPI Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        <div class="bg-white rounded-lg shadow p-6">
+            <div class="text-sm text-gray-500 uppercase">Total Jobs</div>
+            <div class="text-3xl font-bold text-gray-800">{{ kpis.total_jobs }}</div>
+        </div>
+        <div class="bg-white rounded-lg shadow p-6">
+            <div class="text-sm text-gray-500 uppercase">Completion Rate</div>
+            <div class="text-3xl font-bold text-green-600">{{ kpis.completion_rate }}%</div>
+            <div class="text-sm text-gray-500">{{ kpis.completed_jobs }} completed</div>
+        </div>
+        <div class="bg-white rounded-lg shadow p-6">
+            <div class="text-sm text-gray-500 uppercase">Planned vs Reactive</div>
+            <div class="text-3xl font-bold text-blue-600">{{ kpis.planned_maintenance_pct }}%</div>
+            <div class="text-sm text-gray-500">planned maintenance</div>
+        </div>
+        <div class="bg-white rounded-lg shadow p-6">
+            <div class="text-sm text-gray-500 uppercase">Overdue Jobs</div>
+            <div class="text-3xl font-bold {% if kpis.overdue_count > 0 %}text-red-600{% else %}text-green-600{% endif %}">
+                {{ kpis.overdue_count }}
+            </div>
+        </div>
+    </div>
+
+    <!-- Second Row KPIs -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+        <div class="bg-white rounded-lg shadow p-6">
+            <div class="text-sm text-gray-500 uppercase">Avg Completion Time</div>
+            <div class="text-2xl font-bold text-gray-800">{{ kpis.avg_completion_hours }} hours</div>
+        </div>
+        <div class="bg-white rounded-lg shadow p-6">
+            <div class="text-sm text-gray-500 uppercase">Total Labor Hours</div>
+            <div class="text-2xl font-bold text-gray-800">{{ kpis.total_labor_hours }}</div>
+        </div>
+        <div class="bg-white rounded-lg shadow p-6">
+            <div class="text-sm text-gray-500 uppercase">Total Parts Cost</div>
+            <div class="text-2xl font-bold text-gray-800">${{ kpis.total_parts_cost }}</div>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+        <!-- Jobs by Type -->
+        <div class="bg-white rounded-lg shadow p-6">
+            <h2 class="text-lg font-semibold mb-4">Jobs by Type</h2>
+            <div class="space-y-2">
+                {% for jtype, count in kpis.jobs_by_type.items() %}
+                <div class="flex justify-between items-center">
+                    <span class="capitalize">{{ jtype or 'Unknown' }}</span>
+                    <span class="font-medium">{{ count }}</span>
+                </div>
+                {% else %}
+                <p class="text-gray-500">No data</p>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Jobs by Priority -->
+        <div class="bg-white rounded-lg shadow p-6">
+            <h2 class="text-lg font-semibold mb-4">Jobs by Priority</h2>
+            <div class="space-y-2">
+                {% for priority, count in kpis.jobs_by_priority.items() %}
+                <div class="flex justify-between items-center">
+                    <span class="capitalize">{{ priority or 'Normal' }}</span>
+                    <span class="font-medium">{{ count }}</span>
+                </div>
+                {% else %}
+                <p class="text-gray-500">No data</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Top Breakdown Equipment -->
+    <div class="bg-white rounded-lg shadow mb-6">
+        <div class="p-4 border-b">
+            <h2 class="text-lg font-semibold">Top Equipment by Breakdowns</h2>
+        </div>
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Equipment</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Brand/Model</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Breakdowns</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200">
+                {% for eq in kpis.top_breakdown_equipment %}
+                <tr>
+                    <td class="px-6 py-4 font-medium">{{ eq.unique_id }}</td>
+                    <td class="px-6 py-4">{{ eq.brand }} {{ eq.model }}</td>
+                    <td class="px-6 py-4 text-red-600 font-medium">{{ eq.breakdown_count }}</td>
+                </tr>
+                {% else %}
+                <tr><td colspan="3" class="px-6 py-4 text-gray-500 text-center">No breakdowns recorded</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Technician Stats -->
+    <div class="bg-white rounded-lg shadow mb-6">
+        <div class="p-4 border-b">
+            <h2 class="text-lg font-semibold">Technician Workload</h2>
+        </div>
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Technician</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Total Jobs</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Completed</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Completion %</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200">
+                {% for tech in kpis.technician_stats %}
+                <tr>
+                    <td class="px-6 py-4 font-medium">{{ tech.username }}</td>
+                    <td class="px-6 py-4">{{ tech.total }}</td>
+                    <td class="px-6 py-4">{{ tech.completed }}</td>
+                    <td class="px-6 py-4">{{ ((tech.completed / tech.total) * 100)|round(1) if tech.total else 0 }}%</td>
+                </tr>
+                {% else %}
+                <tr><td colspan="4" class="px-6 py-4 text-gray-500 text-center">No data</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Equipment Health Summary -->
+    <div class="bg-white rounded-lg shadow mb-6">
+        <div class="p-4 border-b">
+            <h2 class="text-lg font-semibold">Equipment Health</h2>
+        </div>
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Equipment</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Type</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Health Score</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Hours Remaining</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Recent Breakdowns</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200">
+                {% for eq in health[:15] %}
+                <tr>
+                    <td class="px-6 py-4 font-medium">{{ eq.unique_id }}</td>
+                    <td class="px-6 py-4">{{ eq.equipment_type or '-' }}</td>
+                    <td class="px-6 py-4">
+                        <span class="px-2 py-1 rounded-full text-sm
+                            {% if eq.health_status == 'good' %}bg-green-100 text-green-800
+                            {% elif eq.health_status == 'warning' %}bg-yellow-100 text-yellow-800
+                            {% else %}bg-red-100 text-red-800{% endif %}">
+                            {{ eq.health_score }}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 {% if eq.hours_remaining <= 0 %}text-red-600 font-medium{% endif %}">
+                        {{ eq.hours_remaining }} hrs
+                    </td>
+                    <td class="px-6 py-4">{{ eq.recent_breakdowns }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Expiring Certifications Alert -->
+    {% if expiring_certs %}
+    <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+        <h3 class="font-semibold text-yellow-800 mb-2">Certifications Expiring Soon</h3>
+        <ul class="space-y-1">
+            {% for cert in expiring_certs %}
+            <li class="text-yellow-700">
+                {{ cert.equipment_unique_id }} - {{ cert.certification_type }}
+                expires in {{ cert.days_until_expiry }} days ({{ cert.expiry_date }})
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+// Monthly trends chart could be added here using the trends data
+</script>
+{% endblock %}

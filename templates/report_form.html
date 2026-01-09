@@ -1,0 +1,39 @@
+<!-- templates/report_form.html -->
+{% extends "base.html" %}
+{% block content %}
+<div class="container mx-auto p-4">
+    <h1 class="text-2xl font-bold mb-4">Generate a Custom Report</h1>
+    {% if error %}
+    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+        {{ error }}
+    </div>
+    {% endif %}
+    <form method="POST" action="{{ url_for('reports.custom_report') }}" class="mb-4">
+        <div class="mb-4">
+            <label for="title" class="block text-sm font-medium text-gray-700">Report Title</label>
+            <input type="text" name="title" id="title" placeholder="Report Title" class="border p-2 rounded w-full" value="Custom Report">
+        </div>
+        <div class="mb-4">
+            <label for="data_source" class="block text-sm font-medium text-gray-700">Data Source</label>
+            <select name="data_source" id="data_source" class="border p-2 rounded w-full">
+                <option value="Manual JSON">Manual JSON</option>
+                <option value="Schedules">Schedules</option>
+                <option value="Inventory">Inventory</option>
+                <option value="Equipment">Equipment</option>
+            </select>
+        </div>
+        <div class="mb-4">
+            <label for="data" class="block text-sm font-medium text-gray-700">Data (JSON)</label>
+            <textarea name="data" id="data" placeholder='[{"Job":"Pole Install","Crew":"Team A"}]' class="border p-2 rounded w-full"></textarea>
+        </div>
+        <div class="mb-4">
+            <label for="report_type" class="block text-sm font-medium text-gray-700">Report Type</label>
+            <select name="report_type" id="report_type" class="border p-2 rounded w-full">
+                <option value="pdf">PDF</option>
+                <option value="csv">CSV</option>
+            </select>
+        </div>
+        <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Generate</button>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="/static/tailwind.min.css" />
+  <title>{{ form.name }}</title>
+  <style>body{background:#f7fafc}</style>
+  <script>
+    async function submitForm(ev){
+      ev.preventDefault();
+      const data = {};
+      new FormData(ev.target).forEach((v,k)=>data[k]=v);
+      const res = await fetch('/pm/forms/{{ form_id }}/submit', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(data)});
+      if(res.ok){ alert('Submitted'); ev.target.reset(); }
+    }
+  </script>
+  </head>
+<body>
+  <div class="container mx-auto p-4 max-w-2xl">
+    <h1 class="text-2xl font-bold mb-4">{{ form.name }}</h1>
+    <form onsubmit="submitForm(event)" class="bg-white rounded shadow p-4 space-y-3">
+      <label class="block">
+        <span class="text-sm text-gray-700">Title</span>
+        <input name="title" class="w-full border rounded p-2" />
+      </label>
+      <button class="btn-integration btn-teal">Submit</button>
+    </form>
+  </div>
+</body>
+</html>
+
+
+
+
+

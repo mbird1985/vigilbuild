@@ -1,0 +1,295 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="space-y-6">
+  <h2 class="text-2xl font-semibold text-teal-800">Email Templates</h2>
+
+  {% with messages = get_flashed_messages() %}
+    {% if messages %}
+      <p class="text-orange-500 text-center">{{ messages[0] }}</p>
+    {% endif %}
+  {% endwith %}
+
+  {% if edit_template %}
+  <div class="bg-white p-6 rounded-lg shadow-md">
+    <h3 class="text-xl font-semibold text-teal-800 mb-4">Edit Template</h3>
+    <form method="POST" class="space-y-4">
+      <input type="hidden" name="template_id" value="{{ edit_template.id }}">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-teal-800 font-medium">Name:</label>
+          <input type="text" name="name" value="{{ edit_template.name }}" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500" required>
+        </div>
+        <div>
+          <label class="block text-teal-800 font-medium">Subject:</label>
+          <input type="text" name="subject" value="{{ edit_template.subject }}" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500" required>
+          <div class="mt-2 flex flex-wrap gap-2">
+            <button type="button" class="px-2 py-1 bg-gray-100 rounded hover:bg-gray-200" onclick="insertVariable('subject', '{location}')">{location}</button>
+            <button type="button" class="px-2 py-1 bg-gray-100 rounded hover:bg-gray-200" onclick="insertVariable('subject', '{start_date}')">{start_date}</button>
+            <button type="button" class="px-2 py-1 bg-gray-100 rounded hover:bg-gray-200" onclick="insertVariable('subject', '{job_name}')">{job_name}</button>
+          </div>
+        </div>
+        <div class="col-span-2">
+          <label class="block text-teal-800 font-medium">Body:</label>
+          <textarea name="body" id="body" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500" rows="5" required>{{ edit_template.body }}</textarea>
+          <div class="mt-2 flex flex-wrap gap-2">
+            <button type="button" class="px-2 py-1 bg-gray-100 rounded hover:bg-gray-200" onclick="insertVariable('body', '{location}')">{location}</button>
+            <button type="button" class="px-2 py-1 bg-gray-100 rounded hover:bg-gray-200" onclick="insertVariable('body', '{description}')">{description}</button>
+            <button type="button" class="px-2 py-1 bg-gray-100 rounded hover:bg-gray-200" onclick="insertVariable('body', '{start_date}')">{start_date}</button>
+            <button type="button" class="px-2 py-1 bg-gray-100 rounded hover:bg-gray-200" onclick="insertVariable('body', '{end_date}')">{end_date}</button>
+            <button type="button" class="px-2 py-1 bg-gray-100 rounded hover:bg-gray-200" onclick="insertVariable('body', '{start_time}')">{start_time}</button>
+            <button type="button" class="px-2 py-1 bg-gray-100 rounded hover:bg-gray-200" onclick="insertVariable('body', '{end_time}')">{end_time}</button>
+            <button type="button" class="px-2 py-1 bg-gray-100 rounded hover:bg-gray-200" onclick="insertVariable('body', '{job_name}')">{job_name}</button>
+            <button type="button" class="px-2 py-1 bg-gray-100 rounded hover:bg-gray-200" onclick="insertVariable('body', '{job_number}')">{job_number}</button>
+            <button type="button" class="px-2 py-1 bg-gray-100 rounded hover:bg-gray-200" onclick="insertVariable('body', '{resource_name}')">{resource_name}</button>
+          </div>
+        </div>
+        <div>
+          <label class="block text-teal-800 font-medium">CC (comma-separated):</label>
+          <input type="text" name="cc" value="{{ edit_template.cc }}" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500">
+        </div>
+        <div>
+          <label class="block text-teal-800 font-medium">BCC (comma-separated):</label>
+          <input type="text" name="bcc" value="{{ edit_template.bcc }}" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500">
+        </div>
+        <div>
+          <label class="flex items-center text-teal-800 font-medium">
+            <input type="checkbox" name="outlook_enabled" {% if edit_template.outlook_enabled %}checked{% endif %} class="mr-2"> Use Outlook
+          </label>
+        </div>
+        <div>
+          <label class="flex items-center text-teal-800 font-medium">
+            <input type="checkbox" name="is_html" {% if edit_template.is_html %}checked{% endif %} class="mr-2"> Use HTML
+          </label>
+        </div>
+      </div>
+      <div class="mt-4 flex justify-center gap-4">
+        <button type="submit" name="update_template" class="bg-teal-500 text-white px-4 py-2 rounded-lg hover:bg-teal-600">Save Changes</button>
+        <a href="/email_templates" class="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600">Cancel</a>
+      </div>
+    </form>
+  </div>
+  {% endif %}
+
+  {% if preview %}
+  <div class="bg-white p-6 rounded-lg shadow-md">
+    <h3 class="text-xl font-semibold text-teal-800 mb-4">Email Preview</h3>
+    <div class="p-4 bg-gray-50 rounded-lg">
+      <p><strong>Subject:</strong> {{ preview.subject }}</p>
+      <p><strong>CC:</strong> {{ preview.cc or 'None' }}</p>
+      <p><strong>BCC:</strong> {{ preview.bcc or 'None' }}</p>
+      <p><strong>Body:</strong></p>
+      {% if preview.is_html %}
+        {{ preview.body|safe }}
+      {% else %}
+        <div class="whitespace-pre-wrap">{{ preview.body }}</div>
+      {% endif %}
+    </div>
+  </div>
+  {% endif %}
+
+  <div class="bg-white p-6 rounded-lg shadow-md">
+    <h3 class="text-xl font-semibold text-teal-800 mb-4">Templates</h3>
+    {% if templates and templates|length > 0 %}
+    <table class="w-full border-collapse">
+      <thead class="bg-teal-800 text-white">
+        <tr>
+          <th class="p-3 text-left">Name</th>
+          <th class="p-3 text-left">Subject</th>
+          <th class="p-3 text-left">Body</th>
+          <th class="p-3 text-left">CC</th>
+          <th class="p-3 text-left">BCC</th>
+          <th class="p-3 text-left">Outlook</th>
+          <th class="p-3 text-left">HTML</th>
+          <th class="p-3 text-left">Last Used</th>
+          <th class="p-3 text-left">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for template in templates %}
+        <tr class="border-b hover:bg-gray-50">
+          <td class="p-3">{{ template.name }}</td>
+          <td class="p-3">{{ template.subject }}</td>
+          <td class="p-3">{{ template.body|truncate(50) }}</td>
+          <td class="p-3">{{ template.cc or 'None' }}</td>
+          <td class="p-3">{{ template.bcc or 'None' }}</td>
+          <td class="p-3">{{ 'Yes' if template.outlook_enabled else 'No' }}</td>
+          <td class="p-3">{{ 'Yes' if template.is_html else 'No' }}</td>
+          <td class="p-3">{{ template.last_used or 'Never' }}</td>
+          <td class="p-3 flex gap-2">
+            <a href="/email_templates?edit_template_id={{ template.id }}" class="bg-orange-500 text-white px-3 py-1 rounded-lg hover:bg-orange-600">Edit</a>
+            <form method="POST" onsubmit="return confirm('Are you sure you want to delete this template? This will also delete associated rules.');">
+              <input type="hidden" name="template_id" value="{{ template.id }}">
+              <button type="submit" name="delete_template" class="bg-red-500 text-white px-3 py-1 rounded-lg hover:bg-red-600">Delete</button>
+            </form>
+            <form method="POST">
+              <input type="hidden" name="template_id" value="{{ template.id }}">
+              <button type="submit" name="preview_template" class="bg-teal-500 text-white px-3 py-1 rounded-lg hover:bg-teal-600">Preview</button>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <div class="text-center py-8">
+      <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+      </svg>
+      <h3 class="mt-2 text-sm font-medium text-gray-900">No email templates</h3>
+      <p class="mt-1 text-sm text-gray-500">Create a template below to get started with email automation.</p>
+    </div>
+    {% endif %}
+  </div>
+
+  {% if templates and templates|length > 0 %}
+  <div class="bg-white p-6 rounded-lg shadow-md">
+    <h3 class="text-xl font-semibold text-teal-800 mb-4">Add Automation Rule</h3>
+    <form method="POST" class="space-y-4">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-teal-800 font-medium">Template:</label>
+          <select name="template_id" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500" required>
+            {% for template in templates %}
+              <option value="{{ template.id }}">{{ template.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div>
+          <label class="block text-teal-800 font-medium">Trigger Type:</label>
+          <select name="trigger_type" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500" required>
+            <option value="days_before">Days Before Job</option>
+            <option value="job_status">Job Status Change</option>
+            <option value="manual">Manual Trigger</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-teal-800 font-medium">Trigger Value:</label>
+          <input type="text" name="trigger_value" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500" placeholder="e.g., 2 or 'completed'" required>
+        </div>
+        <div>
+          <label class="block text-teal-800 font-medium">Recipient Type:</label>
+          <select name="recipient_type" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500" required>
+            <option value="location_city">Location City (from Towns)</option>
+            <option value="manager">Job Manager</option>
+            <option value="custom">Custom Email</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-teal-800 font-medium">Recipient Value (if custom):</label>
+          <input type="text" name="recipient_value" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500" placeholder="e.g., manager@potelco.com">
+        </div>
+        <div>
+          <label class="flex items-center text-teal-800 font-medium">
+            <input type="checkbox" name="active" checked class="mr-2"> Active
+          </label>
+        </div>
+      </div>
+      <div class="mt-4 flex justify-center">
+        <button type="submit" name="add_rule" class="bg-teal-500 text-white px-4 py-2 rounded-lg hover:bg-teal-600">Add Rule</button>
+      </div>
+    </form>
+  </div>
+  {% endif %}
+
+  {% if edit_rule %}
+  <div class="bg-white p-6 rounded-lg shadow-md">
+    <h3 class="text-xl font-semibold text-teal-800 mb-4">Edit Automation Rule</h3>
+    <form method="POST" class="space-y-4">
+      <input type="hidden" name="rule_id" value="{{ edit_rule.id }}">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-teal-800 font-medium">Template:</label>
+          <select name="template_id" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500" required>
+            {% for template in templates %}
+              <option value="{{ template.id }}" {% if template.id == edit_rule.template_id %}selected{% endif %}>{{ template.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div>
+          <label class="block text-teal-800 font-medium">Trigger Type:</label>
+          <select name="trigger_type" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500" required>
+            <option value="days_before" {% if edit_rule.trigger_type == 'days_before' %}selected{% endif %}>Days Before Job</option>
+            <option value="job_status" {% if edit_rule.trigger_type == 'job_status' %}selected{% endif %}>Job Status Change</option>
+            <option value="manual" {% if edit_rule.trigger_type == 'manual' %}selected{% endif %}>Manual Trigger</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-teal-800 font-medium">Trigger Value:</label>
+          <input type="text" name="trigger_value" value="{{ edit_rule.trigger_value }}" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500" required>
+        </div>
+        <div>
+          <label class="block text-teal-800 font-medium">Recipient Type:</label>
+          <select name="recipient_type" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500" required>
+            <option value="location_city" {% if edit_rule.recipient_type == 'location_city' %}selected{% endif %}>Location City</option>
+            <option value="manager" {% if edit_rule.recipient_type == 'manager' %}selected{% endif %}>Job Manager</option>
+            <option value="custom" {% if edit_rule.recipient_type == 'custom' %}selected{% endif %}>Custom Email</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-teal-800 font-medium">Recipient Value (if custom):</label>
+          <input type="text" name="recipient_value" value="{{ edit_rule.recipient_value }}" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500">
+        </div>
+        <div>
+          <label class="flex items-center text-teal-800 font-medium">
+            <input type="checkbox" name="active" {% if edit_rule.active %}checked{% endif %} class="mr-2"> Active
+          </label>
+        </div>
+      </div>
+      <div class="mt-4 flex justify-center gap-4">
+        <button type="submit" name="update_rule" class="bg-teal-500 text-white px-4 py-2 rounded-lg hover:bg-teal-600">Save Changes</button>
+        <a href="/email_templates" class="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600">Cancel</a>
+      </div>
+    </form>
+  </div>
+  {% endif %}
+
+  {% if rules and rules|length > 0 %}
+  <div class="bg-white p-6 rounded-lg shadow-md">
+    <h3 class="text-xl font-semibold text-teal-800 mb-4">Automation Rules</h3>
+    <table class="w-full border-collapse">
+      <thead class="bg-teal-800 text-white">
+        <tr>
+          <th class="p-3 text-left">Template ID</th>
+          <th class="p-3 text-left">Trigger Type</th>
+          <th class="p-3 text-left">Trigger Value</th>
+          <th class="p-3 text-left">Recipient Type</th>
+          <th class="p-3 text-left">Recipient Value</th>
+          <th class="p-3 text-left">Active</th>
+          <th class="p-3 text-left">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for rule in rules %}
+        <tr class="border-b hover:bg-gray-50">
+          <td class="p-3">{{ rule.template_id }}</td>
+          <td class="p-3">{{ rule.trigger_type }}</td>
+          <td class="p-3">{{ rule.trigger_value }}</td>
+          <td class="p-3">{{ rule.recipient_type }}</td>
+          <td class="p-3">{{ rule.recipient_value or 'N/A' }}</td>
+          <td class="p-3">{{ 'Yes' if rule.active else 'No' }}</td>
+          <td class="p-3 flex gap-2">
+            <a href="/email_templates?edit_rule_id={{ rule.id }}" class="bg-orange-500 text-white px-3 py-1 rounded-lg hover:bg-orange-600">Edit</a>
+            <form method="POST" onsubmit="return confirm('Are you sure you want to delete this rule?');">
+              <input type="hidden" name="rule_id" value="{{ rule.id }}">
+              <button type="submit" name="delete_rule" class="bg-red-500 text-white px-3 py-1 rounded-lg hover:bg-red-600">Delete</button>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% endif %}
+</div>
+
+<script>
+function insertVariable(fieldId, variable) {
+  var field = document.getElementById(fieldId) || document.getElementsByName(fieldId)[0];
+  var cursorPos = field.selectionStart;
+  var text = field.value;
+  field.value = text.substring(0, cursorPos) + variable + text.substring(cursorPos);
+  field.focus();
+  field.setSelectionRange(cursorPos + variable.length, cursorPos + variable.length);
+}
+</script>
+{% endblock %}

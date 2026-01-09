@@ -1,0 +1,465 @@
+{% extends "marketing_base.html" %}
+
+{% block title %}Vigil Build - Construction Management Software for Power & Infrastructure{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="bg-gradient-hero min-h-screen flex items-center relative overflow-hidden">
+    <!-- Background Pattern -->
+    <div class="absolute inset-0 opacity-10">
+        <svg class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+                    <path d="M 40 0 L 0 0 0 40" fill="none" stroke="white" stroke-width="1"/>
+                </pattern>
+            </defs>
+            <rect width="100%" height="100%" fill="url(#grid)"/>
+        </svg>
+    </div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 relative z-10">
+        <div class="grid lg:grid-cols-2 gap-12 items-center">
+            <!-- Left Content -->
+            <div class="text-white stagger-children">
+                <div class="inline-flex items-center px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 mb-6">
+                    <span class="w-2 h-2 bg-green-400 rounded-full mr-2 animate-pulse"></span>
+                    <span class="text-sm font-medium">Built for Critical Infrastructure</span>
+                </div>
+
+                <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6">
+                    Construction Management
+                    <span class="text-blue-400">Reimagined</span>
+                </h1>
+
+                <p class="text-xl text-gray-300 mb-8 leading-relaxed">
+                    The all-in-one platform trusted by power distribution companies, municipalities,
+                    and contractors to manage projects, equipment, inventory, and teams with
+                    unprecedented efficiency.
+                </p>
+
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <a href="/marketing/contact" class="inline-flex items-center justify-center px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl transition-all shadow-lg hover:shadow-xl pulse-slow">
+                        Request a Demo
+                        <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+                        </svg>
+                    </a>
+                    <a href="/marketing/features" class="inline-flex items-center justify-center px-8 py-4 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-xl border border-white/30 transition-all backdrop-blur-sm">
+                        Explore Features
+                    </a>
+                </div>
+
+                <!-- Trust Badges -->
+                <div class="mt-12 pt-8 border-t border-white/20">
+                    <p class="text-gray-400 text-sm mb-4">Designed for enterprise-grade operations</p>
+                    <div class="flex flex-wrap gap-6 items-center">
+                        <div class="flex items-center text-gray-300">
+                            <svg class="w-5 h-5 mr-2 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                            </svg>
+                            <span class="text-sm">SOC 2 Ready</span>
+                        </div>
+                        <div class="flex items-center text-gray-300">
+                            <svg class="w-5 h-5 mr-2 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                            </svg>
+                            <span class="text-sm">99.9% Uptime</span>
+                        </div>
+                        <div class="flex items-center text-gray-300">
+                            <svg class="w-5 h-5 mr-2 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                            </svg>
+                            <span class="text-sm">Enterprise Security</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Content - Dashboard Preview -->
+            <div class="relative">
+                <div class="glass rounded-2xl p-2 shadow-2xl">
+                    <div class="bg-gray-900 rounded-xl overflow-hidden">
+                        <!-- Mock Dashboard Header -->
+                        <div class="bg-gray-800 px-4 py-3 flex items-center space-x-2">
+                            <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                            <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                            <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                            <span class="ml-4 text-gray-400 text-sm">Vigil Build Dashboard</span>
+                        </div>
+                        <!-- Mock Dashboard Content -->
+                        <div class="p-6 space-y-4">
+                            <div class="grid grid-cols-3 gap-4">
+                                <div class="bg-blue-600/20 rounded-lg p-4">
+                                    <p class="text-gray-400 text-xs">Active Projects</p>
+                                    <p class="text-white text-2xl font-bold">24</p>
+                                </div>
+                                <div class="bg-green-600/20 rounded-lg p-4">
+                                    <p class="text-gray-400 text-xs">Equipment</p>
+                                    <p class="text-white text-2xl font-bold">156</p>
+                                </div>
+                                <div class="bg-purple-600/20 rounded-lg p-4">
+                                    <p class="text-gray-400 text-xs">Team Members</p>
+                                    <p class="text-white text-2xl font-bold">89</p>
+                                </div>
+                            </div>
+                            <div class="bg-gray-800 rounded-lg p-4 h-32 flex items-end space-x-2">
+                                <div class="w-8 bg-blue-500 rounded-t" style="height: 60%"></div>
+                                <div class="w-8 bg-blue-500 rounded-t" style="height: 80%"></div>
+                                <div class="w-8 bg-blue-500 rounded-t" style="height: 45%"></div>
+                                <div class="w-8 bg-blue-500 rounded-t" style="height: 90%"></div>
+                                <div class="w-8 bg-blue-500 rounded-t" style="height: 70%"></div>
+                                <div class="w-8 bg-blue-400 rounded-t" style="height: 55%"></div>
+                                <div class="w-8 bg-blue-400 rounded-t" style="height: 75%"></div>
+                            </div>
+                            <div class="flex space-x-4">
+                                <div class="flex-1 bg-gray-800 rounded-lg p-3">
+                                    <div class="h-2 bg-gray-700 rounded w-3/4 mb-2"></div>
+                                    <div class="h-2 bg-gray-700 rounded w-1/2"></div>
+                                </div>
+                                <div class="flex-1 bg-gray-800 rounded-lg p-3">
+                                    <div class="h-2 bg-gray-700 rounded w-2/3 mb-2"></div>
+                                    <div class="h-2 bg-gray-700 rounded w-4/5"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Floating Elements -->
+                <div class="absolute -top-4 -right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg text-sm font-medium">
+                    Real-time Updates
+                </div>
+                <div class="absolute -bottom-4 -left-4 bg-white text-gray-800 px-4 py-2 rounded-lg shadow-lg text-sm font-medium flex items-center">
+                    <svg class="w-4 h-4 mr-2 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                    </svg>
+                    AI-Powered Insights
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scroll indicator -->
+    <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
+        <svg class="w-6 h-6 text-white/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
+        </svg>
+    </div>
+</section>
+
+<!-- Industries Section -->
+<section class="py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+            <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Built for Your Industry</h2>
+            <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                Purpose-built solutions for organizations that build and maintain critical infrastructure
+            </p>
+        </div>
+
+        <div class="grid md:grid-cols-3 gap-8">
+            <!-- Power Distribution -->
+            <div class="feature-card bg-white rounded-2xl p-8 shadow-lg border border-gray-100">
+                <div class="icon-container w-14 h-14 rounded-xl flex items-center justify-center mb-6">
+                    <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 mb-3">Power Distribution</h3>
+                <p class="text-gray-600 mb-4">
+                    Manage substations, transmission lines, and distribution networks with specialized
+                    tools for outage tracking, pole maintenance, and regulatory compliance.
+                </p>
+                <ul class="space-y-2 text-sm text-gray-600">
+                    <li class="flex items-center"><svg class="w-4 h-4 mr-2 text-green-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg> Outage management</li>
+                    <li class="flex items-center"><svg class="w-4 h-4 mr-2 text-green-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg> Asset tracking</li>
+                    <li class="flex items-center"><svg class="w-4 h-4 mr-2 text-green-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg> Compliance reporting</li>
+                </ul>
+            </div>
+
+            <!-- Municipalities -->
+            <div class="feature-card bg-white rounded-2xl p-8 shadow-lg border border-gray-100">
+                <div class="icon-container w-14 h-14 rounded-xl flex items-center justify-center mb-6">
+                    <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 mb-3">Municipalities</h3>
+                <p class="text-gray-600 mb-4">
+                    Streamline public works operations with citizen request management, fleet tracking,
+                    and transparent reporting for council and stakeholders.
+                </p>
+                <ul class="space-y-2 text-sm text-gray-600">
+                    <li class="flex items-center"><svg class="w-4 h-4 mr-2 text-green-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg> Citizen request portal</li>
+                    <li class="flex items-center"><svg class="w-4 h-4 mr-2 text-green-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg> Budget tracking</li>
+                    <li class="flex items-center"><svg class="w-4 h-4 mr-2 text-green-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg> Public reporting</li>
+                </ul>
+            </div>
+
+            <!-- Contractors -->
+            <div class="feature-card bg-white rounded-2xl p-8 shadow-lg border border-gray-100">
+                <div class="icon-container w-14 h-14 rounded-xl flex items-center justify-center mb-6">
+                    <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 mb-3">Contractors</h3>
+                <p class="text-gray-600 mb-4">
+                    Win more bids and deliver projects on time with integrated estimating, scheduling,
+                    and resource management across multiple job sites.
+                </p>
+                <ul class="space-y-2 text-sm text-gray-600">
+                    <li class="flex items-center"><svg class="w-4 h-4 mr-2 text-green-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg> Bid management</li>
+                    <li class="flex items-center"><svg class="w-4 h-4 mr-2 text-green-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg> Multi-site scheduling</li>
+                    <li class="flex items-center"><svg class="w-4 h-4 mr-2 text-green-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg> Resource allocation</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Key Features Section -->
+<section class="py-20 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+            <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Everything You Need in One Platform</h2>
+            <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                Stop juggling multiple tools. Vigil Build integrates every aspect of construction management
+                into a unified, intuitive experience.
+            </p>
+        </div>
+
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <!-- Feature 1 -->
+            <div class="bg-white rounded-xl p-6 shadow-md hover:shadow-lg transition-shadow">
+                <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
+                    <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/>
+                    </svg>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-900 mb-2">Project Management</h3>
+                <p class="text-gray-600">Track projects from bid to completion with Kanban boards, Gantt charts, and real-time status updates.</p>
+            </div>
+
+            <!-- Feature 2 -->
+            <div class="bg-white rounded-xl p-6 shadow-md hover:shadow-lg transition-shadow">
+                <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mb-4">
+                    <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                    </svg>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-900 mb-2">Equipment Management</h3>
+                <p class="text-gray-600">Monitor fleet health, schedule preventive maintenance, and track equipment across all job sites in real-time.</p>
+            </div>
+
+            <!-- Feature 3 -->
+            <div class="bg-white rounded-xl p-6 shadow-md hover:shadow-lg transition-shadow">
+                <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mb-4">
+                    <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+                    </svg>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-900 mb-2">Inventory Control</h3>
+                <p class="text-gray-600">Barcode scanning, automated reorder points, supplier management, and complete visibility across all warehouses.</p>
+            </div>
+
+            <!-- Feature 4 -->
+            <div class="bg-white rounded-xl p-6 shadow-md hover:shadow-lg transition-shadow">
+                <div class="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center mb-4">
+                    <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                    </svg>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-900 mb-2">Smart Scheduling</h3>
+                <p class="text-gray-600">Drag-and-drop crew scheduling with conflict detection, weather integration, and mobile crew notifications.</p>
+            </div>
+
+            <!-- Feature 5 -->
+            <div class="bg-white rounded-xl p-6 shadow-md hover:shadow-lg transition-shadow">
+                <div class="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center mb-4">
+                    <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                    </svg>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-900 mb-2">Advanced Reporting</h3>
+                <p class="text-gray-600">Custom dashboards, automated reports, and deep analytics to make data-driven decisions with confidence.</p>
+            </div>
+
+            <!-- Feature 6 -->
+            <div class="bg-white rounded-xl p-6 shadow-md hover:shadow-lg transition-shadow">
+                <div class="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center mb-4">
+                    <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+                    </svg>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-900 mb-2">AI-Powered Insights</h3>
+                <p class="text-gray-600">Predictive maintenance alerts, smart inventory forecasting, and intelligent document search powered by AI.</p>
+            </div>
+        </div>
+
+        <div class="text-center mt-12">
+            <a href="/marketing/features" class="inline-flex items-center text-blue-600 hover:text-blue-700 font-semibold">
+                View All Features
+                <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+                </svg>
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Why Different Section -->
+<section class="py-20 bg-gradient-vb text-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid lg:grid-cols-2 gap-12 items-center">
+            <div>
+                <h2 class="text-3xl md:text-4xl font-bold mb-6">Why We're Different</h2>
+                <p class="text-xl text-gray-300 mb-8">
+                    Most construction software was built as generic tools that try to serve everyone.
+                    We built Vigil Build specifically for organizations that manage critical infrastructure.
+                </p>
+
+                <div class="space-y-6">
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0 w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center mr-4">
+                            <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-semibold mb-1">Purpose-Built, Not Generic</h3>
+                            <p class="text-gray-300">Every feature is designed for the unique challenges of power distribution, municipal works, and infrastructure construction.</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0 w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center mr-4">
+                            <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-semibold mb-1">Truly Integrated</h3>
+                            <p class="text-gray-300">No more data silos. Projects, equipment, inventory, and people are connected in one seamless platform.</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0 w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center mr-4">
+                            <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-semibold mb-1">AI That Actually Helps</h3>
+                            <p class="text-gray-300">From predictive maintenance to intelligent document search, our AI features deliver real operational value.</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0 w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center mr-4">
+                            <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-semibold mb-1">Partner, Not Vendor</h3>
+                            <p class="text-gray-300">We work alongside you to configure and optimize the platform for your specific operations.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats -->
+            <div class="grid grid-cols-2 gap-6">
+                <div class="glass rounded-2xl p-6 text-center">
+                    <div class="text-4xl font-bold stat-number mb-2">100%</div>
+                    <p class="text-gray-300">Integrated Platform</p>
+                </div>
+                <div class="glass rounded-2xl p-6 text-center">
+                    <div class="text-4xl font-bold stat-number mb-2">24/7</div>
+                    <p class="text-gray-300">System Availability</p>
+                </div>
+                <div class="glass rounded-2xl p-6 text-center">
+                    <div class="text-4xl font-bold stat-number mb-2">50%</div>
+                    <p class="text-gray-300">Faster Reporting</p>
+                </div>
+                <div class="glass rounded-2xl p-6 text-center">
+                    <div class="text-4xl font-bold stat-number mb-2">Zero</div>
+                    <p class="text-gray-300">Data Silos</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Integration Section -->
+<section class="py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+            <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Connects With Your Existing Tools</h2>
+            <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                Vigil Build integrates seamlessly with the systems you already use
+            </p>
+        </div>
+
+        <div class="flex flex-wrap justify-center items-center gap-8 md:gap-12 opacity-60">
+            <div class="text-center">
+                <div class="w-16 h-16 bg-gray-100 rounded-xl flex items-center justify-center mb-2 mx-auto">
+                    <span class="font-bold text-gray-600">SF</span>
+                </div>
+                <span class="text-sm text-gray-500">Salesforce</span>
+            </div>
+            <div class="text-center">
+                <div class="w-16 h-16 bg-gray-100 rounded-xl flex items-center justify-center mb-2 mx-auto">
+                    <span class="font-bold text-gray-600">PBI</span>
+                </div>
+                <span class="text-sm text-gray-500">Power BI</span>
+            </div>
+            <div class="text-center">
+                <div class="w-16 h-16 bg-gray-100 rounded-xl flex items-center justify-center mb-2 mx-auto">
+                    <span class="font-bold text-gray-600">O365</span>
+                </div>
+                <span class="text-sm text-gray-500">Office 365</span>
+            </div>
+            <div class="text-center">
+                <div class="w-16 h-16 bg-gray-100 rounded-xl flex items-center justify-center mb-2 mx-auto">
+                    <span class="font-bold text-gray-600">QB</span>
+                </div>
+                <span class="text-sm text-gray-500">QuickBooks</span>
+            </div>
+            <div class="text-center">
+                <div class="w-16 h-16 bg-gray-100 rounded-xl flex items-center justify-center mb-2 mx-auto">
+                    <span class="font-bold text-gray-600">GPS</span>
+                </div>
+                <span class="text-sm text-gray-500">Telematics</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="py-20 bg-gray-900">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h2 class="text-3xl md:text-4xl font-bold text-white mb-6">
+            Ready to Transform Your Operations?
+        </h2>
+        <p class="text-xl text-gray-400 mb-8">
+            See how Vigil Build can streamline your construction management.
+            Schedule a personalized demo with our team.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+            <a href="/marketing/contact" class="inline-flex items-center justify-center px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl transition-all shadow-lg hover:shadow-xl">
+                Schedule Your Demo
+                <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+                </svg>
+            </a>
+            <a href="/marketing/features" class="inline-flex items-center justify-center px-8 py-4 bg-transparent hover:bg-white/10 text-white font-semibold rounded-xl border border-white/30 transition-all">
+                Learn More
+            </a>
+        </div>
+    </div>
+</section>
+{% endblock %}

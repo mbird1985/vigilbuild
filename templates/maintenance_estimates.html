@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="space-y-4">
+  <div class="flex items-center justify-between">
+    <h1 class="text-2xl font-bold">Estimates</h1>
+    <a class="btn-integration btn-teal" href="{{ url_for('equipment.maintenance_estimate_new') }}">New Estimate</a>
+  </div>
+  <div class="bg-white rounded shadow">
+    <table class="w-full text-left">
+      <thead class="bg-gray-100"><tr><th class="px-3 py-2">ID</th><th class="px-3 py-2">Customer</th><th class="px-3 py-2">Equipment</th><th class="px-3 py-2">Total</th><th class="px-3 py-2">Status</th></tr></thead>
+      <tbody>
+        {% for e in estimates %}
+        <tr class="border-t">
+          <td class="px-3 py-2"><a class="text-blue-600 underline" href="{{ url_for('equipment.maintenance_estimate_view', estimate_id=e.id) }}">#{{ e.id }}</a></td>
+          <td class="px-3 py-2">{{ e.customer_id or '-' }}</td>
+          <td class="px-3 py-2">{{ e.equipment_id or '-' }}</td>
+          <td class="px-3 py-2">${{ '%.2f'|format(e.total) }}</td>
+          <td class="px-3 py-2">{{ e.status }}</td>
+        </tr>
+        {% else %}
+        <tr><td class="px-3 py-2 text-gray-600" colspan="5">No estimates.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
+
+
+
+
+
+

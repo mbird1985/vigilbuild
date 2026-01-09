@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="space-y-4">
+  <div class="flex items-center justify-between">
+    <h1 class="text-2xl font-bold">Bidding</h1>
+    <button id="newTemplateBtn" class="btn-integration btn-teal">New Template</button>
+  </div>
+
+  <div class="bg-white rounded shadow">
+    <table class="w-full text-left">
+      <thead class="bg-gray-100">
+        <tr>
+          <th class="px-4 py-2">Name</th>
+          <th class="px-4 py-2">Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for t in templates %}
+        <tr class="border-t">
+          <td class="px-4 py-2">{{ t.name }}</td>
+          <td class="px-4 py-2 text-gray-600">{{ t.description }}</td>
+        </tr>
+        {% else %}
+        <tr><td class="px-4 py-4 text-gray-600" colspan="2">No templates yet.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <dialog id="templateDialog" class="p-0 rounded">
+    <form method="dialog" class="bg-white rounded shadow w-[36rem]">
+      <div class="p-4 border-b font-semibold">Create Template</div>
+      <div class="p-4 space-y-3">
+        <label class="block">
+          <span class="text-sm text-gray-700">Name</span>
+          <input id="tplName" class="w-full border rounded p-2" />
+        </label>
+        <label class="block">
+          <span class="text-sm text-gray-700">Description</span>
+          <textarea id="tplDesc" class="w-full border rounded p-2"></textarea>
+        </label>
+        <label class="block">
+          <span class="text-sm text-gray-700">Default Markup %</span>
+          <input id="tplMarkup" type="number" step="0.01" value="0" class="w-full border rounded p-2" />
+        </label>
+      </div>
+      <div class="p-4 border-t flex justify-end gap-2">
+        <button class="btn-integration btn-orange" value="cancel">Cancel</button>
+        <button class="btn-integration btn-teal" id="createTpl">Create</button>
+      </div>
+    </form>
+  </dialog>
+
+</div>
+
+<script>
+const tDialog = document.getElementById('templateDialog');
+document.getElementById('newTemplateBtn').addEventListener('click', () => tDialog.showModal());
+document.getElementById('createTpl').addEventListener('click', async (e) => {
+  e.preventDefault();
+  const name = document.getElementById('tplName').value.trim();
+  const description = document.getElementById('tplDesc').value.trim();
+  const default_markup = parseFloat(document.getElementById('tplMarkup').value || '0');
+  if (!name) return;
+  const res = await fetch('/pm/api/templates', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ name, description, items: [], default_markup })
+  });
+  if (res.ok) location.reload();
+});
+</script>
+{% endblock %}
+
+
+
+
+
+

@@ -1,0 +1,192 @@
+{% extends "base.html" %}
+{% block title %}Create Job from Template{% endblock %}
+{% block content %}
+<div class="container mx-auto px-4 py-6">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-bold text-gray-800">Create Job from Template</h1>
+        <a href="{{ url_for('equipment.maintenance_wo_templates') }}" class="text-gray-600 hover:text-gray-800">&larr; Back to Templates</a>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="lg:col-span-2">
+            <div class="bg-white rounded-lg shadow p-6">
+                <form method="POST">
+                    <!-- Template Selection -->
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-gray-700">Work Order Template *</label>
+                        <select name="template_id" id="template-select" required
+                                class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                                onchange="updateTemplateInfo()">
+                            <option value="">Select a template...</option>
+                            {% for t in templates %}
+                            <option value="{{ t.id }}"
+                                    data-type="{{ t.job_type }}"
+                                    data-hours="{{ t.estimated_hours or '' }}"
+                                    data-priority="{{ t.priority or 'normal' }}"
+                                    data-equipment-type="{{ t.equipment_type or '' }}"
+                                    data-steps="{{ t.step_count }}"
+                                    data-parts="{{ t.part_count }}"
+                                    {% if selected_template and t.id == selected_template.id %}selected{% endif %}>
+                                {{ t.name }} ({{ t.job_type }})
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- Template Preview -->
+                    <div id="template-preview" class="mb-6 p-4 bg-gray-50 rounded-lg {% if not selected_template %}hidden{% endif %}">
+                        <h3 class="font-medium mb-2">Template Details</h3>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                            <div>
+                                <span class="text-gray-500">Type:</span>
+                                <span id="preview-type" class="capitalize">{{ selected_template.job_type if selected_template else '' }}</span>
+                            </div>
+                            <div>
+                                <span class="text-gray-500">Est. Hours:</span>
+                                <span id="preview-hours">{{ selected_template.estimated_hours if selected_template else '-' }}</span>
+                            </div>
+                            <div>
+                                <span class="text-gray-500">Steps:</span>
+                                <span id="preview-steps">{{ selected_template.step_count if selected_template else '0' }}</span>
+                            </div>
+                            <div>
+                                <span class="text-gray-500">Parts:</span>
+                                <span id="preview-parts">{{ selected_template.part_count if selected_template else '0' }}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Equipment Selection -->
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-gray-700">Equipment *</label>
+                        <select name="equipment_id" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2">
+                            <option value="">Select equipment...</option>
+                            {% for eq in equipment %}
+                            <option value="{{ eq.id }}" data-type="{{ eq.equipment_type }}">
+                                {{ eq.unique_id }} - {{ eq.brand }} {{ eq.model }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- Job Details -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Priority</label>
+                            <select name="priority" id="priority-select" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2">
+                                <option value="low">Low</option>
+                                <option value="normal" selected>Normal</option>
+                                <option value="high">High</option>
+                                <option value="critical">Critical</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Assign To</label>
+                            <select name="assigned_to" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2">
+                                <option value="">Unassigned</option>
+                                {% for user in users %}
+                                <option value="{{ user.id }}">{{ user.username }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Scheduled Date</label>
+                            <input type="date" name="scheduled_date" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Due Date</label>
+                            <input type="date" name="due_date" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2">
+                        </div>
+                    </div>
+
+                    <!-- Additional Notes -->
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-gray-700">Additional Notes</label>
+                        <textarea name="notes" rows="3" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                                  placeholder="Any specific instructions for this job..."></textarea>
+                    </div>
+
+                    <!-- Parts Reservation -->
+                    <div class="mb-6">
+                        <label class="flex items-center">
+                            <input type="checkbox" name="reserve_parts" checked class="mr-2">
+                            <span class="text-sm font-medium text-gray-700">Reserve template parts from inventory</span>
+                        </label>
+                        <p class="text-xs text-gray-500 mt-1">Parts specified in the template will be reserved for this job</p>
+                    </div>
+
+                    <div class="flex gap-3">
+                        <button type="submit" class="flex-1 bg-blue-600 text-white px-4 py-3 rounded hover:bg-blue-700 font-medium">
+                            Create Maintenance Job
+                        </button>
+                        <a href="{{ url_for('equipment.maintenance_wo_templates') }}"
+                           class="px-4 py-3 border border-gray-300 rounded text-gray-700 hover:bg-gray-50">
+                            Cancel
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Sidebar Help -->
+        <div class="lg:col-span-1">
+            <div class="bg-blue-50 rounded-lg p-6">
+                <h3 class="font-semibold text-blue-800 mb-3">Creating Jobs from Templates</h3>
+                <ul class="text-sm text-blue-700 space-y-2">
+                    <li>1. Select a work order template</li>
+                    <li>2. Choose the equipment to work on</li>
+                    <li>3. Set priority and assign a technician</li>
+                    <li>4. The job will include all procedure steps and required parts from the template</li>
+                </ul>
+            </div>
+
+            <div class="bg-white rounded-lg shadow p-6 mt-6">
+                <h3 class="font-semibold mb-3">What Gets Created</h3>
+                <ul class="text-sm text-gray-600 space-y-2">
+                    <li class="flex items-start">
+                        <svg class="w-5 h-5 text-green-500 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                        </svg>
+                        Maintenance job with procedure steps
+                    </li>
+                    <li class="flex items-start">
+                        <svg class="w-5 h-5 text-green-500 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                        </svg>
+                        Parts reservation (if enabled)
+                    </li>
+                    <li class="flex items-start">
+                        <svg class="w-5 h-5 text-green-500 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                        </svg>
+                        Time estimate from template
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function updateTemplateInfo() {
+    const select = document.getElementById('template-select');
+    const option = select.options[select.selectedIndex];
+    const preview = document.getElementById('template-preview');
+
+    if (option.value) {
+        preview.classList.remove('hidden');
+        document.getElementById('preview-type').textContent = option.dataset.type;
+        document.getElementById('preview-hours').textContent = option.dataset.hours || '-';
+        document.getElementById('preview-steps').textContent = option.dataset.steps;
+        document.getElementById('preview-parts').textContent = option.dataset.parts;
+
+        // Update priority selector to match template
+        if (option.dataset.priority) {
+            document.getElementById('priority-select').value = option.dataset.priority;
+        }
+    } else {
+        preview.classList.add('hidden');
+    }
+}
+</script>
+{% endblock %}

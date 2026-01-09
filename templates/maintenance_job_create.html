@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="space-y-6">
+  <div class="flex items-center justify-between">
+    <h2 class="text-2xl font-semibold text-teal-800">Create Maintenance Job</h2>
+    <a href="{{ url_for('equipment.maintenance_landing') }}" class="text-teal-600 hover:text-teal-800">Back</a>
+  </div>
+
+  <div class="bg-white rounded-lg shadow-md p-4">
+    <form method="POST" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div>
+        <label class="block text-sm text-gray-700 mb-1">Equipment</label>
+        <select name="equipment_id" class="w-full px-2 py-1 border rounded" required>
+          {% for e in equipment %}
+          <option value="{{ e.id }}">{{ e.unique_id }} — {{ e.brand }} {{ e.model }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div>
+        <label class="block text-sm text-gray-700 mb-1">Job Type</label>
+        <select name="job_type" class="w-full px-2 py-1 border rounded">
+          <option value="maintenance">Maintenance</option>
+          <option value="breakdown">Breakdown</option>
+        </select>
+      </div>
+      <div>
+        <label class="block text-sm text-gray-700 mb-1">Priority</label>
+        <select name="priority" class="w-full px-2 py-1 border rounded">
+          <option value="low">Low</option>
+          <option value="normal" selected>Normal</option>
+          <option value="high">High</option>
+          <option value="critical">Critical</option>
+        </select>
+      </div>
+      <div>
+        <label class="block text-sm text-gray-700 mb-1">Due Date</label>
+        <input type="date" name="due_date" class="w-full px-2 py-1 border rounded">
+      </div>
+      <div class="md:col-span-2">
+        <label class="block text-sm text-gray-700 mb-1">Notes</label>
+        <input type="text" name="notes" class="w-full px-2 py-1 border rounded" placeholder="Describe the work, parts needed, symptoms, etc.">
+      </div>
+      <div>
+        <label class="block text-sm text-gray-700 mb-1">Assign To (User ID)</label>
+        <input type="number" name="assigned_to" class="w-full px-2 py-1 border rounded">
+      </div>
+      <div class="md:col-span-2">
+        <button type="submit" class="btn-integration btn-teal">Create Job</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="text-sm text-gray-600">
+    Tips: mark breakdown jobs (red-coded) for quick triage; add notes like suspected cause; attach photos/documents in equipment detail log after diagnosing.
+  </div>
+</div>
+{% endblock %}
+
+

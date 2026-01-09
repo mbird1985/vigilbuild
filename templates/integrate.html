@@ -1,0 +1,264 @@
+<!-- templates/integrate.html -->
+{% extends "base.html" %}
+{% block content %}
+<div class="space-y-6">
+  <div class="flex items-center justify-between">
+    <h2 class="text-2xl font-semibold text-teal-800">API Integrations Hub</h2>
+    <div class="flex gap-2">
+      <a href="{{ url_for('integration.configure_integration', system='outlook') }}" class="btn-integration btn-teal">Add Outlook</a>
+      <a href="{{ url_for('integration.configure_integration', system='powerbi') }}" class="btn-integration btn-teal">Add Power BI</a>
+      <a href="{{ url_for('integration.configure_integration', system='salesforce') }}" class="btn-integration btn-teal">Add Salesforce</a>
+      <a href="{{ url_for('integration.configure_integration', system='custom') }}" class="btn-integration btn-orange">Add Custom</a>
+    </div>
+  </div>
+
+  {% with messages = get_flashed_messages() %}
+    {% if messages %}
+      <div class="bg-orange-100 border border-orange-400 text-orange-700 px-4 py-3 rounded mb-4">
+        {{ messages[0] }}
+      </div>
+    {% endif %}
+  {% endwith %}
+
+  <div class="max-w-6xl mx-auto">
+    
+    <!-- Pre-approved Integrations -->
+    <div class="bg-white rounded-lg shadow-md mb-6">
+      <div class="px-6 py-4 border-b border-gray-200">
+        <h3 class="text-xl font-semibold text-teal-800">Pre-approved Integrations</h3>
+      </div>
+      
+      <div class="divide-y divide-gray-200">
+        <!-- Microsoft Outlook -->
+        <div class="px-6 py-4 flex items-center justify-between">
+          <div class="flex items-center space-x-4">
+            <div class="flex-shrink-0">
+              <svg class="w-10 h-10 text-blue-600" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M7.88 12.04q0 .45-.11.87-.1.41-.33.74-.22.33-.58.52-.37.2-.87.2t-.85-.2q-.35-.21-.57-.55-.22-.33-.33-.75-.1-.42-.1-.83 0-.42.1-.84.11-.41.33-.73.22-.32.57-.52.35-.19.85-.19t.87.19q.36.2.58.52.22.32.33.73.11.42.11.84zM24 12v9.38q0 .46-.33.8-.33.32-.8.32H7.13q-.46 0-.8-.33-.32-.33-.32-.8V18H1q-.41 0-.7-.3-.3-.29-.3-.7V7q0-.41.3-.7Q.58 6 1 6h6.5L9 4.4q.18-.3.5-.3H23q.41 0 .7.3.3.29.3.7v7zm-6.38-9.25q-.34-.4-.85-.4h-2.07q-.38 0-.65.27-.26.26-.26.65v8.96q0 .39.26.65.27.27.65.27h2.07q.51 0 .85-.4.34-.4.34-.9V3.65q0-.5-.34-.9z"/>
+              </svg>
+            </div>
+            <div>
+              <h4 class="text-lg font-semibold text-gray-900">Microsoft Outlook</h4>
+              <p class="text-gray-600">Email and calendar integration</p>
+              {% if outlook_connected %}
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                  ✓ Connected
+                </span>
+              {% else %}
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                  Not Connected
+                </span>
+              {% endif %}
+            </div>
+          </div>
+          <div class="flex space-x-2">
+            {% if outlook_connected %}
+              <button onclick="window.location.href='{{ url_for('integration.configure_integration', system='outlook') }}'" 
+                      class="btn-integration btn-orange">
+                Edit
+              </button>
+            {% else %}
+              <button onclick="window.location.href='{{ url_for('integration.configure_integration', system='outlook') }}'" 
+                      class="btn-integration btn-teal">
+                Create New
+              </button>
+            {% endif %}
+          </div>
+        </div>
+
+        <!-- Power BI -->
+        <div class="px-6 py-4 flex items-center justify-between">
+          <div class="flex items-center space-x-4">
+            <div class="flex-shrink-0">
+              <svg class="w-10 h-10 text-yellow-600" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M14.25 2.1l-.4.2c-.2.1-.3.3-.3.5v18.4c0 .2.1.4.3.5l.4.2c1.5.7 3.2-.1 3.2-1.7V3.8c0-1.6-1.7-2.4-3.2-1.7zM11 5.9l-.4.2c-.2.1-.3.3-.3.5v11.8c0 .2.1.4.3.5l.4.2c1.5.7 3.2-.1 3.2-1.7V7.6c0-1.6-1.7-2.4-3.2-1.7zM7.75 9.7l-.4.2c-.2.1-.3.3-.3.5v7.2c0 .2.1.4.3.5l.4.2c1.5.7 3.2-.1 3.2-1.7v-5.2c0-1.6-1.7-2.4-3.2-1.7zM4.5 13.5l-.4.2c-.2.1-.3.3-.3.5v3.6c0 .2.1.4.3.5l.4.2c1.5.7 3.2-.1 3.2-1.7v-1.6c0-1.6-1.7-2.4-3.2-1.7z"/>
+              </svg>
+            </div>
+            <div>
+              <h4 class="text-lg font-semibold text-gray-900">Power BI</h4>
+              <p class="text-gray-600">Business analytics and reporting</p>
+              {% if powerbi_connected %}
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                  ✓ Connected
+                </span>
+              {% else %}
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                  Not Connected
+                </span>
+              {% endif %}
+            </div>
+          </div>
+          <div class="flex space-x-2">
+            {% if powerbi_connected %}
+              <button onclick="window.location.href='{{ url_for('integration.configure_integration', system='powerbi') }}'" 
+                      class="btn-integration btn-orange">
+                Edit
+              </button>
+            {% else %}
+              <button onclick="window.location.href='{{ url_for('integration.configure_integration', system='powerbi') }}'" 
+                      class="btn-integration btn-teal">
+                Create New
+              </button>
+            {% endif %}
+          </div>
+        </div>
+
+        <!-- Salesforce -->
+        <div class="px-6 py-4 flex items-center justify-between">
+          <div class="flex items-center space-x-4">
+            <div class="flex-shrink-0">
+              <svg class="w-10 h-10 text-blue-500" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12.5 2.1c-2.8 0-5.2 1.9-6 4.5-1.1-.6-2.4-.9-3.7-.9C1.2 5.7 0 6.9 0 8.4c0 1.5 1.2 2.7 2.8 2.7h16.4c2.2 0 4-1.8 4-4s-1.8-4-4-4c-.4 0-.8.1-1.2.2-1.1-2.6-3.7-4.2-5.5-1.2zm-5.3 9.6c-1.9 0-3.5 1.6-3.5 3.5s1.6 3.5 3.5 3.5h10.6c1.9 0 3.5-1.6 3.5-3.5s-1.6-3.5-3.5-3.5H7.2z"/>
+              </svg>
+            </div>
+            <div>
+              <h4 class="text-lg font-semibold text-gray-900">Salesforce</h4>
+              <p class="text-gray-600">Customer relationship management</p>
+              {% if salesforce_connected %}
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                  ✓ Connected
+                </span>
+              {% else %}
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                  Not Connected
+                </span>
+              {% endif %}
+            </div>
+          </div>
+          <div class="flex space-x-2">
+            {% if salesforce_connected %}
+              <button onclick="window.location.href='{{ url_for('integration.configure_integration', system='salesforce') }}'" 
+                      class="btn-integration btn-orange">
+                Edit
+              </button>
+            {% else %}
+              <button onclick="window.location.href='{{ url_for('integration.configure_integration', system='salesforce') }}'" 
+                      class="btn-integration btn-teal">
+                Create New
+              </button>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Custom Integrations -->
+    <div class="bg-white rounded-lg shadow-md mb-6">
+      <div class="px-6 py-4 border-b border-gray-200">
+        <h3 class="text-xl font-semibold text-teal-800">Custom Integrations</h3>
+      </div>
+      
+      <div class="divide-y divide-gray-200">
+        <!-- Other Systems Entry Point -->
+        <div class="px-6 py-4 flex items-center justify-between">
+          <div class="flex items-center space-x-4">
+            <div class="flex-shrink-0">
+              <svg class="w-10 h-10 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+              </svg>
+            </div>
+            <div>
+              <h4 class="text-lg font-semibold text-gray-900">Other Systems</h4>
+              <p class="text-gray-600">Connect to any system via REST API</p>
+            </div>
+          </div>
+          <div class="flex space-x-2">
+            <button onclick="window.location.href='{{ url_for('integration.configure_integration', system='custom') }}'" 
+                    class="btn-integration btn-teal">
+              Create New
+            </button>
+          </div>
+        </div>
+
+        <!-- Dynamic Custom Integrations List -->
+        {% if custom_integrations %}
+          {% for custom in custom_integrations %}
+          <div class="px-6 py-4 flex items-center justify-between">
+            <div class="flex items-center space-x-4">
+              <div class="flex-shrink-0">
+                {% if custom.icon_svg %}
+                  {{ custom.icon_svg|safe }}
+                {% else %}
+                  <div class="w-10 h-10 bg-gradient-to-br from-blue-400 to-purple-500 rounded-lg flex items-center justify-center">
+                    <span class="text-white font-bold text-sm">{{ custom.system_name[:2].upper() }}</span>
+                  </div>
+                {% endif %}
+              </div>
+              <div>
+                <h4 class="text-lg font-semibold text-gray-900">{{ custom.system_name }}</h4>
+                <p class="text-gray-600">{{ custom.description or 'Custom API integration' }}</p>
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                  ✓ Connected
+                </span>
+              </div>
+            </div>
+            <div class="flex space-x-2">
+              <button onclick="window.location.href='{{ url_for('integration.configure_integration', system=custom.system_type) }}'" 
+                      class="btn-integration btn-orange">
+                Edit
+              </button>
+            </div>
+          </div>
+          {% endfor %}
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- All Integrations Management Table -->
+    <div class="bg-white rounded-lg shadow-md">
+      <div class="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
+        <h3 class="text-xl font-semibold text-teal-800">Manage Integrations</h3>
+        <form action="{{ url_for('integration.api_get_integrations') }}" method="GET">
+          <button type="submit" class="btn-integration btn-blue">Refresh</button>
+        </form>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-50">
+            <tr>
+              <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">System</th>
+              <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
+              <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+              <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Created</th>
+              <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            {% for integ in all_integrations %}
+            <tr class="hover:bg-gray-50 text-sm">
+              <td class="px-3 py-2">{{ integ.system_type|title }}</td>
+              <td class="px-3 py-2">{{ integ.system_name }}</td>
+              <td class="px-3 py-2">
+                {% if integ.enabled %}
+                  <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Enabled</span>
+                {% else %}
+                  <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">Disabled</span>
+                {% endif %}
+              </td>
+              <td class="px-3 py-2">{{ integ.created_at.strftime('%Y-%m-%d') if integ.created_at else '-' }}</td>
+              <td class="px-3 py-2">
+                <div class="flex gap-2">
+                  {% if integ.system_type == 'custom' %}
+                  <a class="btn-integration btn-orange" style="padding: 2px 6px; font-size: 11px;" href="{{ url_for('integration.configure_integration', system='custom') }}?name={{ integ.system_name }}">Configure</a>
+                  <form action="{{ url_for('integration.save_integration_config', system='custom') }}" method="POST" onsubmit="return confirm('Delete this integration?');">
+                    <input type="hidden" name="existing_name" value="{{ integ.system_name }}">
+                    <button type="submit" name="action" value="delete" class="btn-integration btn-red" style="padding: 2px 6px; font-size: 11px;">Delete</button>
+                  </form>
+                  {% else %}
+                  <a class="btn-integration btn-orange" style="padding: 2px 6px; font-size: 11px;" href="{{ url_for('integration.configure_integration', system=integ.system_type) }}">Configure</a>
+                  <form action="{{ url_for('integration.save_integration_config', system=integ.system_type) }}" method="POST" onsubmit="return confirm('Delete this integration?');">
+                    <button type="submit" name="action" value="delete" class="btn-integration btn-red" style="padding: 2px 6px; font-size: 11px;">Delete</button>
+                  </form>
+                  {% endif %}
+                </div>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

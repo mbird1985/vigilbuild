@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block content %}
+
+  Edit Document
+
+  <form method="POST">
+    <label>Title: <input name="title" value="{{ document.title }}"></label>
+    <label>Category:
+      <select name="category">
+        <option value="Jobs" {% if document.category == 'Jobs' %}selected{% endif %}>Jobs</option>
+        <option value="WAC" {% if document.category == 'WAC' %}selected{% endif %}>WAC</option>
+        <option value="HR" {% if document.category == 'HR' %}selected{% endif %}>HR</option>
+        <option value="Handbook" {% if document.category == 'Handbook' %}selected{% endif %}>Handbook</option>
+        <option value="Uncategorized" {% if document.category == 'Uncategorized' %}selected{% endif %}>Uncategorized</option>
+      </select>
+    </label>
+    <label>Tags: <input name="tags" value="{{ document.tags|join(', ') }}"></label>
+    <!-- New: AI-Suggested Tags -->
+    <button type="button" onclick="suggestTags()">Suggest Tags</button>
+    <button type="submit">Save</button>
+    <a href="{{ url_for('documents.document_list') }}">Cancel</a>
+  </form>
+
+  <script>
+    function suggestTags() {
+      fetch('/api/documents/suggest_tags', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({title: '{{ document.title }}'})
+      }).then(response => response.json()).then(data => {
+        document.querySelector('input[name="tags"]').value = data.tags.join(', ');
+      });
+    }
+  </script>
+
+{% endblock %}

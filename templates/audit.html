@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="bg-white p-6 rounded-lg shadow-md">
+  <h2 class="text-2xl font-semibold text-teal-800 mb-4">Audit Trail</h2>
+
+  {% with messages = get_flashed_messages() %}
+    {% if messages %}
+      <p class="text-orange-500 mb-4 text-center">{{ messages[0] }}</p>
+    {% endif %}
+  {% endwith %}
+
+  <table class="w-full border-collapse">
+    <thead class="bg-teal-800 text-white">
+      <tr>
+        <th class="p-3 text-left">Action</th>
+        <th class="p-3 text-left">User</th>
+        <th class="p-3 text-left">Document ID</th>
+        <th class="p-3 text-left">Document Title</th>
+        <th class="p-3 text-left">Details</th>
+        <th class="p-3 text-left">Timestamp</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for entry in audit_entries %}
+      <tr class="border-b hover:bg-gray-50">
+        <td class="p-3">{{ entry.action }}</td>
+        <td class="p-3">{{ entry.user_id }}</td>
+        <td class="p-3">{{ entry.document_id or 'N/A' }}</td>
+        <td class="p-3">{{ entry.document_title or 'N/A' }}</td>
+        <td class="p-3">{{ entry.details|tojson|replace('"', '"') }}</td>
+        <td class="p-3">{{ entry.timestamp }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

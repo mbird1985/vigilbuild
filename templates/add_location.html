@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="max-w-2xl mx-auto">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-3xl font-bold text-gray-800">Add Inventory Location</h1>
+        <a href="{{ url_for('inventory.locations_list') }}" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded">
+            Cancel
+        </a>
+    </div>
+
+    <form method="POST" class="bg-white rounded-lg shadow p-6">
+        <div class="space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Location Name *</label>
+                    <input type="text" name="name" required
+                           class="w-full border border-gray-300 rounded px-3 py-2"
+                           placeholder="e.g., Main Warehouse">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Location Type</label>
+                    <select name="location_type" class="w-full border border-gray-300 rounded px-3 py-2">
+                        <option value="warehouse">Warehouse</option>
+                        <option value="job_site">Job Site</option>
+                        <option value="truck">Truck/Vehicle</option>
+                        <option value="office">Office</option>
+                    </select>
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Address</label>
+                <input type="text" name="address" class="w-full border border-gray-300 rounded px-3 py-2"
+                       placeholder="Street address">
+            </div>
+
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">City</label>
+                    <input type="text" name="city" class="w-full border border-gray-300 rounded px-3 py-2">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">State</label>
+                    <input type="text" name="state" class="w-full border border-gray-300 rounded px-3 py-2">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">ZIP Code</label>
+                    <input type="text" name="zip_code" class="w-full border border-gray-300 rounded px-3 py-2">
+                </div>
+            </div>
+
+            <div class="flex items-center space-x-6">
+                <label class="flex items-center">
+                    <input type="checkbox" name="is_primary" class="mr-2 rounded">
+                    <span class="text-sm text-gray-700">Primary Location</span>
+                </label>
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Notes</label>
+                <textarea name="notes" rows="3" class="w-full border border-gray-300 rounded px-3 py-2"
+                          placeholder="Additional information about this location"></textarea>
+            </div>
+        </div>
+
+        <div class="flex justify-end space-x-3 mt-6 pt-4 border-t">
+            <a href="{{ url_for('inventory.locations_list') }}" class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded">
+                Cancel
+            </a>
+            <button type="submit" class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded">
+                Add Location
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}

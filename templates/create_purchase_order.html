@@ -1,0 +1,237 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="max-w-4xl mx-auto">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-3xl font-bold text-gray-800">Create Purchase Order</h1>
+        <a href="{{ url_for('inventory.purchase_orders_list') }}" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded">
+            Cancel
+        </a>
+    </div>
+
+    <form method="POST" id="poForm">
+        <div class="bg-white rounded-lg shadow p-6 mb-6">
+            <h2 class="text-lg font-semibold mb-4 border-b pb-2">Order Details</h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Supplier *</label>
+                    <select name="supplier_id" id="supplierSelect" required
+                            class="w-full border border-gray-300 rounded px-3 py-2 focus:ring-2 focus:ring-blue-500">
+                        <option value="">Select a supplier</option>
+                        {% for supplier in suppliers %}
+                        <option value="{{ supplier.id }}" {% if request.args.get('supplier') == supplier.id|string %}selected{% endif %}>
+                            {{ supplier.name }}{% if supplier.preferred %} (Preferred){% endif %}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Notes</label>
+                    <input type="text" name="notes" class="w-full border border-gray-300 rounded px-3 py-2"
+                           placeholder="Optional order notes">
+                </div>
+            </div>
+        </div>
+
+        <!-- Items Section -->
+        <div class="bg-white rounded-lg shadow p-6 mb-6">
+            <div class="flex justify-between items-center mb-4 border-b pb-2">
+                <h2 class="text-lg font-semibold">Order Items</h2>
+                <button type="button" onclick="addItemRow()"
+                        class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-sm">
+                    + Add Item
+                </button>
+            </div>
+
+            <div id="itemsContainer">
+                <div class="item-row grid grid-cols-12 gap-2 mb-2 items-center">
+                    <div class="col-span-5">
+                        <select name="item_ids[]" required class="w-full border border-gray-300 rounded px-2 py-2 text-sm item-select">
+                            <option value="">Select item</option>
+                            {% for item in low_stock_items %}
+                            <option value="{{ item.id }}" data-price="{{ item.cost_per_unit or 0 }}">
+                                {{ item.name }} ({{ item.quantity }} {{ item.unit }})
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-span-2">
+                        <input type="number" name="quantities[]" min="1" required placeholder="Qty"
+                               class="w-full border border-gray-300 rounded px-2 py-2 text-sm qty-input">
+                    </div>
+                    <div class="col-span-2">
+                        <input type="number" name="prices[]" step="0.01" min="0" placeholder="Price"
+                               class="w-full border border-gray-300 rounded px-2 py-2 text-sm price-input">
+                    </div>
+                    <div class="col-span-2 text-right font-medium line-total">$0.00</div>
+                    <div class="col-span-1 text-center">
+                        <button type="button" onclick="removeItemRow(this)" class="text-red-600 hover:text-red-800">
+                            &times;
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="border-t mt-4 pt-4">
+                <div class="flex justify-end">
+                    <div class="w-48">
+                        <div class="flex justify-between text-lg font-semibold">
+                            <span>Total:</span>
+                            <span id="orderTotal">$0.00</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Low Stock Suggestions -->
+        {% if low_stock_items %}
+        <div class="bg-yellow-50 rounded-lg shadow p-6 mb-6">
+            <h2 class="text-lg font-semibold mb-4 text-yellow-800">Low Stock Items - Consider Ordering</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                {% for item in low_stock_items[:9] %}
+                <div class="bg-white p-3 rounded border border-yellow-200 flex justify-between items-center">
+                    <div>
+                        <p class="font-medium text-sm">{{ item.name|truncate(25) }}</p>
+                        <p class="text-xs text-gray-500">{{ item.quantity }} {{ item.unit }} left</p>
+                    </div>
+                    <button type="button" onclick="quickAddItem({{ item.id }}, '{{ item.name|e }}', {{ item.cost_per_unit or 0 }})"
+                            class="bg-yellow-600 hover:bg-yellow-700 text-white px-2 py-1 rounded text-xs">
+                        Add
+                    </button>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="flex justify-end space-x-3">
+            <a href="{{ url_for('inventory.purchase_orders_list') }}" class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded">
+                Cancel
+            </a>
+            <button type="submit" class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded">
+                Create Purchase Order
+            </button>
+        </div>
+    </form>
+</div>
+
+<script>
+const itemOptions = `
+    <option value="">Select item</option>
+    {% for item in low_stock_items %}
+    <option value="{{ item.id }}" data-price="{{ item.cost_per_unit or 0 }}">{{ item.name }} ({{ item.quantity }} {{ item.unit }})</option>
+    {% endfor %}
+`;
+
+function addItemRow() {
+    const container = document.getElementById('itemsContainer');
+    const row = document.createElement('div');
+    row.className = 'item-row grid grid-cols-12 gap-2 mb-2 items-center';
+    row.innerHTML = `
+        <div class="col-span-5">
+            <select name="item_ids[]" required class="w-full border border-gray-300 rounded px-2 py-2 text-sm item-select">
+                ${itemOptions}
+            </select>
+        </div>
+        <div class="col-span-2">
+            <input type="number" name="quantities[]" min="1" required placeholder="Qty"
+                   class="w-full border border-gray-300 rounded px-2 py-2 text-sm qty-input">
+        </div>
+        <div class="col-span-2">
+            <input type="number" name="prices[]" step="0.01" min="0" placeholder="Price"
+                   class="w-full border border-gray-300 rounded px-2 py-2 text-sm price-input">
+        </div>
+        <div class="col-span-2 text-right font-medium line-total">$0.00</div>
+        <div class="col-span-1 text-center">
+            <button type="button" onclick="removeItemRow(this)" class="text-red-600 hover:text-red-800">&times;</button>
+        </div>
+    `;
+    container.appendChild(row);
+    attachRowListeners(row);
+}
+
+function removeItemRow(btn) {
+    const rows = document.querySelectorAll('.item-row');
+    if (rows.length > 1) {
+        btn.closest('.item-row').remove();
+        updateTotal();
+    }
+}
+
+function quickAddItem(itemId, itemName, price) {
+    // Find empty row or add new one
+    let emptyRow = null;
+    document.querySelectorAll('.item-row').forEach(row => {
+        const select = row.querySelector('.item-select');
+        if (!select.value) {
+            emptyRow = row;
+        }
+    });
+
+    if (!emptyRow) {
+        addItemRow();
+        emptyRow = document.querySelector('.item-row:last-child');
+    }
+
+    const select = emptyRow.querySelector('.item-select');
+    const priceInput = emptyRow.querySelector('.price-input');
+    const qtyInput = emptyRow.querySelector('.qty-input');
+
+    select.value = itemId;
+    priceInput.value = price.toFixed(2);
+    qtyInput.value = 1;
+    qtyInput.focus();
+
+    updateRowTotal(emptyRow);
+    updateTotal();
+}
+
+function updateRowTotal(row) {
+    const qty = parseFloat(row.querySelector('.qty-input').value) || 0;
+    const price = parseFloat(row.querySelector('.price-input').value) || 0;
+    const total = qty * price;
+    row.querySelector('.line-total').textContent = '$' + total.toFixed(2);
+}
+
+function updateTotal() {
+    let total = 0;
+    document.querySelectorAll('.item-row').forEach(row => {
+        const qty = parseFloat(row.querySelector('.qty-input').value) || 0;
+        const price = parseFloat(row.querySelector('.price-input').value) || 0;
+        total += qty * price;
+    });
+    document.getElementById('orderTotal').textContent = '$' + total.toFixed(2);
+}
+
+function attachRowListeners(row) {
+    const select = row.querySelector('.item-select');
+    const qtyInput = row.querySelector('.qty-input');
+    const priceInput = row.querySelector('.price-input');
+
+    select.addEventListener('change', function() {
+        const option = this.options[this.selectedIndex];
+        const defaultPrice = parseFloat(option.dataset.price) || 0;
+        priceInput.value = defaultPrice.toFixed(2);
+        updateRowTotal(row);
+        updateTotal();
+    });
+
+    qtyInput.addEventListener('input', function() {
+        updateRowTotal(row);
+        updateTotal();
+    });
+
+    priceInput.addEventListener('input', function() {
+        updateRowTotal(row);
+        updateTotal();
+    });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.item-row').forEach(row => {
+        attachRowListeners(row);
+    });
+});
+</script>
+{% endblock %}

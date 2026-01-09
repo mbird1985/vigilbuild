@@ -1,0 +1,157 @@
+{% extends "base.html" %}
+{% block title %}Perform Inspection #{{ inspection.id }}{% endblock %}
+{% block content %}
+<div class="container mx-auto px-4 py-6">
+    <div class="flex justify-between items-center mb-6">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-800">Inspection #{{ inspection.id }}</h1>
+            <p class="text-gray-600">{{ inspection.equipment_unique_id }} - {{ inspection.equipment_brand }} {{ inspection.equipment_model }}</p>
+        </div>
+        <span class="px-3 py-1 text-sm rounded-full bg-yellow-100 text-yellow-800">In Progress</span>
+    </div>
+
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+        {% for message in messages %}{{ message }}{% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
+
+    <!-- Checklist Items -->
+    <div class="bg-white rounded-lg shadow mb-6">
+        <div class="p-4 border-b">
+            <h2 class="text-lg font-semibold">Inspection Checklist</h2>
+        </div>
+        <div class="divide-y">
+            {% for item in inspection.items %}
+            <div class="p-4 {% if item.status == 'fail' %}bg-red-50{% elif item.status == 'ok' %}bg-green-50{% endif %}">
+                <form method="POST" enctype="multipart/form-data" class="space-y-3">
+                    <input type="hidden" name="action" value="update_item">
+                    <input type="hidden" name="item_id" value="{{ item.id }}">
+
+                    <div class="flex items-start justify-between">
+                        <div class="flex-1">
+                            <span class="font-medium">{{ item.label }}</span>
+                            {% if item.category %}<span class="text-xs text-gray-500 ml-2">({{ item.category }})</span>{% endif %}
+                            {% if item.requires_photo %}<span class="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded ml-2">Photo Required</span>{% endif %}
+                        </div>
+                        <div class="flex gap-2">
+                            <label class="flex items-center">
+                                <input type="radio" name="status" value="ok" {% if item.status == 'ok' %}checked{% endif %} class="mr-1">
+                                <span class="text-green-600">OK</span>
+                            </label>
+                            <label class="flex items-center">
+                                <input type="radio" name="status" value="fail" {% if item.status == 'fail' %}checked{% endif %} class="mr-1">
+                                <span class="text-red-600">Fail</span>
+                            </label>
+                            <label class="flex items-center">
+                                <input type="radio" name="status" value="na" {% if item.status == 'na' %}checked{% endif %} class="mr-1">
+                                <span class="text-gray-600">N/A</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                        <div class="md:col-span-2">
+                            <input type="text" name="notes" value="{{ item.notes or '' }}" placeholder="Notes (required if failed)"
+                                   class="w-full border border-gray-300 rounded p-2 text-sm">
+                        </div>
+                        <div>
+                            <input type="file" name="photo" accept="image/*" class="w-full text-sm">
+                        </div>
+                    </div>
+
+                    <button type="submit" class="bg-blue-600 text-white px-3 py-1 rounded text-sm hover:bg-blue-700">
+                        Save Item
+                    </button>
+                </form>
+            </div>
+            {% else %}
+            <div class="p-8 text-center text-gray-500">
+                No checklist items. This is a blank inspection.
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Complete Inspection -->
+    <div class="bg-white rounded-lg shadow p-6">
+        <h2 class="text-lg font-semibold mb-4">Complete Inspection</h2>
+        <form method="POST">
+            <input type="hidden" name="action" value="complete">
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Final Notes</label>
+                    <textarea name="completion_notes" rows="3" class="mt-1 block w-full border border-gray-300 rounded-md p-2"></textarea>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Your Name (for signature)</label>
+                    <input type="text" name="signature_name" value="{{ current_user.username }}"
+                           class="mt-1 block w-full border border-gray-300 rounded-md p-2">
+                </div>
+                <!-- Signature pad placeholder -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Electronic Signature</label>
+                    <div class="mt-1 border-2 border-dashed border-gray-300 rounded-lg p-4 text-center text-gray-500">
+                        <canvas id="signature-pad" width="400" height="100" class="border bg-white mx-auto"></canvas>
+                        <input type="hidden" name="signature_data" id="signature_data">
+                        <button type="button" onclick="clearSignature()" class="text-sm text-blue-600 mt-2">Clear</button>
+                    </div>
+                </div>
+                <button type="submit" class="w-full bg-green-600 text-white px-4 py-3 rounded hover:bg-green-700 text-lg font-medium">
+                    Complete Inspection
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+// Simple signature pad
+const canvas = document.getElementById('signature-pad');
+const ctx = canvas.getContext('2d');
+let isDrawing = false;
+
+canvas.addEventListener('mousedown', startDrawing);
+canvas.addEventListener('mousemove', draw);
+canvas.addEventListener('mouseup', stopDrawing);
+canvas.addEventListener('mouseout', stopDrawing);
+
+// Touch support
+canvas.addEventListener('touchstart', (e) => { e.preventDefault(); startDrawing(e.touches[0]); });
+canvas.addEventListener('touchmove', (e) => { e.preventDefault(); draw(e.touches[0]); });
+canvas.addEventListener('touchend', stopDrawing);
+
+function startDrawing(e) {
+    isDrawing = true;
+    draw(e);
+}
+
+function draw(e) {
+    if (!isDrawing) return;
+    const rect = canvas.getBoundingClientRect();
+    const x = (e.clientX || e.pageX) - rect.left;
+    const y = (e.clientY || e.pageY) - rect.top;
+
+    ctx.lineWidth = 2;
+    ctx.lineCap = 'round';
+    ctx.strokeStyle = '#000';
+    ctx.lineTo(x, y);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+}
+
+function stopDrawing() {
+    isDrawing = false;
+    ctx.beginPath();
+    document.getElementById('signature_data').value = canvas.toDataURL();
+}
+
+function clearSignature() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    document.getElementById('signature_data').value = '';
+}
+</script>
+{% endblock %}

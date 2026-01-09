@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="{% block meta_description %}Vigil Build - Enterprise Construction Management Software for Power Distribution, Municipalities & Contractors{% endblock %}">
+    <meta name="keywords" content="construction management, power distribution, municipal software, equipment maintenance, inventory management, project management">
+    <meta name="author" content="Vigil Build">
+
+    <!-- Open Graph / Social Media -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://vigilbuild.com/">
+    <meta property="og:title" content="{% block og_title %}Vigil Build - Construction Management Software{% endblock %}">
+    <meta property="og:description" content="{% block og_description %}Enterprise-grade construction management platform built for power distribution companies, municipalities, and contractors.{% endblock %}">
+    <meta property="og:image" content="/static/vigil_build_logo_transparent.png">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
+    <link rel="apple-touch-icon" href="/static/apple-touch-icon.png">
+
+    <title>{% block title %}Vigil Build - Construction Management Software{% endblock %}</title>
+
+    <!-- Tailwind CSS -->
+    <link rel="stylesheet" href="/static/tailwind.min.css">
+
+    <style>
+        /* Custom CSS for marketing site */
+        :root {
+            --vb-navy: #1e3a5f;
+            --vb-navy-dark: #152a45;
+            --vb-navy-light: #2d4a6f;
+            --vb-accent: #3b82f6;
+            --vb-accent-light: #60a5fa;
+        }
+
+        /* Smooth scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Custom gradients */
+        .bg-gradient-vb {
+            background: linear-gradient(135deg, var(--vb-navy) 0%, var(--vb-navy-dark) 100%);
+        }
+
+        .bg-gradient-hero {
+            background: linear-gradient(135deg, #1e3a5f 0%, #0f172a 50%, #1e293b 100%);
+        }
+
+        /* Glassmorphism effect */
+        .glass {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        /* Card hover effects */
+        .feature-card {
+            transition: all 0.3s ease;
+        }
+        .feature-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Animated gradient border */
+        .gradient-border {
+            position: relative;
+            background: white;
+            border-radius: 1rem;
+        }
+        .gradient-border::before {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            border-radius: 1rem;
+            background: linear-gradient(135deg, #3b82f6, #1e3a5f, #60a5fa);
+            z-index: -1;
+        }
+
+        /* Navigation styles */
+        .nav-link {
+            position: relative;
+            transition: color 0.3s ease;
+        }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: #3b82f6;
+            transition: width 0.3s ease;
+        }
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        /* Pulse animation for CTA */
+        @keyframes pulse-slow {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+        .pulse-slow {
+            animation: pulse-slow 3s ease-in-out infinite;
+        }
+
+        /* Fade in animation */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .fade-in-up {
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
+
+        /* Stagger children animation */
+        .stagger-children > * {
+            opacity: 0;
+            animation: fadeInUp 0.5s ease-out forwards;
+        }
+        .stagger-children > *:nth-child(1) { animation-delay: 0.1s; }
+        .stagger-children > *:nth-child(2) { animation-delay: 0.2s; }
+        .stagger-children > *:nth-child(3) { animation-delay: 0.3s; }
+        .stagger-children > *:nth-child(4) { animation-delay: 0.4s; }
+        .stagger-children > *:nth-child(5) { animation-delay: 0.5s; }
+        .stagger-children > *:nth-child(6) { animation-delay: 0.6s; }
+
+        /* Mobile menu */
+        .mobile-menu {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+        .mobile-menu.open {
+            max-height: 400px;
+        }
+
+        /* Icon containers */
+        .icon-container {
+            background: linear-gradient(135deg, #3b82f6 0%, #1e3a5f 100%);
+        }
+
+        /* Stats counter effect */
+        .stat-number {
+            background: linear-gradient(135deg, #3b82f6, #60a5fa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Dynamic navbar styles */
+        .navbar {
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .navbar.navbar-light {
+            background-color: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar.navbar-dark {
+            background-color: rgba(30, 58, 95, 0.95);
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.3);
+        }
+
+        .navbar.navbar-light .nav-link {
+            color: #374151;
+        }
+
+        .navbar.navbar-light .nav-link:hover {
+            color: #2563eb;
+        }
+
+        .navbar.navbar-dark .nav-link {
+            color: #e5e7eb;
+        }
+
+        .navbar.navbar-dark .nav-link:hover {
+            color: #ffffff;
+        }
+
+        .navbar.navbar-light .nav-link::after {
+            background: #3b82f6;
+        }
+
+        .navbar.navbar-dark .nav-link::after {
+            background: #60a5fa;
+        }
+
+        .navbar.navbar-light .login-link {
+            color: #4b5563;
+        }
+
+        .navbar.navbar-light .login-link:hover {
+            color: #111827;
+        }
+
+        .navbar.navbar-dark .login-link {
+            color: #d1d5db;
+        }
+
+        .navbar.navbar-dark .login-link:hover {
+            color: #ffffff;
+        }
+
+        .navbar.navbar-light .mobile-menu-btn {
+            color: #4b5563;
+        }
+
+        .navbar.navbar-light .mobile-menu-btn:hover {
+            background-color: #f3f4f6;
+        }
+
+        .navbar.navbar-dark .mobile-menu-btn {
+            color: #e5e7eb;
+        }
+
+        .navbar.navbar-dark .mobile-menu-btn:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Logo filter for dark/light modes */
+        .navbar.navbar-dark .nav-logo {
+            filter: brightness(0) invert(1);
+        }
+
+        .navbar.navbar-light .nav-logo {
+            filter: none;
+        }
+
+        /* Mobile menu styles for dark mode */
+        .navbar.navbar-light .mobile-menu-container {
+            border-top-color: #f3f4f6;
+        }
+
+        .navbar.navbar-dark .mobile-menu-container {
+            border-top-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .navbar.navbar-light .mobile-nav-link {
+            color: #374151;
+        }
+
+        .navbar.navbar-light .mobile-nav-link:hover {
+            background-color: #f3f4f6;
+        }
+
+        .navbar.navbar-dark .mobile-nav-link {
+            color: #e5e7eb;
+        }
+
+        .navbar.navbar-dark .mobile-nav-link:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+    </style>
+
+    {% block extra_head %}{% endblock %}
+</head>
+<body class="bg-gray-50 font-sans antialiased">
+    <!-- Navigation -->
+    <nav id="main-navbar" class="navbar navbar-light fixed top-0 left-0 right-0 z-50 backdrop-blur-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo -->
+                <a href="/marketing" class="flex items-center space-x-2">
+                    <img src="/static/vigil_build_logo_transparent.png" alt="Vigil Build" class="nav-logo h-14 w-auto transition-all duration-300">
+                </a>
+
+                <!-- Desktop Navigation -->
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="/marketing" class="nav-link font-medium transition-colors duration-300">Home</a>
+                    <a href="/marketing/features" class="nav-link font-medium transition-colors duration-300">Features</a>
+                    <a href="/marketing/about" class="nav-link font-medium transition-colors duration-300">Why Vigil Build</a>
+                    <a href="/marketing/contact" class="nav-link font-medium transition-colors duration-300">Contact</a>
+                    <a href="/auth/login" class="login-link font-medium transition-colors duration-300">Login</a>
+                    <a href="/marketing/contact" class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg font-medium transition-colors shadow-md hover:shadow-lg">
+                        Request Demo
+                    </a>
+                </div>
+
+                <!-- Mobile menu button -->
+                <button id="mobile-menu-btn" class="mobile-menu-btn md:hidden p-2 rounded-lg transition-colors duration-300">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Mobile Navigation -->
+            <div id="mobile-menu" class="mobile-menu md:hidden">
+                <div class="mobile-menu-container py-4 space-y-3 border-t transition-colors duration-300">
+                    <a href="/marketing" class="mobile-nav-link block px-4 py-2 rounded-lg transition-colors duration-300">Home</a>
+                    <a href="/marketing/features" class="mobile-nav-link block px-4 py-2 rounded-lg transition-colors duration-300">Features</a>
+                    <a href="/marketing/about" class="mobile-nav-link block px-4 py-2 rounded-lg transition-colors duration-300">Why Vigil Build</a>
+                    <a href="/marketing/contact" class="mobile-nav-link block px-4 py-2 rounded-lg transition-colors duration-300">Contact</a>
+                    <a href="/auth/login" class="mobile-nav-link block px-4 py-2 rounded-lg transition-colors duration-300">Login</a>
+                    <a href="/marketing/contact" class="block mx-4 text-center bg-blue-600 text-white px-5 py-2 rounded-lg font-medium">
+                        Request Demo
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="pt-16">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gradient-vb text-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <!-- Brand Column -->
+                <div class="col-span-1 md:col-span-2">
+                    <img src="/static/vigil_build_logo_transparent.png" alt="Vigil Build" class="h-16 w-auto mb-4" style="filter: brightness(0) invert(1);">
+                    <p class="text-gray-300 max-w-md">
+                        Enterprise-grade construction management software designed for power distribution companies,
+                        municipalities, and contractors who demand reliability and efficiency.
+                    </p>
+                    <div class="flex space-x-4 mt-6">
+                        <!-- LinkedIn: Replace # with your LinkedIn company page URL (e.g., https://linkedin.com/company/vigilbuild) -->
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors" aria-label="LinkedIn">
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+                        </a>
+                        <!-- X (formerly Twitter): Replace # with your X profile URL (e.g., https://x.com/vigilbuild) -->
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors" aria-label="X (formerly Twitter)">
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Quick Links -->
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Product</h4>
+                    <ul class="space-y-2">
+                        <li><a href="/marketing/features" class="text-gray-300 hover:text-white transition-colors">Features</a></li>
+                        <li><a href="/marketing/features#equipment" class="text-gray-300 hover:text-white transition-colors">Equipment Management</a></li>
+                        <li><a href="/marketing/features#inventory" class="text-gray-300 hover:text-white transition-colors">Inventory Tracking</a></li>
+                        <li><a href="/marketing/features#scheduling" class="text-gray-300 hover:text-white transition-colors">Scheduling</a></li>
+                        <li><a href="/marketing/features#projects" class="text-gray-300 hover:text-white transition-colors">Project Management</a></li>
+                    </ul>
+                </div>
+
+                <!-- Company -->
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Company</h4>
+                    <ul class="space-y-2">
+                        <li><a href="/marketing/about" class="text-gray-300 hover:text-white transition-colors">About Us</a></li>
+                        <li><a href="/marketing/contact" class="text-gray-300 hover:text-white transition-colors">Contact</a></li>
+                        <li><a href="/marketing/contact" class="text-gray-300 hover:text-white transition-colors">Request Demo</a></li>
+                        <li><a href="/auth/login" class="text-gray-300 hover:text-white transition-colors">Customer Login</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="border-t border-gray-600 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
+                <p class="text-gray-400 text-sm">
+                    &copy; {{ current_year or 2025 }} Vigil Build. All rights reserved.
+                </p>
+                <div class="flex space-x-6 mt-4 md:mt-0">
+                    <a href="#" class="text-gray-400 hover:text-white text-sm transition-colors">Privacy Policy</a>
+                    <a href="#" class="text-gray-400 hover:text-white text-sm transition-colors">Terms of Service</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Mobile Menu Script & Dynamic Navbar -->
+    <script>
+        document.getElementById('mobile-menu-btn').addEventListener('click', function() {
+            document.getElementById('mobile-menu').classList.toggle('open');
+        });
+
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', function(e) {
+            const menu = document.getElementById('mobile-menu');
+            const btn = document.getElementById('mobile-menu-btn');
+            if (!menu.contains(e.target) && !btn.contains(e.target)) {
+                menu.classList.remove('open');
+            }
+        });
+
+        // Dynamic navbar color based on background
+        (function() {
+            const navbar = document.getElementById('main-navbar');
+            const navbarHeight = 64; // Height of navbar in pixels
+
+            // Define which section types should trigger dark navbar
+            const darkSections = [
+                '.bg-gradient-hero',
+                '.bg-gradient-vb',
+                '.bg-gray-900',
+                '[class*="bg-gradient-hero"]',
+                '[class*="bg-gradient-vb"]'
+            ];
+
+            function isDarkSection(element) {
+                // Check if element has any dark background class
+                const classList = element.className || '';
+                return classList.includes('bg-gradient-hero') ||
+                       classList.includes('bg-gradient-vb') ||
+                       classList.includes('bg-gray-900') ||
+                       classList.includes('bg-gray-800');
+            }
+
+            function getElementAtNavbar() {
+                // Get element at the center-bottom of the navbar
+                const x = window.innerWidth / 2;
+                const y = navbarHeight / 2;
+
+                // Temporarily hide navbar to get element behind it
+                navbar.style.pointerEvents = 'none';
+                const elementsAtPoint = document.elementsFromPoint(x, y);
+                navbar.style.pointerEvents = '';
+
+                // Find the first section element (skip the navbar itself)
+                for (let el of elementsAtPoint) {
+                    if (el === navbar || navbar.contains(el)) continue;
+                    if (el.tagName === 'SECTION' || el.tagName === 'DIV' || el.tagName === 'MAIN') {
+                        // Walk up to find section or check current element
+                        let current = el;
+                        while (current && current !== document.body) {
+                            if (current.tagName === 'SECTION') {
+                                return current;
+                            }
+                            if (isDarkSection(current)) {
+                                return current;
+                            }
+                            current = current.parentElement;
+                        }
+                        return el;
+                    }
+                }
+                return null;
+            }
+
+            function updateNavbarColor() {
+                const elementBehind = getElementAtNavbar();
+
+                if (elementBehind && isDarkSection(elementBehind)) {
+                    navbar.classList.remove('navbar-light');
+                    navbar.classList.add('navbar-dark');
+                } else {
+                    navbar.classList.remove('navbar-dark');
+                    navbar.classList.add('navbar-light');
+                }
+            }
+
+            // Update on scroll
+            let ticking = false;
+            window.addEventListener('scroll', function() {
+                if (!ticking) {
+                    window.requestAnimationFrame(function() {
+                        updateNavbarColor();
+                        ticking = false;
+                    });
+                    ticking = true;
+                }
+            });
+
+            // Update on resize
+            window.addEventListener('resize', updateNavbarColor);
+
+            // Initial check
+            updateNavbarColor();
+
+            // Also check after a short delay for any late-loading content
+            setTimeout(updateNavbarColor, 100);
+        })();
+    </script>
+
+    {% block extra_scripts %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="space-y-4">
+  <h1 class="text-2xl font-bold">{{ board.name }} — Gantt</h1>
+  <button onclick="showAddTaskModal()" class="btn-integration btn-teal">Add Task</button>
+  <button onclick="showAddDependencyModal()" class="btn-integration btn-blue">Add Dependency</button>
+  <!-- Gantt chart here -->
+</div>
+
+<!-- Task modal similar to timeline -->
+
+<!-- Dependency modal -->
+<div id="addDependencyModal" class="modal">
+  <form id="addDependencyForm">
+    <select name="predecessor_id">
+      {% for item in items %}
+        <option value="{{ item.id }}">{{ item.name }}</option>
+      {% endfor %}
+    </select>
+    <select name="successor_id">
+      {% for item in items %}
+        <option value="{{ item.id }}">{{ item.name }}</option>
+      {% endfor %}
+    </select>
+    <select name="type">
+      <option value="FS">Finish-Start</option>
+      <!-- Other types -->
+    </select>
+    <button type="submit">Save</button>
+  </form>
+</div>
+
+<script>
+// Similar JS for tasks
+// For dependencies
+document.getElementById('addDependencyForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const data = Object.fromEntries(new FormData(e.target));
+  await fetch(`/pm/dependencies`, {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({...data, board_id: {{ board.id }}})
+  });
+  location.reload();
+});
+</script>
+
+<div class="bg-white rounded shadow p-4">
+    <div id="gantt"></div>
+  </div>
+  <script src="/static/js/plotly.min.js"></script>
+  <script>
+    const tasks = {{ (cp_data and cp_data.tasks)|tojson }} || [];
+    const x0 = tasks.map(t => t.start);
+    const x1 = tasks.map(t => t.end);
+    const y = tasks.map(t => t.name);
+    const colors = tasks.map(t => t.critical ? 'red' : 'steelblue');
+    const data = [{
+      type: 'bar',
+      orientation: 'h',
+      x: tasks.map(t => (new Date(t.end) - new Date(t.start)) / (1000*60*60*24) + 1),
+      y: y,
+      base: x0,
+      marker: { color: colors },
+      hovertext: tasks.map(t => `${t.name}: ${t.start} → ${t.end} (Slack ${t.slack}d)`),
+      hoverinfo: 'text'
+    }];
+    const layout = { barmode: 'stack', title: 'Gantt (Critical Path in Red)', xaxis: { type: 'date' }, margin: {l: 200} };
+    Plotly.newPlot('gantt', data, layout);
+  </script>
+{% endblock %}
+
+

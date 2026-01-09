@@ -1,0 +1,80 @@
+<!-- templates/towns.html -->
+{% extends "base.html" %}
+{% block content %}
+<div class="space-y-6">
+  <div class="flex items-center justify-between">
+    <h2 class="text-2xl font-semibold text-teal-800">Towns</h2>
+    <a href="#add-town" class="btn-integration btn-teal">Add Town</a>
+  </div>
+
+  {% with messages = get_flashed_messages() %}
+  {% if messages %}
+  <div class="bg-orange-100 border border-orange-400 text-orange-700 px-4 py-3 rounded mb-4">{{ messages[0] }}</div>
+  {% endif %}
+  {% endwith %}
+
+  <!-- Add Town -->
+  <div id="add-town" class="bg-white rounded-lg shadow-md p-4">
+    <form method="POST" action="{{ url_for('towns.add_town') }}" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div>
+        <label class="block text-sm text-gray-700 mb-1">Town Name</label>
+        <input type="text" name="city_name" class="w-full px-2 py-1 border rounded" required>
+      </div>
+      <div>
+        <label class="block text-sm text-gray-700 mb-1">General Email</label>
+        <input type="email" name="email" class="w-full px-2 py-1 border rounded">
+      </div>
+      <div>
+        <label class="block text-sm text-gray-700 mb-1">General Phone</label>
+        <input type="text" name="phone" class="w-full px-2 py-1 border rounded">
+      </div>
+      <div class="md:col-span-3">
+        <label class="block text-sm text-gray-700 mb-1">Mailing Address</label>
+        <input type="text" name="address" class="w-full px-2 py-1 border rounded" placeholder="Street, City, State, Zip">
+      </div>
+      <div class="md:col-span-3">
+        <label class="block text-sm text-gray-700 mb-1">Primary Contact Name</label>
+        <input type="text" name="contact_name" class="w-full px-2 py-1 border rounded">
+      </div>
+      <div class="md:col-span-3">
+        <button type="submit" class="btn-integration btn-teal">Save Town</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Towns Table -->
+  <div class="bg-white rounded-lg shadow-md overflow-hidden">
+    <div class="px-4 py-2 border-b bg-gray-50 text-gray-700 font-medium">Town List</div>
+    <div class="overflow-x-auto">
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-50">
+          <tr>
+            <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Town</th>
+            <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Email</th>
+            <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Phone</th>
+            <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Address</th>
+            <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Primary Contact</th>
+            <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+          {% for town in towns %}
+          <tr class="hover:bg-gray-50 text-sm">
+            <td class="px-3 py-2">{{ town.name }}</td>
+            <td class="px-3 py-2">{{ town.email or '-' }}</td>
+            <td class="px-3 py-2">{{ town.phone or '-' }}</td>
+            <td class="px-3 py-2">{{ town.address or '-' }}</td>
+            <td class="px-3 py-2">{{ town.contact_name or '-' }}</td>
+            <td class="px-3 py-2">
+              <a href="{{ url_for('towns.edit_town', id=town.id) }}" class="btn-integration btn-orange" style="padding: 2px 6px; font-size: 11px;">Edit</a>
+              <a href="{{ url_for('towns.list_town_contacts', town_id=town.id) }}" class="btn-integration btn-blue" style="padding: 2px 6px; font-size: 11px;">Contacts</a>
+              <a href="{{ url_for('towns.delete_town', id=town.id) }}" class="btn-integration btn-red" style="padding: 2px 6px; font-size: 11px;">Delete</a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

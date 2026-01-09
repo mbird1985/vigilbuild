@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="space-y-4">
+  <div class="flex items-center justify-between">
+    <h1 class="text-2xl font-bold">Inspection #{{ inspection.id }}</h1>
+    <a class="btn-integration btn-blue" href="{{ url_for('equipment.maintenance_landing') }}">Back</a>
+  </div>
+  <div class="bg-white rounded shadow p-4 grid md:grid-cols-2 gap-3">
+    <div><div class="text-sm text-gray-600">Equipment</div><div class="font-medium">#{{ equipment.id }} — {{ equipment.unique_id }}</div></div>
+    <div><div class="text-sm text-gray-600">Created</div><div class="font-medium">{{ inspection.created_at }}</div></div>
+    <div class="md:col-span-2"><div class="text-sm text-gray-600">Notes</div><div class="font-medium whitespace-pre-wrap">{{ inspection.notes or '-' }}</div></div>
+  </div>
+  <div class="bg-white rounded shadow p-4">
+    <div class="font-semibold mb-2">Checklist</div>
+    <form method="post" action="{{ url_for('equipment.maintenance_inspection_update_item', inspection_id=inspection.id) }}" class="flex flex-wrap gap-2 mb-3">
+      <input name="label" placeholder="New item" class="border rounded p-2">
+      <select name="status" class="border rounded p-2"><option value="ok">OK</option><option value="warn">Warn</option><option value="fail">Fail</option></select>
+      <input name="notes" placeholder="Notes" class="border rounded p-2 flex-1">
+      <button class="btn-integration btn-teal">Add</button>
+    </form>
+    <table class="w-full text-left">
+      <thead class="bg-gray-100"><tr><th class="px-2 py-1">Item</th><th class="px-2 py-1">Status</th><th class="px-2 py-1">Notes</th></tr></thead>
+      <tbody>
+        {% for it in items %}
+        <tr class="border-t">
+          <td class="px-2 py-1">{{ it.label }}</td>
+          <td class="px-2 py-1">{{ it.status }}</td>
+          <td class="px-2 py-1">{{ it.notes }}</td>
+        </tr>
+        {% else %}
+        <tr><td class="px-2 py-2 text-gray-600" colspan="3">No items.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
+
+
+
+
+
+

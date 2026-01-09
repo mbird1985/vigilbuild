@@ -1,0 +1,250 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="max-w-4xl mx-auto">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-3xl font-bold text-gray-800">Edit Supplier: {{ supplier.name }}</h1>
+        <a href="{{ url_for('inventory.supplier_detail', supplier_id=supplier.id) }}" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded">
+            Cancel
+        </a>
+    </div>
+
+    <form method="POST" class="space-y-6">
+        <!-- Basic Information -->
+        <div class="bg-white rounded-lg shadow p-6">
+            <h2 class="text-lg font-semibold mb-4 border-b pb-2">Basic Information</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Company Name *</label>
+                    <input type="text" name="name" required value="{{ supplier.name }}"
+                           class="w-full border border-gray-300 rounded px-3 py-2">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Account Number</label>
+                    <input type="text" name="account_number" value="{{ supplier.account_number or '' }}"
+                           class="w-full border border-gray-300 rounded px-3 py-2"
+                           placeholder="Your account # with this supplier">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Website</label>
+                    <input type="url" name="website" value="{{ supplier.website or '' }}"
+                           class="w-full border border-gray-300 rounded px-3 py-2"
+                           placeholder="https://www.example.com">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Category</label>
+                    <select name="category" class="w-full border border-gray-300 rounded px-3 py-2">
+                        <option value="">Select Category</option>
+                        <option value="electrical" {% if supplier.category == 'electrical' %}selected{% endif %}>Electrical</option>
+                        <option value="hardware" {% if supplier.category == 'hardware' %}selected{% endif %}>Hardware</option>
+                        <option value="safety" {% if supplier.category == 'safety' %}selected{% endif %}>Safety Equipment</option>
+                        <option value="tools" {% if supplier.category == 'tools' %}selected{% endif %}>Tools</option>
+                        <option value="vehicles" {% if supplier.category == 'vehicles' %}selected{% endif %}>Vehicles & Fleet</option>
+                        <option value="materials" {% if supplier.category == 'materials' %}selected{% endif %}>Raw Materials</option>
+                        <option value="office" {% if supplier.category == 'office' %}selected{% endif %}>Office Supplies</option>
+                        <option value="other" {% if supplier.category == 'other' %}selected{% endif %}>Other</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contact Information -->
+        <div class="bg-white rounded-lg shadow p-6">
+            <h2 class="text-lg font-semibold mb-4 border-b pb-2">Contact Information</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Primary Phone</label>
+                    <input type="tel" name="phone" value="{{ supplier.phone or '' }}"
+                           class="w-full border border-gray-300 rounded px-3 py-2"
+                           placeholder="(555) 123-4567">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Primary Email</label>
+                    <input type="email" name="email" value="{{ supplier.email or '' }}"
+                           class="w-full border border-gray-300 rounded px-3 py-2"
+                           placeholder="orders@supplier.com">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Fax</label>
+                    <input type="tel" name="fax" value="{{ supplier.fax or '' }}"
+                           class="w-full border border-gray-300 rounded px-3 py-2"
+                           placeholder="(555) 123-4568">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Preferred Contact Method</label>
+                    <select name="preferred_contact_method" class="w-full border border-gray-300 rounded px-3 py-2">
+                        <option value="email" {% if supplier.preferred_contact_method == 'email' %}selected{% endif %}>Email</option>
+                        <option value="phone" {% if supplier.preferred_contact_method == 'phone' %}selected{% endif %}>Phone</option>
+                        <option value="fax" {% if supplier.preferred_contact_method == 'fax' %}selected{% endif %}>Fax</option>
+                        <option value="portal" {% if supplier.preferred_contact_method == 'portal' %}selected{% endif %}>Online Portal</option>
+                        <option value="edi" {% if supplier.preferred_contact_method == 'edi' %}selected{% endif %}>EDI</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Address -->
+        <div class="bg-white rounded-lg shadow p-6">
+            <h2 class="text-lg font-semibold mb-4 border-b pb-2">Address</h2>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Street Address</label>
+                    <input type="text" name="address" value="{{ supplier.address or '' }}"
+                           class="w-full border border-gray-300 rounded px-3 py-2">
+                </div>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div class="col-span-2">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">City</label>
+                        <input type="text" name="city" value="{{ supplier.city or '' }}"
+                               class="w-full border border-gray-300 rounded px-3 py-2">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">State</label>
+                        <input type="text" name="state" value="{{ supplier.state or '' }}"
+                               class="w-full border border-gray-300 rounded px-3 py-2">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">ZIP Code</label>
+                        <input type="text" name="zip_code" value="{{ supplier.zip_code or '' }}"
+                               class="w-full border border-gray-300 rounded px-3 py-2">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Performance Metrics -->
+        <div class="bg-white rounded-lg shadow p-6">
+            <h2 class="text-lg font-semibold mb-4 border-b pb-2">Performance & Lead Times</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Lead Time (Days)</label>
+                    <input type="number" name="lead_time_days" min="0" value="{{ supplier.lead_time_days or '' }}"
+                           class="w-full border border-gray-300 rounded px-3 py-2"
+                           placeholder="Average days to ship">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Avg Shipment Time (Days)</label>
+                    <input type="number" name="avg_shipment_days" min="0" step="0.5" value="{{ supplier.avg_shipment_days or '' }}"
+                           class="w-full border border-gray-300 rounded px-3 py-2"
+                           placeholder="Days in transit">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Minimum Order Value ($)</label>
+                    <input type="number" name="minimum_order_value" min="0" step="0.01" value="{{ supplier.minimum_order_value or '' }}"
+                           class="w-full border border-gray-300 rounded px-3 py-2"
+                           placeholder="0.00">
+                </div>
+            </div>
+        </div>
+
+        <!-- Payment Terms -->
+        <div class="bg-white rounded-lg shadow p-6">
+            <h2 class="text-lg font-semibold mb-4 border-b pb-2">Payment Terms</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Payment Terms</label>
+                    <select name="payment_terms" class="w-full border border-gray-300 rounded px-3 py-2">
+                        <option value="">Select Terms</option>
+                        <option value="net_15" {% if supplier.payment_terms == 'net_15' %}selected{% endif %}>Net 15</option>
+                        <option value="net_30" {% if supplier.payment_terms == 'net_30' %}selected{% endif %}>Net 30</option>
+                        <option value="net_45" {% if supplier.payment_terms == 'net_45' %}selected{% endif %}>Net 45</option>
+                        <option value="net_60" {% if supplier.payment_terms == 'net_60' %}selected{% endif %}>Net 60</option>
+                        <option value="cod" {% if supplier.payment_terms == 'cod' %}selected{% endif %}>COD</option>
+                        <option value="prepaid" {% if supplier.payment_terms == 'prepaid' %}selected{% endif %}>Prepaid</option>
+                        <option value="2_10_net_30" {% if supplier.payment_terms == '2_10_net_30' %}selected{% endif %}>2/10 Net 30</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Credit Limit ($)</label>
+                    <input type="number" name="credit_limit" min="0" step="0.01" value="{{ supplier.credit_limit or '' }}"
+                           class="w-full border border-gray-300 rounded px-3 py-2"
+                           placeholder="0.00">
+                </div>
+            </div>
+        </div>
+
+        <!-- API Integration -->
+        <div class="bg-white rounded-lg shadow p-6">
+            <h2 class="text-lg font-semibold mb-4 border-b pb-2">API Integration</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">API Endpoint URL</label>
+                    <input type="url" name="api_endpoint" value="{{ supplier.api_endpoint or '' }}"
+                           class="w-full border border-gray-300 rounded px-3 py-2"
+                           placeholder="https://api.supplier.com/v1">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Authentication Type</label>
+                    <select name="api_auth_type" class="w-full border border-gray-300 rounded px-3 py-2">
+                        <option value="">No API</option>
+                        <option value="api_key" {% if supplier.api_auth_type == 'api_key' %}selected{% endif %}>API Key</option>
+                        <option value="basic_auth" {% if supplier.api_auth_type == 'basic_auth' %}selected{% endif %}>Basic Auth</option>
+                        <option value="oauth2" {% if supplier.api_auth_type == 'oauth2' %}selected{% endif %}>OAuth 2.0</option>
+                        <option value="bearer_token" {% if supplier.api_auth_type == 'bearer_token' %}selected{% endif %}>Bearer Token</option>
+                    </select>
+                </div>
+                <div class="md:col-span-2">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">API Key / Token</label>
+                    <input type="password" name="api_key" value="{{ supplier.api_key or '' }}"
+                           class="w-full border border-gray-300 rounded px-3 py-2"
+                           placeholder="Enter API key (leave blank to keep existing)">
+                    <p class="text-xs text-gray-500 mt-1">API credentials are stored encrypted</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Notes -->
+        <div class="bg-white rounded-lg shadow p-6">
+            <h2 class="text-lg font-semibold mb-4 border-b pb-2">Notes</h2>
+            <textarea name="notes" rows="4" class="w-full border border-gray-300 rounded px-3 py-2"
+                      placeholder="Internal notes about this supplier">{{ supplier.notes or '' }}</textarea>
+        </div>
+
+        <!-- Status -->
+        <div class="bg-white rounded-lg shadow p-6">
+            <h2 class="text-lg font-semibold mb-4 border-b pb-2">Status</h2>
+            <div class="flex items-center space-x-6">
+                <label class="flex items-center">
+                    <input type="checkbox" name="is_active" {% if supplier.is_active %}checked{% endif %} class="mr-2 rounded">
+                    <span class="text-sm text-gray-700">Active Supplier</span>
+                </label>
+                <label class="flex items-center">
+                    <input type="checkbox" name="is_preferred" {% if supplier.is_preferred %}checked{% endif %} class="mr-2 rounded">
+                    <span class="text-sm text-gray-700">Preferred Supplier</span>
+                </label>
+            </div>
+        </div>
+
+        <!-- Form Actions -->
+        <div class="flex justify-between items-center">
+            <button type="button" onclick="confirmDelete()" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded">
+                Delete Supplier
+            </button>
+            <div class="space-x-3">
+                <a href="{{ url_for('inventory.supplier_detail', supplier_id=supplier.id) }}" class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded">
+                    Cancel
+                </a>
+                <button type="submit" class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded">
+                    Save Changes
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+function confirmDelete() {
+    if (confirm('Are you sure you want to delete this supplier? This action cannot be undone.')) {
+        fetch('{{ url_for("inventory.delete_supplier", supplier_id=supplier.id) }}', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' }
+        }).then(response => {
+            if (response.ok) {
+                window.location.href = '{{ url_for("inventory.suppliers_list") }}';
+            } else {
+                alert('Failed to delete supplier. It may have associated orders or items.');
+            }
+        });
+    }
+}
+</script>
+{% endblock %}

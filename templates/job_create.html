@@ -1,0 +1,485 @@
+<!-- templates/job_create.html -->
+{% extends "base.html" %}
+{% block content %}
+<div class="container mx-auto p-6">
+    <h1 class="text-3xl font-bold mb-6 text-gray-800">Create New Job</h1>
+    
+    <form method="POST" action="{{ url_for('jobs.create_job_route') }}" id="jobCreateForm" class="space-y-8">
+        <!-- Basic Job Information -->
+        <div class="bg-white p-6 rounded-lg shadow-md">
+            <h2 class="text-xl font-semibold mb-4 text-gray-700 border-b pb-2">Basic Information</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Job Name *</label>
+                    <input type="text" name="name" id="job_name" class="w-full border border-gray-300 p-3 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" required>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Job Type *</label>
+                    <select name="job_type" id="job_type" class="w-full border border-gray-300 p-3 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" required>
+                        <option value="">-- Select Job Type --</option>
+                        <option value="installation">Installation</option>
+                        <option value="maintenance">Maintenance</option>
+                        <option value="repair">Repair</option>
+                        <option value="inspection">Inspection</option>
+                        <option value="construction">Construction</option>
+                        <option value="emergency">Emergency</option>
+                    </select>
+                </div>
+        <div class="md:col-span-2">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                    <textarea name="description" id="description" rows="3" class="w-full border border-gray-300 p-3 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Detailed description of work to be performed"></textarea>
+                </div>
+            </div>
+        </div>
+
+        <!-- Location & Scheduling -->
+        <div class="bg-white p-6 rounded-lg shadow-md">
+            <h2 class="text-xl font-semibold mb-4 text-gray-700 border-b pb-2">Location & Scheduling</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Location *</label>
+                    <input type="text" name="location" id="location" class="w-full border border-gray-300 p-3 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Work site address or description" required>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Town/City</label>
+                    <select name="town_id" id="town_id" class="w-full border border-gray-300 p-3 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <option value="">-- Select Town --</option>
+                {% for t in towns %}
+                <option value="{{ t.id }}">{{ t.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Start Date *</label>
+                    <input type="date" name="start_date" id="start_date" class="w-full border border-gray-300 p-3 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" required>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Projected End Date</label>
+                    <input type="date" name="end_date" id="end_date" class="w-full border border-gray-300 p-3 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Duration (Days)</label>
+                    <input type="number" name="duration_days" id="duration_days" class="w-full border border-gray-300 p-3 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" min="1" placeholder="Estimated work days">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Square Footage</label>
+                    <input type="number" name="square_footage" id="square_footage" class="w-full border border-gray-300 p-3 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" min="0" placeholder="Area in sq ft">
+                </div>
+            </div>
+        </div>
+
+        <!-- People Assignment -->
+        <div class="bg-white p-6 rounded-lg shadow-md">
+            <h2 class="text-xl font-semibold mb-4 text-gray-700 border-b pb-2">People Assignment</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Crew Size</label>
+                    <input type="number" name="crew_size" id="crew_size" class="w-full border border-gray-300 p-3 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" min="1" value="1">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Job Supervisor</label>
+                    <select name="supervisor_id" id="supervisor_id" class="w-full border border-gray-300 p-3 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <option value="">-- Select Supervisor --</option>
+                        {% for user in users %}
+                        {% if user.role in ['manager', 'admin', 'supervisor'] %}
+                        <option value="{{ user.id }}">{{ user.full_name }} ({{ user.role }})</option>
+                        {% endif %}
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            
+            <!-- Assigned People -->
+            <div class="mt-4">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Assigned People</label>
+                <div id="assigned-people" class="space-y-2">
+                    <div class="person-assignment flex gap-2 items-end">
+                        <div class="flex-1">
+                            <select name="assigned_people[]" class="w-full border border-gray-300 p-2 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent person-select">
+                                <option value="">-- Select Person --</option>
+                                {% for user in users %}
+                                <option value="{{ user.id }}" data-certifications="{{ user.certifications|tojson }}">{{ user.full_name }} - {{ user.job_title or 'No Title' }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <button type="button" class="remove-person bg-red-500 text-white px-3 py-2 rounded hover:bg-red-600" onclick="removePerson(this)">Remove</button>
+                    </div>
+                </div>
+                <button type="button" id="add-person" class="mt-2 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">Add Person</button>
+            </div>
+        </div>
+
+        <!-- Equipment Assignment -->
+        <div class="bg-white p-6 rounded-lg shadow-md">
+            <h2 class="text-xl font-semibold mb-4 text-gray-700 border-b pb-2">Equipment Assignment</h2>
+            <div id="assigned-equipment" class="space-y-2">
+                <div class="equipment-assignment flex gap-2 items-end">
+                    <div class="flex-1">
+                        <select name="assigned_equipment[]" class="w-full border border-gray-300 p-2 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent equipment-select">
+                            <option value="">-- Select Equipment --</option>
+                            {% for equipment in equipment_list %}
+                            <option value="{{ equipment.id }}" data-certifications="{{ equipment.certifications_required|tojson }}" data-status="{{ equipment.status }}">{{ equipment.name }} - {{ equipment.model }} ({{ equipment.status }})</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="w-32">
+                        <input type="text" name="equipment_operator[]" placeholder="Operator" class="w-full border border-gray-300 p-2 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent operator-field">
+                    </div>
+                    <button type="button" class="remove-equipment bg-red-500 text-white px-3 py-2 rounded hover:bg-red-600" onclick="removeEquipment(this)">Remove</button>
+                </div>
+            </div>
+            <button type="button" id="add-equipment" class="mt-2 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">Add Equipment</button>
+        </div>
+
+        <!-- Inventory Items -->
+        <div class="bg-white p-6 rounded-lg shadow-md">
+            <h2 class="text-xl font-semibold mb-4 text-gray-700 border-b pb-2">Required Inventory Items</h2>
+            <div id="required-inventory" class="space-y-2">
+                <div class="inventory-item flex gap-2 items-end">
+                    <div class="flex-1">
+                        <select name="inventory_items[]" class="w-full border border-gray-300 p-2 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent inventory-select">
+                            <option value="">-- Select Item --</option>
+                            {% for item in inventory_items %}
+                            <option value="{{ item.id }}" data-available="{{ item.quantity }}" data-unit="{{ item.unit }}">{{ item.name }} - Available: {{ item.quantity }} {{ item.unit }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="w-24">
+                        <input type="number" name="inventory_quantities[]" placeholder="Qty" class="w-full border border-gray-300 p-2 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent quantity-field" min="1">
+                    </div>
+                    <button type="button" class="remove-inventory bg-red-500 text-white px-3 py-2 rounded hover:bg-red-600" onclick="removeInventory(this)">Remove</button>
+                </div>
+            </div>
+            <button type="button" id="add-inventory" class="mt-2 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">Add Item</button>
+        </div>
+
+        <!-- Job Codes -->
+        <div class="bg-white p-6 rounded-lg shadow-md">
+            <h2 class="text-xl font-semibold mb-4 text-gray-700 border-b pb-2">Job Codes</h2>
+            <div id="job-codes" class="space-y-2">
+                <div class="job-code flex gap-2 items-end">
+                    <div class="flex-1">
+                        <select name="job_codes[]" class="w-full border border-gray-300 p-2 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent job-code-select">
+                            <option value="">-- Select Job Code --</option>
+                            {% for code in job_codes %}
+                            <option value="{{ code.id }}">{{ code.service_unit }} - {{ code.description }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="w-24">
+                        <input type="number" name="code_quantities[]" placeholder="Qty" class="w-full border border-gray-300 p-2 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" min="1">
+                    </div>
+                    <button type="button" class="remove-code bg-red-500 text-white px-3 py-2 rounded hover:bg-red-600" onclick="removeJobCode(this)">Remove</button>
+                </div>
+            </div>
+            <button type="button" id="add-job-code" class="mt-2 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">Add Job Code</button>
+        </div>
+
+        <!-- Financial Information -->
+        <div class="bg-white p-6 rounded-lg shadow-md">
+            <h2 class="text-xl font-semibold mb-4 text-gray-700 border-b pb-2">Financial Information</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Estimated Cost</label>
+                    <input type="number" name="estimated_cost" id="estimated_cost" class="w-full border border-gray-300 p-3 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" step="0.01" min="0" placeholder="0.00">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Priority</label>
+                    <select name="priority" id="priority" class="w-full border border-gray-300 p-3 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <option value="normal">Normal</option>
+                        <option value="high">High</option>
+                        <option value="critical">Critical</option>
+                        <option value="low">Low</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Validation Messages -->
+        <div id="validation-messages" class="hidden bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+            <strong>Please fix the following issues:</strong>
+            <ul id="validation-list" class="mt-2 list-disc list-inside"></ul>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="flex justify-end space-x-4">
+            <button type="button" onclick="window.history.back()" class="bg-gray-500 text-white px-6 py-3 rounded-md hover:bg-gray-600 transition duration-200">Cancel</button>
+            <button type="submit" class="bg-blue-600 text-white px-6 py-3 rounded-md hover:bg-blue-700 transition duration-200 flex items-center">
+                <svg class="hidden animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Create Job
+            </button>
+        </div>
+    </form>
+</div>
+
+<!-- JavaScript for dynamic form handling and validation -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Add person functionality
+    document.getElementById('add-person').addEventListener('click', function() {
+        const container = document.getElementById('assigned-people');
+        const template = container.querySelector('.person-assignment').cloneNode(true);
+        template.querySelector('select').selectedIndex = 0;
+        container.appendChild(template);
+    });
+
+    // Add equipment functionality
+    document.getElementById('add-equipment').addEventListener('click', function() {
+        const container = document.getElementById('assigned-equipment');
+        const template = container.querySelector('.equipment-assignment').cloneNode(true);
+        template.querySelector('select').selectedIndex = 0;
+        template.querySelector('input').value = '';
+        container.appendChild(template);
+    });
+
+    // Add inventory functionality
+    document.getElementById('add-inventory').addEventListener('click', function() {
+        const container = document.getElementById('required-inventory');
+        const template = container.querySelector('.inventory-item').cloneNode(true);
+        template.querySelector('select').selectedIndex = 0;
+        template.querySelector('input').value = '';
+        container.appendChild(template);
+    });
+
+    // Add job code functionality
+    document.getElementById('add-job-code').addEventListener('click', function() {
+        const container = document.getElementById('job-codes');
+        const template = container.querySelector('.job-code').cloneNode(true);
+        template.querySelector('select').selectedIndex = 0;
+        template.querySelector('input').value = '';
+        container.appendChild(template);
+    });
+
+    // Form validation
+    document.getElementById('jobCreateForm').addEventListener('submit', function(e) {
+        if (!validateForm()) {
+            e.preventDefault();
+            return false;
+        }
+    });
+
+    // Equipment selection validation
+    document.addEventListener('change', function(e) {
+        if (e.target.classList.contains('equipment-select')) {
+            validateEquipmentSelection(e.target);
+        }
+    });
+
+    // Person selection validation
+    document.addEventListener('change', function(e) {
+        if (e.target.classList.contains('person-select')) {
+            validatePersonAvailability(e.target);
+        }
+    });
+
+    // Inventory validation
+    document.addEventListener('change', function(e) {
+        if (e.target.classList.contains('inventory-select') || e.target.classList.contains('quantity-field')) {
+            validateInventoryAvailability(e.target.closest('.inventory-item'));
+        }
+    });
+
+    // Auto-calculate end date based on start date and duration
+    document.getElementById('start_date').addEventListener('change', updateEndDate);
+    document.getElementById('duration_days').addEventListener('change', updateEndDate);
+});
+
+function removePerson(button) {
+    const container = document.getElementById('assigned-people');
+    if (container.children.length > 1) {
+        button.closest('.person-assignment').remove();
+    }
+}
+
+function removeEquipment(button) {
+    const container = document.getElementById('assigned-equipment');
+    if (container.children.length > 1) {
+        button.closest('.equipment-assignment').remove();
+    }
+}
+
+function removeInventory(button) {
+    const container = document.getElementById('required-inventory');
+    if (container.children.length > 1) {
+        button.closest('.inventory-item').remove();
+    }
+}
+
+function removeJobCode(button) {
+    const container = document.getElementById('job-codes');
+    if (container.children.length > 1) {
+        button.closest('.job-code').remove();
+    }
+}
+
+function updateEndDate() {
+    const startDate = document.getElementById('start_date').value;
+    const duration = parseInt(document.getElementById('duration_days').value);
+    
+    if (startDate && duration) {
+        const start = new Date(startDate);
+        const end = new Date(start.getTime() + (duration * 24 * 60 * 60 * 1000));
+        document.getElementById('end_date').value = end.toISOString().split('T')[0];
+    }
+}
+
+function validateForm() {
+    const errors = [];
+    
+    // Basic validation
+    if (!document.getElementById('job_name').value.trim()) {
+        errors.push('Job name is required');
+    }
+    
+    if (!document.getElementById('job_type').value) {
+        errors.push('Job type is required');
+    }
+    
+    if (!document.getElementById('location').value.trim()) {
+        errors.push('Location is required');
+    }
+    
+    if (!document.getElementById('start_date').value) {
+        errors.push('Start date is required');
+    }
+
+    // Validate people assignments
+    const assignedPeople = Array.from(document.querySelectorAll('.person-select'))
+        .map(select => select.value)
+        .filter(value => value);
+    
+    const duplicatePeople = assignedPeople.filter((item, index) => assignedPeople.indexOf(item) !== index);
+    if (duplicatePeople.length > 0) {
+        errors.push('The same person cannot be assigned multiple times');
+    }
+
+    // Validate equipment assignments
+    const assignedEquipment = Array.from(document.querySelectorAll('.equipment-select'))
+        .map(select => select.value)
+        .filter(value => value);
+    
+    const duplicateEquipment = assignedEquipment.filter((item, index) => assignedEquipment.indexOf(item) !== index);
+    if (duplicateEquipment.length > 0) {
+        errors.push('The same equipment cannot be assigned multiple times');
+    }
+
+    // Validate inventory items
+    const inventoryItems = Array.from(document.querySelectorAll('.inventory-select'))
+        .map(select => select.value)
+        .filter(value => value);
+    
+    const duplicateInventory = inventoryItems.filter((item, index) => inventoryItems.indexOf(item) !== index);
+    if (duplicateInventory.length > 0) {
+        errors.push('The same inventory item cannot be added multiple times');
+    }
+
+    // Validate job codes
+    const jobCodes = Array.from(document.querySelectorAll('.job-code-select'))
+        .map(select => select.value)
+        .filter(value => value);
+    
+    const duplicateJobCodes = jobCodes.filter((item, index) => jobCodes.indexOf(item) !== index);
+    if (duplicateJobCodes.length > 0) {
+        errors.push('The same job code cannot be added multiple times');
+    }
+
+    // Show errors if any
+    if (errors.length > 0) {
+        showValidationErrors(errors);
+        return false;
+    }
+
+    hideValidationErrors();
+    return true;
+}
+
+function validateEquipmentSelection(equipmentSelect) {
+    const selectedOption = equipmentSelect.options[equipmentSelect.selectedIndex];
+    if (!selectedOption.value) return;
+
+    const status = selectedOption.dataset.status;
+    const requiredCerts = JSON.parse(selectedOption.dataset.certifications || '[]');
+    
+    // Check if equipment is available
+    if (status !== 'in_service' && status !== 'available') {
+        showFieldError(equipmentSelect, `Equipment is not available (Status: ${status})`);
+        return;
+    }
+
+    // Check operator certifications if specified
+    const operatorField = equipmentSelect.closest('.equipment-assignment').querySelector('.operator-field');
+    if (operatorField.value && requiredCerts.length > 0) {
+        // This would need backend validation in a real implementation
+        console.log('Checking operator certifications for:', operatorField.value, requiredCerts);
+    }
+
+    clearFieldError(equipmentSelect);
+}
+
+function validatePersonAvailability(personSelect) {
+    const selectedOption = personSelect.options[personSelect.selectedIndex];
+    if (!selectedOption.value) return;
+
+    const startDate = document.getElementById('start_date').value;
+    const endDate = document.getElementById('end_date').value;
+    
+    if (startDate && endDate) {
+        // This would need backend AJAX call to check availability
+        console.log('Checking person availability:', selectedOption.value, startDate, endDate);
+    }
+}
+
+function validateInventoryAvailability(inventoryRow) {
+    const select = inventoryRow.querySelector('.inventory-select');
+    const quantityField = inventoryRow.querySelector('.quantity-field');
+    
+    if (!select.value || !quantityField.value) return;
+
+    const selectedOption = select.options[select.selectedIndex];
+    const available = parseInt(selectedOption.dataset.available);
+    const requested = parseInt(quantityField.value);
+    
+    if (requested > available) {
+        showFieldError(quantityField, `Only ${available} units available`);
+        return;
+    }
+
+    clearFieldError(quantityField);
+}
+
+function showValidationErrors(errors) {
+    const container = document.getElementById('validation-messages');
+    const list = document.getElementById('validation-list');
+    
+    list.innerHTML = errors.map(error => `<li>${error}</li>`).join('');
+    container.classList.remove('hidden');
+    container.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+function hideValidationErrors() {
+    document.getElementById('validation-messages').classList.add('hidden');
+}
+
+function showFieldError(field, message) {
+    clearFieldError(field);
+    field.classList.add('border-red-500');
+    
+    const errorDiv = document.createElement('div');
+    errorDiv.className = 'field-error text-red-500 text-sm mt-1';
+    errorDiv.textContent = message;
+    
+    field.parentNode.appendChild(errorDiv);
+}
+
+function clearFieldError(field) {
+    field.classList.remove('border-red-500');
+    const errorDiv = field.parentNode.querySelector('.field-error');
+    if (errorDiv) {
+        errorDiv.remove();
+    }
+}
+</script>
+{% endblock %}

@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="space-y-4">
+  <div class="flex items-center justify-between">
+    <h1 class="text-2xl font-bold">{{ board.name }} — Workload</h1>
+    <a class="btn-integration btn-blue" href="{{ url_for('pm.board_detail', board_id=board.id, view='kanban') }}">Kanban</a>
+  </div>
+  <div class="bg-white rounded shadow p-4">
+    <table class="w-full text-left">
+      <thead class="bg-gray-100">
+        <tr>
+          <th class="px-4 py-2">User</th>
+          <th class="px-4 py-2">Assigned Hours</th>
+          <th class="px-4 py-2">Capacity (Weekly)</th>
+          <th class="px-4 py-2">Utilization</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for r in workload_data.rows %}
+        <tr class="border-t {{ 'bg-red-50' if r.overallocated else '' }}">
+          <td class="px-4 py-2">{{ r.username }}</td>
+          <td class="px-4 py-2">{{ r.assigned_hours }}</td>
+          <td class="px-4 py-2">{{ r.weekly_capacity_hours }}</td>
+          <td class="px-4 py-2">{{ (r.utilization * 100)|round(0) }}%</td>
+        </tr>
+        {% else %}
+        <tr><td class="px-4 py-4 text-gray-600" colspan="4">No workload data.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
+
+

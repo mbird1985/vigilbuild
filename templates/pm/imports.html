@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="space-y-4">
+  <h1 class="text-2xl font-bold">Imports</h1>
+  <div class="bg-white rounded shadow p-4 space-y-3">
+    <p class="text-gray-700">Import charts, graphs, job details, or schedule snapshots. Paste embed codes or upload CSVs.</p>
+    <div class="grid md:grid-cols-2 gap-4">
+      <div>
+        <h2 class="font-semibold mb-2">Embed iFrame</h2>
+        <textarea id="embedCode" placeholder="Paste embed code (Power BI iFrame, etc.)" class="w-full border rounded p-2 h-32"></textarea>
+        <button class="btn-integration btn-teal mt-2" onclick="addEmbed()">Add to Dashboard</button>
+      </div>
+      <div>
+        <h2 class="font-semibold mb-2">Upload CSV</h2>
+        <input id="csvFile" type="file" accept=".csv" class="border rounded p-2 w-full" />
+        <button class="btn-integration btn-blue mt-2" onclick="previewCsv()">Preview</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="csvPreview" class="bg-white rounded shadow p-4 hidden">
+    <h2 class="font-semibold mb-2">CSV Preview</h2>
+    <pre id="csvText" class="whitespace-pre-wrap text-sm"></pre>
+  </div>
+</div>
+
+<script>
+async function addEmbed() {
+  const code = document.getElementById('embedCode').value.trim();
+  if (!code) return;
+  // Save as a generic widget with embed html in config
+  await fetch('/pm/api/widgets', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ widget_type: 'embed', config: { html: code }, width: 12 })
+  });
+  alert('Embed added to dashboard');
+}
+
+function previewCsv() {
+  const file = document.getElementById('csvFile').files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function() {
+    const text = reader.result;
+    document.getElementById('csvText').textContent = text.slice(0, 5000);
+    document.getElementById('csvPreview').classList.remove('hidden');
+  };
+  reader.readAsText(file);
+}
+</script>
+{% endblock %}
+
+
+
+
+
+

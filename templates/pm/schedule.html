@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="space-y-4">
+  <h1 class="text-2xl font-bold">Schedule Summary</h1>
+  <div class="bg-white rounded shadow">
+    <table class="w-full text-left">
+      <thead class="bg-gray-100">
+        <tr>
+          <th class="px-4 py-2">Title</th>
+          <th class="px-4 py-2">Start</th>
+          <th class="px-4 py-2">End</th>
+          <th class="px-4 py-2">Location</th>
+          <th class="px-4 py-2">Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for s in schedules %}
+        <tr class="border-t">
+          <td class="px-4 py-2">{{ s.title }}</td>
+          <td class="px-4 py-2">{{ s.start_date }}</td>
+          <td class="px-4 py-2">{{ s.end_date }}</td>
+          <td class="px-4 py-2">{{ s.location }}</td>
+          <td class="px-4 py-2">{{ s.status }}</td>
+        </tr>
+        {% else %}
+        <tr><td class="px-4 py-4 text-gray-600" colspan="5">No schedules found.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
+
+
+
+
+
+

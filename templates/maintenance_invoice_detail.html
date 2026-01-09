@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="space-y-4">
+  <div class="flex items-center justify-between">
+    <h1 class="text-2xl font-bold">Invoice #{{ invoice.id }}</h1>
+    {% if invoice.status != 'paid' %}
+    <form method="post" action="{{ url_for('equipment.maintenance_invoice_mark_paid', invoice_id=invoice.id) }}">
+      <button class="btn-integration btn-teal">Mark Paid</button>
+    </form>
+    {% endif %}
+  </div>
+  <div class="bg-white rounded shadow p-4">
+    <div class="grid md:grid-cols-3 gap-3">
+      <div><div class="text-sm text-gray-600">Customer</div><div class="font-medium">{{ invoice.customer_id or '-' }}</div></div>
+      <div><div class="text-sm text-gray-600">Equipment</div><div class="font-medium">{{ invoice.equipment_id or '-' }}</div></div>
+      <div><div class="text-sm text-gray-600">Status</div><div class="font-medium">{{ invoice.status }}</div></div>
+    </div>
+  </div>
+  <div class="bg-white rounded shadow p-4">
+    <div class="font-semibold mb-2">Items</div>
+    <table class="w-full text-left">
+      <thead class="bg-gray-100"><tr><th class="px-2 py-1">Type</th><th class="px-2 py-1">Description</th><th class="px-2 py-1">Qty</th><th class="px-2 py-1">Unit</th><th class="px-2 py-1">Total</th></tr></thead>
+      <tbody>
+        {% for it in items %}
+        <tr class="border-t"><td class="px-2 py-1">{{ it.item_type }}</td><td class="px-2 py-1">{{ it.description }}</td><td class="px-2 py-1">{{ it.quantity }}</td><td class="px-2 py-1">${{ '%.2f'|format(it.unit_price) }}</td><td class="px-2 py-1">${{ '%.2f'|format(it.total) }}</td></tr>
+        {% else %}
+        <tr><td class="px-2 py-2 text-gray-600" colspan="5">No items.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <div class="text-right mt-3 font-semibold">Total: ${{ '%.2f'|format(invoice.total) }}</div>
+  </div>
+</div>
+{% endblock %}
+
+
+
+
+
+

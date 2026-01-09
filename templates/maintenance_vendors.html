@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block title %}Vendors & Contractors - Maintenance{% endblock %}
+{% block content %}
+<div class="container mx-auto px-4 py-6">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-bold text-gray-800">Vendors & Contractors</h1>
+        <a href="{{ url_for('equipment.maintenance_vendor_new') }}" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+            + Add Vendor
+        </a>
+    </div>
+
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+        {% for message in messages %}{{ message }}{% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
+
+    <!-- Filters -->
+    <div class="bg-white rounded-lg shadow p-4 mb-6">
+        <form method="GET" class="flex gap-4 items-end">
+            <div>
+                <label class="block text-sm font-medium text-gray-700">Type</label>
+                <select name="type" class="mt-1 border border-gray-300 rounded-md p-2">
+                    <option value="">All Types</option>
+                    <option value="contractor" {% if filter_type == 'contractor' %}selected{% endif %}>Contractor</option>
+                    <option value="supplier" {% if filter_type == 'supplier' %}selected{% endif %}>Supplier</option>
+                    <option value="service" {% if filter_type == 'service' %}selected{% endif %}>Service Provider</option>
+                </select>
+            </div>
+            <button type="submit" class="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700">Filter</button>
+            <a href="{{ url_for('equipment.maintenance_vendors') }}" class="text-gray-600 hover:underline">Clear</a>
+        </form>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {% for vendor in vendors %}
+        <div class="bg-white rounded-lg shadow p-4">
+            <div class="flex justify-between items-start mb-3">
+                <div>
+                    <h3 class="font-semibold text-lg">{{ vendor.name }}</h3>
+                    <span class="text-xs px-2 py-1 rounded-full bg-gray-100 text-gray-600 capitalize">{{ vendor.vendor_type }}</span>
+                </div>
+                {% if vendor.is_active %}
+                <span class="px-2 py-1 text-xs rounded-full bg-green-100 text-green-800">Active</span>
+                {% else %}
+                <span class="px-2 py-1 text-xs rounded-full bg-gray-100 text-gray-600">Inactive</span>
+                {% endif %}
+            </div>
+            <div class="text-sm text-gray-600 space-y-1 mb-3">
+                {% if vendor.contact_name %}<div>{{ vendor.contact_name }}</div>{% endif %}
+                {% if vendor.contact_phone %}<div>{{ vendor.contact_phone }}</div>{% endif %}
+                {% if vendor.contact_email %}<div>{{ vendor.contact_email }}</div>{% endif %}
+                {% if vendor.specialties %}<div class="text-gray-500">{{ vendor.specialties }}</div>{% endif %}
+            </div>
+            {% if vendor.rating %}
+            <div class="mb-3">
+                {% for i in range(5) %}
+                <span class="{% if i < vendor.rating %}text-yellow-400{% else %}text-gray-300{% endif %}">★</span>
+                {% endfor %}
+            </div>
+            {% endif %}
+            <div class="flex gap-2">
+                <a href="{{ url_for('equipment.maintenance_vendor_view', vendor_id=vendor.id) }}" class="text-blue-600 hover:underline text-sm">View Details</a>
+                <a href="{{ url_for('equipment.maintenance_vendor_edit', vendor_id=vendor.id) }}" class="text-green-600 hover:underline text-sm">Edit</a>
+            </div>
+        </div>
+        {% else %}
+        <div class="col-span-full text-center py-8 text-gray-500">
+            No vendors found. <a href="{{ url_for('equipment.maintenance_vendor_new') }}" class="text-blue-600 hover:underline">Add one</a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

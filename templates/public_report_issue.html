@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Report an Issue - Vigil Build</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <div class="bg-blue-700 text-white py-6">
+        <div class="container mx-auto px-4">
+            <h1 class="text-2xl font-bold">Report an Issue</h1>
+            <p class="text-blue-200">Help us maintain your community</p>
+        </div>
+    </div>
+
+    <div class="container mx-auto px-4 py-8">
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-6">
+            {% for message in messages %}{{ message }}{% endfor %}
+        </div>
+        {% endif %}
+        {% endwith %}
+
+        <div class="max-w-2xl mx-auto bg-white rounded-lg shadow-lg p-6">
+            <form method="POST" enctype="multipart/form-data">
+                <div class="space-y-6">
+                    <!-- Issue Type -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">What type of issue are you reporting? *</label>
+                        <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+                            <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-blue-50">
+                                <input type="radio" name="request_type" value="pothole" required class="mr-2">
+                                <span>Pothole</span>
+                            </label>
+                            <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-blue-50">
+                                <input type="radio" name="request_type" value="streetlight" class="mr-2">
+                                <span>Street Light</span>
+                            </label>
+                            <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-blue-50">
+                                <input type="radio" name="request_type" value="power_outage" class="mr-2">
+                                <span>Power Outage</span>
+                            </label>
+                            <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-blue-50">
+                                <input type="radio" name="request_type" value="water" class="mr-2">
+                                <span>Water Issue</span>
+                            </label>
+                            <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-blue-50">
+                                <input type="radio" name="request_type" value="road_damage" class="mr-2">
+                                <span>Road Damage</span>
+                            </label>
+                            <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-blue-50">
+                                <input type="radio" name="request_type" value="other" class="mr-2">
+                                <span>Other</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Description -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Describe the issue *</label>
+                        <textarea name="description" rows="4" required
+                                  class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-3"
+                                  placeholder="Please provide as much detail as possible..."></textarea>
+                    </div>
+
+                    <!-- Location -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Location / Address *</label>
+                        <input type="text" name="location" required
+                               class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-3"
+                               placeholder="Street address, intersection, or landmark">
+                        <input type="hidden" name="latitude" id="latitude">
+                        <input type="hidden" name="longitude" id="longitude">
+                        <button type="button" onclick="getLocation()" class="mt-2 text-sm text-blue-600 hover:underline">
+                            Use my current location
+                        </button>
+                    </div>
+
+                    <!-- Photo -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Photo (optional)</label>
+                        <input type="file" name="photo" accept="image/*" capture="environment"
+                               class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+                        <p class="text-xs text-gray-500 mt-1">A photo helps us understand and locate the issue faster</p>
+                    </div>
+
+                    <!-- Contact Info (Optional) -->
+                    <div class="border-t pt-6">
+                        <p class="text-sm text-gray-600 mb-4">Contact information (optional - allows us to update you on the status)</p>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">Name</label>
+                                <input type="text" name="reporter_name"
+                                       class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">Email</label>
+                                <input type="email" name="reporter_email"
+                                       class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">Phone</label>
+                                <input type="tel" name="reporter_phone"
+                                       class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2">
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="w-full bg-blue-600 text-white px-6 py-4 rounded-lg text-lg font-semibold hover:bg-blue-700">
+                        Submit Report
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <div class="max-w-2xl mx-auto mt-6 text-center text-sm text-gray-500">
+            <p>For emergencies, please call 911.</p>
+            <p>This form is for non-emergency issues only.</p>
+        </div>
+    </div>
+
+    <script>
+    function getLocation() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function(position) {
+                document.getElementById('latitude').value = position.coords.latitude;
+                document.getElementById('longitude').value = position.coords.longitude;
+                alert('Location captured!');
+            }, function(error) {
+                alert('Unable to get location: ' + error.message);
+            });
+        } else {
+            alert('Geolocation is not supported by this browser.');
+        }
+    }
+    </script>
+</body>
+</html>

@@ -1,0 +1,156 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="space-y-4">
+  <div class="flex justify-between mb-4">
+    <h1 class="text-2xl font-bold">{{ board.name }}</h1>
+    <div class="flex space-x-2">
+      <select onchange="window.location.href = '?view=' + this.value" class="border rounded p-2">
+        <option value="kanban" {% if active_view == 'kanban' %}selected{% endif %}>Kanban</option>
+        <option value="timeline" {% if active_view == 'timeline' %}selected{% endif %}>Timeline</option>
+        <option value="gantt" {% if active_view == 'gantt' %}selected{% endif %}>Gantt</option>
+        <option value="calendar" {% if active_view == 'calendar' %}selected{% endif %}>Calendar</option>
+        <option value="map" {% if active_view == 'map' %}selected{% endif %}>Map</option>
+        <option value="workload" {% if active_view == 'workload' %}selected{% endif %}>Workload</option>
+        <option value="chart" {% if active_view == 'chart' %}selected{% endif %}>Chart</option>
+        <option value="files" {% if active_view == 'files' %}selected{% endif %}>Files</option>
+        <option value="forms" {% if active_view == 'forms' %}selected{% endif %}>Forms</option>
+      </select>
+      <button onclick="showAddItemModal()" class="btn-integration btn-teal">Add Item</button>
+      <button onclick="showAddColumnModal()" class="btn-integration btn-blue">Add Column</button>
+    </div>
+  </div>
+
+  <div class="bg-white rounded shadow p-4">
+    <div class="flex gap-4 overflow-x-auto" id="kanbanBoard">
+      {% set statuses = ['To Do','In Progress','Blocked','Done'] %}
+      {% for column_status in statuses %}
+      <div class="min-w-[240px] bg-gray-50 rounded p-3" data-status="{{ column_status }}">
+        <div class="font-semibold mb-2">{{ column_status }}</div>
+        <div class="space-y-2" ondrop="onDrop(event, '{{ column_status }}')" ondragover="event.preventDefault();">
+          {% for it in items if (it.status or 'To Do') == column_status %}
+          <div class="bg-white rounded border p-2" draggable="true" ondragstart="onDragStart(event, {{ it.id }})" data-id="{{ it.id }}">
+            <div class="font-medium">{{ it.name }}</div>
+            {% if it.due_date %}<div class="text-xs text-gray-500">Due: {{ it.due_date }}</div>{% endif %}
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <script>
+  let draggedId = null;
+  function onDragStart(ev, id) { draggedId = id; }
+  async function onDrop(ev, newStatus) {
+    ev.preventDefault();
+    if (!draggedId) return;
+    const res = await fetch(`/pm/items/${draggedId}/values`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ column_id: 0, value: newStatus })
+    });
+    if (res.ok) {
+      // Also update the item core status
+      await fetch(`/pm/items/${draggedId}/status`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ status: newStatus }) });
+      location.reload();
+    }
+  }
+  </script>
+</div>
+
+<div id="addItemModal" class="modal">
+  <form id="addItemForm">
+    <input type="text" name="name" placeholder="Item Name" required>
+    <input type="text" name="status" placeholder="Status">
+    <input type="date" name="start_date" placeholder="Start Date">
+    <input type="date" name="end_date" placeholder="End Date">
+    <input type="date" name="due_date" placeholder="Due Date">
+    <input type="number" name="assignee_id" placeholder="Assignee ID">
+    <input type="number" name="position" placeholder="Position" value="0">
+    <input type="number" name="estimated_hours" placeholder="Estimated Hours">
+    <button type="submit">Save</button>
+  </form>
+</div>
+
+<div id="addColumnModal" class="modal">
+  <form id="addColumnForm">
+    <input type="text" name="name" placeholder="Column Name" required>
+    <select name="type">
+      <option value="text">Text</option>
+      <option value="number">Number</option>
+      <option value="date">Date</option>
+      <option value="timeline">Timeline</option>
+      <option value="people">People</option>
+      <option value="status">Status</option>
+      <option value="dropdown">Dropdown</option>
+      <option value="formula">Formula</option>
+      <option value="time_tracking">Time Tracking</option>
+      <option value="dependency">Dependency</option>
+      <option value="location">Location</option>
+      <option value="file">File</option>
+    </select>
+    <input type="number" name="position" placeholder="Position" value="0">
+    <label><input type="checkbox" name="is_restricted">Restricted</label>
+    <button type="submit">Save</button>
+  </form>
+</div>
+
+<script>
+function showAddItemModal() {
+  document.getElementById('addItemModal').style.display = 'block';
+}
+
+function showAddColumnModal() {
+  document.getElementById('addColumnModal').style.display = 'block';
+}
+
+document.getElementById('addItemForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const formData = new FormData(e.target);
+  const data = Object.fromEntries(formData.entries());
+  try {
+    const res = await fetch(`/pm/boards/{{ board.id }}/items`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+    if (res.ok) {
+      location.reload();
+    } else {
+      alert('Error adding item');
+    }
+  } catch (err) {
+    alert('Network error');
+  }
+});
+
+document.getElementById('addColumnForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const formData = new FormData(e.target);
+  const data = Object.fromEntries(formData.entries());
+  data.config = {}; // Placeholder
+  data.is_restricted = data.is_restricted === 'on';
+  try {
+    const res = await fetch(`/pm/boards/{{ board.id }}/columns`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+    if (res.ok) {
+      location.reload();
+    } else {
+      alert('Error adding column');
+    }
+  } catch (err) {
+    alert('Network error');
+  }
+});
+</script>
+
+<style>
+.modal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 20px; border: 1px solid #ccc; }
+</style>
+{% endblock %}
+
+

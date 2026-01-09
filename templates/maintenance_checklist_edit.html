@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+{% block title %}{% if template %}Edit{% else %}New{% endif %} Checklist Template{% endblock %}
+{% block content %}
+<div class="container mx-auto px-4 py-6">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-bold text-gray-800">{% if template %}Edit: {{ template.name }}{% else %}New Checklist Template{% endif %}</h1>
+        <a href="{{ url_for('equipment.maintenance_checklists') }}" class="text-gray-600 hover:text-gray-800">&larr; Back to Templates</a>
+    </div>
+
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+        {% for message in messages %}{{ message }}{% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Template Details -->
+        <div class="bg-white rounded-lg shadow p-6">
+            <h2 class="text-lg font-semibold mb-4">Template Details</h2>
+            <form method="POST" action="{% if template %}{{ url_for('equipment.maintenance_checklist_edit', template_id=template.id) }}{% else %}{{ url_for('equipment.maintenance_checklist_new') }}{% endif %}">
+                {% if template %}<input type="hidden" name="action" value="update_template">{% endif %}
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Name *</label>
+                        <input type="text" name="name" value="{{ template.name if template else '' }}" required
+                               class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Equipment Type</label>
+                        <select name="equipment_type" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2">
+                            <option value="">All Equipment Types</option>
+                            {% for type in equipment_types %}
+                            <option value="{{ type }}" {% if template and template.equipment_type == type %}selected{% endif %}>{{ type }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Description</label>
+                        <textarea name="description" rows="3" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2">{{ template.description if template else '' }}</textarea>
+                    </div>
+                    {% if template %}
+                    <div class="flex items-center">
+                        <input type="checkbox" name="is_active" id="is_active" {% if template.is_active %}checked{% endif %} class="h-4 w-4 text-blue-600 rounded">
+                        <label for="is_active" class="ml-2 text-sm text-gray-700">Active</label>
+                    </div>
+                    {% endif %}
+                    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                        {% if template %}Update Template{% else %}Create Template{% endif %}
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        {% if template %}
+        <!-- Checklist Items -->
+        <div class="bg-white rounded-lg shadow p-6">
+            <h2 class="text-lg font-semibold mb-4">Checklist Items</h2>
+
+            <!-- Existing Items -->
+            <div class="mb-6 space-y-2">
+                {% for item in template.items %}
+                <div class="flex items-center justify-between p-3 bg-gray-50 rounded border">
+                    <div>
+                        <span class="font-medium">{{ item.label }}</span>
+                        {% if item.category %}<span class="text-xs text-gray-500 ml-2">({{ item.category }})</span>{% endif %}
+                        {% if item.requires_photo %}<span class="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded ml-2">Photo Required</span>{% endif %}
+                    </div>
+                    <form method="POST" class="inline" onsubmit="return confirm('Delete this item?')">
+                        <input type="hidden" name="action" value="delete_item">
+                        <input type="hidden" name="item_id" value="{{ item.id }}">
+                        <button type="submit" class="text-red-600 hover:text-red-800 text-sm">Delete</button>
+                    </form>
+                </div>
+                {% else %}
+                <p class="text-gray-500 text-sm">No items yet. Add items below.</p>
+                {% endfor %}
+            </div>
+
+            <!-- Add New Item -->
+            <h3 class="font-medium mb-2 border-t pt-4">Add New Item</h3>
+            <form method="POST">
+                <input type="hidden" name="action" value="add_item">
+                <div class="space-y-3">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Item Label *</label>
+                        <input type="text" name="label" required placeholder="e.g., Check tire pressure"
+                               class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2">
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Category</label>
+                            <input type="text" name="category" placeholder="e.g., Tires, Engine"
+                                   class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Default Status</label>
+                            <select name="default_status" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2">
+                                <option value="ok">OK</option>
+                                <option value="na">N/A</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="flex items-center">
+                        <input type="checkbox" name="requires_photo" id="requires_photo" class="h-4 w-4 text-blue-600 rounded">
+                        <label for="requires_photo" class="ml-2 text-sm text-gray-700">Require photo if failed</label>
+                    </div>
+                    <input type="hidden" name="position" value="{{ template.items|length }}">
+                    <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+                        Add Item
+                    </button>
+                </div>
+            </form>
+        </div>
+        {% endif %}
+    </div>
+
+    {% if template %}
+    <!-- Delete Template -->
+    <div class="mt-6">
+        <form method="POST" action="{{ url_for('equipment.maintenance_checklist_delete', template_id=template.id) }}" onsubmit="return confirm('Delete this entire template? This cannot be undone.')">
+            <button type="submit" class="text-red-600 hover:text-red-800">Delete Template</button>
+        </form>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,192 @@
+{% extends "base.html" %}
+{% block title %}{{ kit.name }} - Parts Kit{% endblock %}
+{% block content %}
+<div class="container mx-auto px-4 py-6">
+    <div class="flex justify-between items-center mb-6">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-800">{{ kit.name }}</h1>
+            <p class="text-gray-600 capitalize">{{ kit.kit_type }} Kit</p>
+        </div>
+        <div class="flex gap-3">
+            <a href="{{ url_for('inventory.parts_kit_edit', kit_id=kit.id) }}"
+               class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Edit Kit</a>
+            <a href="{{ url_for('inventory.parts_kits') }}" class="text-gray-600 hover:text-gray-800">&larr; Back</a>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Main Content -->
+        <div class="lg:col-span-2 space-y-6">
+            <!-- Kit Summary -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div class="text-center p-4 bg-gray-50 rounded-lg">
+                        <div class="text-2xl font-bold text-gray-800">{{ kit.items|length }}</div>
+                        <div class="text-sm text-gray-500">Total Items</div>
+                    </div>
+                    <div class="text-center p-4 bg-gray-50 rounded-lg">
+                        <div class="text-2xl font-bold text-gray-800">${{ '{:,.2f}'.format(kit.total_cost) }}</div>
+                        <div class="text-sm text-gray-500">Kit Cost</div>
+                    </div>
+                    <div class="text-center p-4 {% if kit.availability_status == 'available' %}bg-green-50{% elif kit.availability_status == 'partial' %}bg-yellow-50{% else %}bg-red-50{% endif %} rounded-lg">
+                        <div class="text-2xl font-bold {% if kit.availability_status == 'available' %}text-green-600{% elif kit.availability_status == 'partial' %}text-yellow-600{% else %}text-red-600{% endif %} capitalize">
+                            {{ kit.availability_status }}
+                        </div>
+                        <div class="text-sm text-gray-500">Availability</div>
+                    </div>
+                    <div class="text-center p-4 bg-gray-50 rounded-lg">
+                        <div class="text-2xl font-bold text-gray-800">{{ kit.items|selectattr('is_optional')|list|length }}</div>
+                        <div class="text-sm text-gray-500">Optional Items</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Kit Items -->
+            <div class="bg-white rounded-lg shadow">
+                <div class="p-4 border-b flex justify-between items-center">
+                    <h2 class="text-lg font-semibold">Kit Contents</h2>
+                    <a href="{{ url_for('inventory.parts_kit_add_item', kit_id=kit.id) }}" class="text-blue-600 hover:underline text-sm">+ Add Item</a>
+                </div>
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Item</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Required Qty</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">In Stock</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Location</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Line Cost</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200">
+                        {% for item in kit.items %}
+                        <tr class="{% if not item.is_available and not item.is_optional %}bg-red-50{% endif %}">
+                            <td class="px-4 py-3">
+                                <a href="{{ url_for('inventory.inventory_detail', item_id=item.consumable_id) }}"
+                                   class="text-blue-600 hover:underline font-medium">{{ item.name }}</a>
+                                {% if item.is_optional %}
+                                <span class="ml-2 text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded">Optional</span>
+                                {% endif %}
+                                {% if item.notes %}
+                                <p class="text-xs text-gray-500 mt-1">{{ item.notes }}</p>
+                                {% endif %}
+                            </td>
+                            <td class="px-4 py-3">{{ item.required_qty }} {{ item.unit }}</td>
+                            <td class="px-4 py-3 {% if item.stock_qty < item.required_qty %}text-red-600 font-medium{% endif %}">
+                                {{ item.stock_qty }}
+                            </td>
+                            <td class="px-4 py-3 text-sm text-gray-500">{{ item.location or '-' }}</td>
+                            <td class="px-4 py-3">${{ '{:,.2f}'.format(item.line_cost) }}</td>
+                            <td class="px-4 py-3">
+                                {% if item.is_available %}
+                                <span class="px-2 py-1 text-xs rounded-full bg-green-100 text-green-800">Available</span>
+                                {% else %}
+                                <span class="px-2 py-1 text-xs rounded-full bg-red-100 text-red-800">Insufficient</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="6" class="px-4 py-8 text-center text-gray-500">No items in this kit yet.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                    <tfoot class="bg-gray-50">
+                        <tr>
+                            <td colspan="4" class="px-4 py-3 font-medium text-right">Total Kit Cost:</td>
+                            <td colspan="2" class="px-4 py-3 font-bold text-lg">${{ '{:,.2f}'.format(kit.total_cost) }}</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="lg:col-span-1 space-y-6">
+            <!-- Kit Info -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <h3 class="font-semibold mb-4">Kit Information</h3>
+                <dl class="space-y-3 text-sm">
+                    <div>
+                        <dt class="text-gray-500">Kit Type</dt>
+                        <dd class="font-medium capitalize">{{ kit.kit_type }}</dd>
+                    </div>
+                    {% if kit.equipment_type %}
+                    <div>
+                        <dt class="text-gray-500">Equipment Type</dt>
+                        <dd class="font-medium">{{ kit.equipment_type }}</dd>
+                    </div>
+                    {% endif %}
+                    <div>
+                        <dt class="text-gray-500">Status</dt>
+                        <dd>
+                            {% if kit.is_active %}
+                            <span class="px-2 py-1 text-xs rounded-full bg-green-100 text-green-800">Active</span>
+                            {% else %}
+                            <span class="px-2 py-1 text-xs rounded-full bg-gray-100 text-gray-800">Inactive</span>
+                            {% endif %}
+                        </dd>
+                    </div>
+                    <div>
+                        <dt class="text-gray-500">Created</dt>
+                        <dd class="font-medium">{{ kit.created_at.strftime('%Y-%m-%d') if kit.created_at else '-' }}</dd>
+                    </div>
+                </dl>
+            </div>
+
+            {% if kit.description %}
+            <div class="bg-white rounded-lg shadow p-6">
+                <h3 class="font-semibold mb-2">Description</h3>
+                <p class="text-sm text-gray-600">{{ kit.description }}</p>
+            </div>
+            {% endif %}
+
+            <!-- Quick Actions -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <h3 class="font-semibold mb-4">Actions</h3>
+                <div class="space-y-2">
+                    {% if kit.availability_status == 'available' %}
+                    <form method="POST" action="{{ url_for('inventory.reserve_kit_for_job') }}">
+                        <input type="hidden" name="kit_id" value="{{ kit.id }}">
+                        <select name="job_id" required class="w-full border border-gray-300 rounded-md p-2 text-sm mb-2">
+                            <option value="">Select Job...</option>
+                            {% for job in open_jobs %}
+                            <option value="{{ job.id }}">#{{ job.id }} - {{ job.equipment_unique_id }}</option>
+                            {% endfor %}
+                        </select>
+                        <button type="submit" class="w-full bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+                            Reserve for Job
+                        </button>
+                    </form>
+                    {% else %}
+                    <div class="text-center text-gray-500 text-sm py-2">
+                        Cannot reserve - some items unavailable
+                    </div>
+                    {% endif %}
+                    <a href="{{ url_for('inventory.parts_kit_duplicate', kit_id=kit.id) }}"
+                       class="block w-full text-center px-4 py-2 border border-gray-300 rounded hover:bg-gray-50">
+                        Duplicate Kit
+                    </a>
+                    <a href="{{ url_for('inventory.parts_kit_print', kit_id=kit.id) }}"
+                       class="block w-full text-center px-4 py-2 border border-gray-300 rounded hover:bg-gray-50">
+                        Print Pick List
+                    </a>
+                </div>
+            </div>
+
+            <!-- Low Stock Alert -->
+            {% set low_stock_items = kit.items|selectattr('is_available', 'false')|list %}
+            {% if low_stock_items %}
+            <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+                <h3 class="font-semibold text-red-800 mb-2">Low Stock Alert</h3>
+                <ul class="text-sm text-red-700 space-y-1">
+                    {% for item in low_stock_items %}
+                    <li>{{ item.name }}: {{ item.stock_qty }}/{{ item.required_qty }} {{ item.unit }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

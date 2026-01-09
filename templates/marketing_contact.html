@@ -1,0 +1,362 @@
+{% extends "marketing_base.html" %}
+
+{% block title %}Request a Demo - Vigil Build Construction Management{% endblock %}
+{% block meta_description %}Schedule a personalized demo of Vigil Build. See how our construction management platform can transform your operations.{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="bg-gradient-hero py-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h1 class="text-4xl md:text-5xl font-bold text-white mb-6">
+            Let's Talk About Your Operations
+        </h1>
+        <p class="text-xl text-gray-300 max-w-2xl mx-auto">
+            Schedule a personalized demo and see how Vigil Build can help you manage
+            projects, equipment, and teams more effectively.
+        </p>
+    </div>
+</section>
+
+<!-- Contact Section -->
+<section class="py-20 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid lg:grid-cols-2 gap-12">
+            <!-- Contact Form -->
+            <div class="bg-white rounded-2xl shadow-xl p-8">
+                <h2 class="text-2xl font-bold text-gray-900 mb-6">Request Your Demo</h2>
+
+                <form id="demo-request-form" action="/marketing/demo-request" method="POST" class="space-y-6">
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div>
+                            <label for="first_name" class="block text-sm font-medium text-gray-700 mb-2">First Name *</label>
+                            <input type="text" id="first_name" name="first_name" required
+                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                                   placeholder="John">
+                        </div>
+                        <div>
+                            <label for="last_name" class="block text-sm font-medium text-gray-700 mb-2">Last Name *</label>
+                            <input type="text" id="last_name" name="last_name" required
+                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                                   placeholder="Smith">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label for="email" class="block text-sm font-medium text-gray-700 mb-2">Work Email *</label>
+                        <input type="email" id="email" name="email" required
+                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                               placeholder="john.smith@company.com">
+                    </div>
+
+                    <div>
+                        <label for="phone" class="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
+                        <input type="tel" id="phone" name="phone"
+                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                               placeholder="(555) 123-4567">
+                    </div>
+
+                    <div>
+                        <label for="company" class="block text-sm font-medium text-gray-700 mb-2">Company Name *</label>
+                        <input type="text" id="company" name="company" required
+                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                               placeholder="ABC Power Company">
+                    </div>
+
+                    <div>
+                        <label for="job_title" class="block text-sm font-medium text-gray-700 mb-2">Job Title</label>
+                        <input type="text" id="job_title" name="job_title"
+                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                               placeholder="Operations Manager">
+                    </div>
+
+                    <div>
+                        <label for="industry" class="block text-sm font-medium text-gray-700 mb-2">Industry *</label>
+                        <select id="industry" name="industry" required
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+                            <option value="">Select your industry</option>
+                            <option value="power_distribution">Power Distribution / Electric Utility</option>
+                            <option value="municipality">Municipality / Public Works</option>
+                            <option value="contractor">General Contractor</option>
+                            <option value="electrical_contractor">Electrical Contractor</option>
+                            <option value="telecom">Telecommunications</option>
+                            <option value="oil_gas">Oil & Gas</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label for="company_size" class="block text-sm font-medium text-gray-700 mb-2">Company Size</label>
+                        <select id="company_size" name="company_size"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+                            <option value="">Select company size</option>
+                            <option value="1-10">1-10 employees</option>
+                            <option value="11-50">11-50 employees</option>
+                            <option value="51-200">51-200 employees</option>
+                            <option value="201-500">201-500 employees</option>
+                            <option value="501+">501+ employees</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label for="interests" class="block text-sm font-medium text-gray-700 mb-2">What features are you most interested in?</label>
+                        <div class="grid grid-cols-2 gap-3">
+                            <label class="flex items-center">
+                                <input type="checkbox" name="interests" value="project_management" class="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500">
+                                <span class="ml-2 text-sm text-gray-600">Project Management</span>
+                            </label>
+                            <label class="flex items-center">
+                                <input type="checkbox" name="interests" value="equipment" class="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500">
+                                <span class="ml-2 text-sm text-gray-600">Equipment Management</span>
+                            </label>
+                            <label class="flex items-center">
+                                <input type="checkbox" name="interests" value="inventory" class="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500">
+                                <span class="ml-2 text-sm text-gray-600">Inventory Control</span>
+                            </label>
+                            <label class="flex items-center">
+                                <input type="checkbox" name="interests" value="scheduling" class="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500">
+                                <span class="ml-2 text-sm text-gray-600">Scheduling</span>
+                            </label>
+                            <label class="flex items-center">
+                                <input type="checkbox" name="interests" value="maintenance" class="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500">
+                                <span class="ml-2 text-sm text-gray-600">Maintenance</span>
+                            </label>
+                            <label class="flex items-center">
+                                <input type="checkbox" name="interests" value="reporting" class="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500">
+                                <span class="ml-2 text-sm text-gray-600">Reporting & Analytics</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label for="message" class="block text-sm font-medium text-gray-700 mb-2">Tell us about your current challenges</label>
+                        <textarea id="message" name="message" rows="4"
+                                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all resize-none"
+                                  placeholder="What problems are you trying to solve? What tools are you currently using?"></textarea>
+                    </div>
+
+                    <button type="submit"
+                            class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-4 px-6 rounded-xl transition-all shadow-lg hover:shadow-xl">
+                        Request My Demo
+                    </button>
+
+                    <p class="text-xs text-gray-500 text-center">
+                        By submitting this form, you agree to receive communications from Vigil Build.
+                        We respect your privacy and will never share your information.
+                    </p>
+                </form>
+
+                <!-- Success Message (hidden by default) -->
+                <div id="form-success" class="hidden text-center py-12">
+                    <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-2">Thank You!</h3>
+                    <p class="text-gray-600 mb-4">
+                        We've received your demo request. A member of our team will be in touch within 24 hours.
+                    </p>
+                    <a href="/marketing" class="text-blue-600 hover:text-blue-700 font-medium">
+                        Return to Home
+                    </a>
+                </div>
+            </div>
+
+            <!-- Contact Info & Benefits -->
+            <div class="space-y-8">
+                <!-- What to Expect -->
+                <div class="bg-white rounded-2xl shadow-lg p-8">
+                    <h3 class="text-xl font-bold text-gray-900 mb-6">What to Expect</h3>
+                    <div class="space-y-4">
+                        <div class="flex items-start">
+                            <div class="flex-shrink-0 w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mr-4">
+                                <span class="text-blue-600 font-bold text-sm">1</span>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-gray-900">Discovery Call</h4>
+                                <p class="text-gray-600 text-sm">We'll learn about your current operations and challenges</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <div class="flex-shrink-0 w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mr-4">
+                                <span class="text-blue-600 font-bold text-sm">2</span>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-gray-900">Personalized Demo</h4>
+                                <p class="text-gray-600 text-sm">See features tailored to your specific use cases</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <div class="flex-shrink-0 w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mr-4">
+                                <span class="text-blue-600 font-bold text-sm">3</span>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-gray-900">Q&A Session</h4>
+                                <p class="text-gray-600 text-sm">Get all your questions answered by our team</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <div class="flex-shrink-0 w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mr-4">
+                                <span class="text-blue-600 font-bold text-sm">4</span>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-gray-900">Custom Proposal</h4>
+                                <p class="text-gray-600 text-sm">Receive a tailored solution for your organization</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Why Demo -->
+                <div class="bg-gradient-vb rounded-2xl p-8 text-white">
+                    <h3 class="text-xl font-bold mb-6">Why Request a Demo?</h3>
+                    <ul class="space-y-4">
+                        <li class="flex items-start">
+                            <svg class="w-5 h-5 text-green-400 mr-3 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                            </svg>
+                            <span class="text-gray-200">See how Vigil Build handles your specific workflows</span>
+                        </li>
+                        <li class="flex items-start">
+                            <svg class="w-5 h-5 text-green-400 mr-3 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                            </svg>
+                            <span class="text-gray-200">Get answers to your technical questions</span>
+                        </li>
+                        <li class="flex items-start">
+                            <svg class="w-5 h-5 text-green-400 mr-3 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                            </svg>
+                            <span class="text-gray-200">Understand integration capabilities with your existing tools</span>
+                        </li>
+                        <li class="flex items-start">
+                            <svg class="w-5 h-5 text-green-400 mr-3 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                            </svg>
+                            <span class="text-gray-200">No pressure - just information to help you decide</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Direct Contact -->
+                <div class="bg-white rounded-2xl shadow-lg p-8">
+                    <h3 class="text-xl font-bold text-gray-900 mb-6">Prefer to Reach Out Directly?</h3>
+
+                    <div class="space-y-4">
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center mr-4">
+                                <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-500">Email</p>
+                                <a href="mailto:info@vigilbuild.com" class="text-blue-600 hover:text-blue-700 font-medium">info@vigilbuild.com</a>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center mr-4">
+                                <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-500">Website</p>
+                                <a href="https://vigilbuild.com" class="text-blue-600 hover:text-blue-700 font-medium">vigilbuild.com</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FAQ Section -->
+<section class="py-20 bg-white">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 class="text-3xl font-bold text-gray-900 text-center mb-12">Frequently Asked Questions</h2>
+
+        <div class="space-y-6">
+            <div class="bg-gray-50 rounded-xl p-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-2">How long is the demo?</h3>
+                <p class="text-gray-600">Most demos run 30-45 minutes, though we're happy to spend more time if you have a lot of questions. We focus on the features most relevant to your operations.</p>
+            </div>
+
+            <div class="bg-gray-50 rounded-xl p-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-2">Who should attend the demo?</h3>
+                <p class="text-gray-600">We recommend including key stakeholders who will use or benefit from the platform - operations managers, project managers, fleet managers, and IT when possible.</p>
+            </div>
+
+            <div class="bg-gray-50 rounded-xl p-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-2">Is there a free trial?</h3>
+                <p class="text-gray-600">Yes, we offer pilot programs for qualified organizations. We'll discuss options during your demo based on your needs and timeline.</p>
+            </div>
+
+            <div class="bg-gray-50 rounded-xl p-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-2">What about pricing?</h3>
+                <p class="text-gray-600">Pricing is based on your organization's size and needs. We'll provide a custom quote after understanding your requirements during the demo process.</p>
+            </div>
+
+            <div class="bg-gray-50 rounded-xl p-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-2">How long does implementation take?</h3>
+                <p class="text-gray-600">Most organizations are up and running within 2-4 weeks. We provide guided onboarding and data migration support to ensure a smooth transition.</p>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    document.getElementById('demo-request-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const form = this;
+        const submitBtn = form.querySelector('button[type="submit"]');
+        const originalBtnText = submitBtn.innerHTML;
+
+        // Show loading state
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = `
+            <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white inline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            Submitting...
+        `;
+
+        // Collect form data
+        const formData = new FormData(form);
+
+        // Submit to backend
+        fetch('/marketing/demo-request', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Hide form and show success message
+                form.classList.add('hidden');
+                document.getElementById('form-success').classList.remove('hidden');
+
+                // Scroll to top of form area
+                document.querySelector('.bg-white.rounded-2xl.shadow-xl').scrollIntoView({ behavior: 'smooth' });
+            } else {
+                // Show error
+                alert(data.message || 'An error occurred. Please try again.');
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalBtnText;
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred. Please try again.');
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalBtnText;
+        });
+    });
+</script>
+{% endblock %}

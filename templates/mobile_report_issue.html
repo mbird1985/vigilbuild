@@ -1,0 +1,200 @@
+{% extends "mobile_base.html" %}
+{% block title %}Report Issue{% endblock %}
+{% block header_title %}Report Issue{% endblock %}
+
+{% block header_left %}
+<a href="{{ url_for('mobile.worker_dashboard') }}" class="p-2 touch-btn">
+    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+    </svg>
+</a>
+{% endblock %}
+
+{% block content %}
+<form method="POST" enctype="multipart/form-data" class="p-4 space-y-4">
+    <!-- Issue Type -->
+    <div class="bg-white rounded-xl shadow-sm p-4">
+        <label class="block text-sm font-medium text-gray-700 mb-3">What type of issue?</label>
+        <div class="grid grid-cols-2 gap-3">
+            <label class="relative">
+                <input type="radio" name="issue_type" value="equipment_breakdown" class="sr-only peer" required>
+                <div class="p-4 border-2 rounded-xl text-center cursor-pointer peer-checked:border-blue-600 peer-checked:bg-blue-50 transition-colors">
+                    <svg class="w-8 h-8 mx-auto text-gray-500 peer-checked:text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                    </svg>
+                    <span class="text-sm font-medium mt-2 block">Equipment Breakdown</span>
+                </div>
+            </label>
+            <label class="relative">
+                <input type="radio" name="issue_type" value="safety_hazard" class="sr-only peer">
+                <div class="p-4 border-2 rounded-xl text-center cursor-pointer peer-checked:border-red-600 peer-checked:bg-red-50 transition-colors">
+                    <svg class="w-8 h-8 mx-auto text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/>
+                    </svg>
+                    <span class="text-sm font-medium mt-2 block">Safety Hazard</span>
+                </div>
+            </label>
+            <label class="relative">
+                <input type="radio" name="issue_type" value="outage" class="sr-only peer">
+                <div class="p-4 border-2 rounded-xl text-center cursor-pointer peer-checked:border-yellow-600 peer-checked:bg-yellow-50 transition-colors">
+                    <svg class="w-8 h-8 mx-auto text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                    </svg>
+                    <span class="text-sm font-medium mt-2 block">Power Outage</span>
+                </div>
+            </label>
+            <label class="relative">
+                <input type="radio" name="issue_type" value="road_damage" class="sr-only peer">
+                <div class="p-4 border-2 rounded-xl text-center cursor-pointer peer-checked:border-orange-600 peer-checked:bg-orange-50 transition-colors">
+                    <svg class="w-8 h-8 mx-auto text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
+                    </svg>
+                    <span class="text-sm font-medium mt-2 block">Road Damage</span>
+                </div>
+            </label>
+        </div>
+    </div>
+
+    <!-- Equipment Selection (if applicable) -->
+    <div class="bg-white rounded-xl shadow-sm p-4" id="equipment-section">
+        <label class="block text-sm font-medium text-gray-700 mb-2">Equipment (if applicable)</label>
+        <select name="equipment_id" class="w-full border border-gray-300 rounded-lg p-3 text-base">
+            <option value="">Select equipment or skip</option>
+            {% for eq in equipment %}
+            <option value="{{ eq.id }}">{{ eq.unique_id }} - {{ eq.brand }} {{ eq.model }}</option>
+            {% endfor %}
+        </select>
+        <button type="button" onclick="scanEquipmentQR()" class="mt-3 w-full py-3 border border-blue-600 text-blue-600 rounded-lg font-medium flex items-center justify-center gap-2">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"/>
+            </svg>
+            Scan Equipment QR Code
+        </button>
+    </div>
+
+    <!-- Description -->
+    <div class="bg-white rounded-xl shadow-sm p-4">
+        <label class="block text-sm font-medium text-gray-700 mb-2">Describe the issue *</label>
+        <textarea name="description" rows="4" required class="w-full border border-gray-300 rounded-lg p-3 text-base resize-none"
+                  placeholder="What's wrong? Be as specific as possible..."></textarea>
+    </div>
+
+    <!-- Location -->
+    <div class="bg-white rounded-xl shadow-sm p-4">
+        <label class="block text-sm font-medium text-gray-700 mb-2">Location</label>
+        <input type="text" name="location" id="location-input" class="w-full border border-gray-300 rounded-lg p-3 text-base mb-3"
+               placeholder="Enter location or use GPS">
+        <input type="hidden" name="latitude" id="latitude">
+        <input type="hidden" name="longitude" id="longitude">
+        <button type="button" onclick="getLocation()" class="w-full py-3 border border-blue-600 text-blue-600 rounded-lg font-medium flex items-center justify-center gap-2">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+            </svg>
+            Use Current Location
+        </button>
+    </div>
+
+    <!-- Priority -->
+    <div class="bg-white rounded-xl shadow-sm p-4">
+        <label class="block text-sm font-medium text-gray-700 mb-3">Priority Level</label>
+        <div class="flex gap-3">
+            <label class="flex-1">
+                <input type="radio" name="priority" value="low" class="sr-only peer">
+                <div class="py-3 text-center border-2 rounded-lg cursor-pointer peer-checked:border-green-600 peer-checked:bg-green-50 transition-colors">
+                    <span class="font-medium text-sm">Low</span>
+                </div>
+            </label>
+            <label class="flex-1">
+                <input type="radio" name="priority" value="normal" class="sr-only peer" checked>
+                <div class="py-3 text-center border-2 rounded-lg cursor-pointer peer-checked:border-blue-600 peer-checked:bg-blue-50 transition-colors">
+                    <span class="font-medium text-sm">Normal</span>
+                </div>
+            </label>
+            <label class="flex-1">
+                <input type="radio" name="priority" value="high" class="sr-only peer">
+                <div class="py-3 text-center border-2 rounded-lg cursor-pointer peer-checked:border-orange-600 peer-checked:bg-orange-50 transition-colors">
+                    <span class="font-medium text-sm">High</span>
+                </div>
+            </label>
+            <label class="flex-1">
+                <input type="radio" name="priority" value="emergency" class="sr-only peer">
+                <div class="py-3 text-center border-2 rounded-lg cursor-pointer peer-checked:border-red-600 peer-checked:bg-red-50 transition-colors">
+                    <span class="font-medium text-sm">Emergency</span>
+                </div>
+            </label>
+        </div>
+    </div>
+
+    <!-- Photo -->
+    <div class="bg-white rounded-xl shadow-sm p-4">
+        <label class="block text-sm font-medium text-gray-700 mb-2">Add Photo</label>
+        <div id="photo-preview" class="hidden mb-3">
+            <img id="preview-img" class="w-full h-48 object-cover rounded-lg">
+        </div>
+        <div class="flex gap-3">
+            <label class="flex-1 py-3 border border-gray-300 rounded-lg text-center cursor-pointer flex items-center justify-center gap-2">
+                <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/>
+                </svg>
+                <span class="text-sm font-medium">Take Photo</span>
+                <input type="file" name="photo" accept="image/*" capture="environment" class="hidden" onchange="previewPhoto(this)">
+            </label>
+            <label class="flex-1 py-3 border border-gray-300 rounded-lg text-center cursor-pointer flex items-center justify-center gap-2">
+                <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                </svg>
+                <span class="text-sm font-medium">Gallery</span>
+                <input type="file" name="photo" accept="image/*" class="hidden" onchange="previewPhoto(this)">
+            </label>
+        </div>
+    </div>
+
+    <!-- Submit Button -->
+    <button type="submit" class="w-full bg-blue-600 text-white py-4 rounded-xl font-semibold text-lg touch-btn">
+        Submit Report
+    </button>
+</form>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function getLocation() {
+    if (navigator.geolocation) {
+        showToast('Getting location...');
+        navigator.geolocation.getCurrentPosition(function(position) {
+            document.getElementById('latitude').value = position.coords.latitude;
+            document.getElementById('longitude').value = position.coords.longitude;
+            document.getElementById('location-input').value = `GPS: ${position.coords.latitude.toFixed(6)}, ${position.coords.longitude.toFixed(6)}`;
+            showToast('Location captured!');
+            hapticFeedback('light');
+        }, function(error) {
+            showToast('Could not get location: ' + error.message);
+        }, {
+            enableHighAccuracy: true,
+            timeout: 10000
+        });
+    } else {
+        showToast('Geolocation not supported');
+    }
+}
+
+function previewPhoto(input) {
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            document.getElementById('preview-img').src = e.target.result;
+            document.getElementById('photo-preview').classList.remove('hidden');
+        };
+        reader.readAsDataURL(input.files[0]);
+        hapticFeedback('light');
+    }
+}
+
+function scanEquipmentQR() {
+    // In a real app, this would open a QR scanner
+    showToast('QR scanner would open here');
+}
+</script>
+{% endblock %}

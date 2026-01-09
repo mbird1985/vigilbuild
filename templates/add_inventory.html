@@ -1,0 +1,1323 @@
+<!--add_inventory-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Inventory Item - Potelco Construction Management</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .spec-input-group {
+            margin-bottom: 15px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 6px;
+        }
+        .spec-input-group.required {
+            background: #e8f4fd;
+            border-left: 3px solid #0066cc;
+        }
+        .similar-items-section {
+            background: linear-gradient(135deg, #fff3cd 0%, #ffe8a1 100%);
+            border: 2px solid #ffc107;
+            border-radius: 10px;
+            padding: 25px;
+            margin: 25px 0;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .similar-item-card {
+            background: white;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+        }
+        .similar-item-card:hover {
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+            transform: translateY(-2px);
+        }
+        .template-section {
+            background: linear-gradient(135deg, #e7f3ff 0%, #c3e0ff 100%);
+            border: 2px solid #0066cc;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+        .json-editor {
+            font-family: 'Courier New', monospace;
+            background-color: #2d2d2d;
+            color: #f8f8f2;
+            border: 2px solid #444;
+            padding: 15px;
+            border-radius: 6px;
+        }
+        .supplier-section {
+            background: #f0f8ff;
+            border: 1px solid #b8daff;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .dimension-inputs {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+        .image-preview-container {
+            border: 2px dashed #dee2e6;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            background: #f8f9fa;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .image-preview-container:hover {
+            border-color: #0066cc;
+            background: #e7f3ff;
+        }
+        .image-preview {
+            max-width: 200px;
+            max-height: 200px;
+            margin: 10px auto;
+            display: none;
+        }
+        .category-icon {
+            font-size: 24px;
+            margin-right: 10px;
+        }
+        .spec-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            background: #e9ecef;
+            border-radius: 4px;
+            font-size: 12px;
+            margin: 2px;
+        }
+        .cost-tracking {
+            background: #f0fff4;
+            border: 1px solid #28a745;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 20px;
+        }
+        .bulk-import-section {
+            background: #fff5f5;
+            border: 1px solid #dc3545;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        .nav-tabs .nav-link.active {
+            background: #0066cc;
+            color: white;
+            border-color: #0066cc;
+        }
+        .stock-level-indicator {
+            height: 8px;
+            border-radius: 4px;
+            margin-top: 5px;
+        }
+        .autocomplete-suggestions {
+            position: absolute;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 1000;
+            width: 100%;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .autocomplete-suggestion {
+            padding: 10px;
+            cursor: pointer;
+        }
+        .autocomplete-suggestion:hover {
+            background: #e7f3ff;
+        }
+        .validation-feedback {
+            font-size: 12px;
+            margin-top: 5px;
+        }
+        .validation-feedback.valid {
+            color: #28a745;
+        }
+        .validation-feedback.invalid {
+            color: #dc3545;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid mt-4">
+        <div class="row">
+            <div class="col-lg-9">
+                <div class="d-flex align-items-center mb-4">
+                    <h2><i class="fas fa-boxes text-primary"></i> Add New Inventory Item</h2>
+                    <div class="ms-auto">
+                        <button class="btn btn-outline-secondary" onclick="toggleBulkImport()">
+                            <i class="fas fa-file-upload"></i> Bulk Import
+                        </button>
+                        <button class="btn btn-outline-info" onclick="showTemplateLibrary()">
+                            <i class="fas fa-book"></i> Template Library
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Bulk Import Section (Hidden by default) -->
+                <div id="bulkImportSection" class="bulk-import-section" style="display: none;">
+                    <h5><i class="fas fa-file-csv"></i> Bulk Import from CSV/Excel</h5>
+                    <input type="file" id="bulkFile" accept=".csv,.xlsx,.xls" class="form-control mb-2">
+                    <button class="btn btn-primary btn-sm" onclick="processBulkImport()">Process File</button>
+                    <button class="btn btn-secondary btn-sm" onclick="toggleBulkImport()">Cancel</button>
+                </div>
+                
+                {% if show_grouping_options %}
+                <div class="similar-items-section">
+                    <h4><i class="fas fa-exclamation-triangle text-warning"></i> Similar Items Found</h4>
+                    <p class="lead">We found similar items in your inventory. You can merge with an existing item or create a new one.</p>
+                    
+                    <div class="row">
+                        {% for item in similar_items %}
+                        <div class="col-md-6">
+                            <div class="similar-item-card">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <h5 class="text-primary">{{ item.name }}</h5>
+                                        <p class="mb-1"><strong>Supplier:</strong> {{ item.supplier }}</p>
+                                        <p class="mb-1"><strong>SKU:</strong> {{ item.supplier_sku or 'N/A' }}</p>
+                                        <p class="mb-1"><strong>Current Stock:</strong> 
+                                            <span class="badge bg-info">{{ item.quantity }} {{ item.unit }}</span>
+                                        </p>
+                                        <p class="mb-1"><strong>Location:</strong> {{ item.location }}</p>
+                                        {% if item.cost_per_unit %}
+                                        <p class="mb-1"><strong>Unit Cost:</strong> ${{ "%.2f"|format(item.cost_per_unit) }}</p>
+                                        {% endif %}
+                                    </div>
+                                    {% if item.image_path %}
+                                    <img src="{{ url_for('static', filename=item.image_path) }}" 
+                                         alt="{{ item.name }}" 
+                                         style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px;">
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="mt-3">
+                                    <strong>Specifications:</strong>
+                                    <div class="mt-1">
+                                        {% for key, value in item.specifications.items() %}
+                                        <span class="spec-badge">{{ key }}: {{ value }}</span>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                
+                                <form method="POST" action="{{ url_for('inventory.confirm_grouping') }}" class="mt-3">
+                                    {% for key, value in form_data.items() %}
+                                    <input type="hidden" name="{{ key }}" value="{{ value }}">
+                                    {% endfor %}
+                                    <input type="hidden" name="grouping_action" value="merge">
+                                    <input type="hidden" name="merge_with_id" value="{{ item.id }}">
+                                    <button type="submit" class="btn btn-success">
+                                        <i class="fas fa-code-merge"></i> Merge with this item
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    
+                    <div class="mt-4 d-flex gap-2">
+                        <form method="POST" action="{{ url_for('inventory.confirm_grouping') }}" style="display: inline;">
+                            {% for key, value in form_data.items() %}
+                            <input type="hidden" name="{{ key }}" value="{{ value }}">
+                            {% endfor %}
+                            <input type="hidden" name="grouping_action" value="create_new">
+                            <button type="submit" class="btn btn-warning">
+                                <i class="fas fa-plus-circle"></i> Create as separate item anyway
+                            </button>
+                        </form>
+                        
+                        <a href="{{ url_for('inventory.add_inventory') }}" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i> Go back and modify
+                        </a>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Main Form with Tabs -->
+                <ul class="nav nav-tabs" id="inventoryTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="basic-tab" data-bs-toggle="tab" data-bs-target="#basic" type="button">
+                            <i class="fas fa-info-circle"></i> Basic Info
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="specifications-tab" data-bs-toggle="tab" data-bs-target="#specifications" type="button">
+                            <i class="fas fa-cogs"></i> Specifications
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="supplier-tab" data-bs-toggle="tab" data-bs-target="#supplier" type="button">
+                            <i class="fas fa-truck"></i> Supplier Info
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="stock-tab" data-bs-toggle="tab" data-bs-target="#stock" type="button">
+                            <i class="fas fa-warehouse"></i> Stock & Location
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="media-tab" data-bs-toggle="tab" data-bs-target="#media" type="button">
+                            <i class="fas fa-image"></i> Images & Docs
+                        </button>
+                    </li>
+                </ul>
+
+                <form method="POST" {% if not show_grouping_options %}action="{{ url_for('inventory.add_inventory') }}"{% endif %} enctype="multipart/form-data">
+                    <div class="tab-content mt-3" id="inventoryTabContent">
+                        
+                        <!-- Basic Info Tab -->
+                        <div class="tab-pane fade show active" id="basic" role="tabpanel">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="category" class="form-label">
+                                            <i class="fas fa-folder"></i> Category *
+                                        </label>
+                                        <select class="form-control" id="category" name="category" required onchange="updateBaseNames()">
+                                            <option value="">Select Category</option>
+                                            <option value="fasteners" data-icon="fas fa-bolt">Fasteners (Bolts, Screws, Nuts)</option>
+                                            <option value="electrical" data-icon="fas fa-plug">Electrical (Cables, Connectors)</option>
+                                            <option value="safety" data-icon="fas fa-hard-hat">Safety Equipment</option>
+                                            <option value="hardware" data-icon="fas fa-tools">General Hardware</option>
+                                            <option value="plumbing" data-icon="fas fa-faucet">Plumbing Supplies</option>
+                                            <option value="concrete" data-icon="fas fa-cube">Concrete & Masonry</option>
+                                            <option value="lumber" data-icon="fas fa-tree">Lumber & Wood</option>
+                                            <option value="paint" data-icon="fas fa-paint-roller">Paint & Coatings</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="base_name" class="form-label">
+                                            <i class="fas fa-tag"></i> Item Type *
+                                        </label>
+                                        <select class="form-control" id="base_name" name="base_name" required onchange="updateTemplate()">
+                                            <option value="">Select Item Type</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Template Information -->
+                            <div id="template-info" class="template-section" style="display: none;">
+                                <h5><i class="fas fa-clipboard-list"></i> Item Template</h5>
+                                <p id="template-description" class="mb-2"></p>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <p><strong>Naming Pattern:</strong> <code id="naming-pattern"></code></p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <p><strong>Required Fields:</strong> <span id="required-fields"></span></p>
+                                    </div>
+                                </div>
+                                <div class="alert alert-info mt-2 mb-0">
+                                    <i class="fas fa-info-circle"></i> This template ensures consistent naming and tracking across all items of this type.
+                                </div>
+                            </div>
+
+                            <!-- Item Name (Auto-generated) -->
+                            <div class="mb-3">
+                                <label for="item_name_preview" class="form-label">
+                                    <i class="fas fa-eye"></i> Item Name Preview
+                                </label>
+                                <input type="text" class="form-control" id="item_name_preview" readonly 
+                                       style="background-color: #f8f9fa; font-weight: bold;">
+                                <small class="form-text text-muted">
+                                    This name is auto-generated based on your specifications
+                                </small>
+                            </div>
+                        </div>
+
+                        <!-- Specifications Tab -->
+                        <div class="tab-pane fade" id="specifications" role="tabpanel">
+                            <div class="alert alert-warning mb-3">
+                                <i class="fas fa-exclamation-circle"></i> Specifications determine how items are grouped and tracked. Be precise!
+                            </div>
+                            
+                            <div id="spec-inputs">
+                                <!-- Dynamic specification inputs will be inserted here -->
+                            </div>
+
+                            <!-- Common Specifications -->
+                            <div class="row mt-4">
+                                <div class="col-12">
+                                    <h6><i class="fas fa-ruler-combined"></i> Dimensions (if applicable)</h6>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label for="dimension_length" class="form-label">Length</label>
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" id="dimension_length" name="dimension_length">
+                                            <select class="form-select" name="dimension_length_unit" style="max-width: 100px;">
+                                                <option value="in">in</option>
+                                                <option value="ft">ft</option>
+                                                <option value="mm">mm</option>
+                                                <option value="cm">cm</option>
+                                                <option value="m">m</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label for="dimension_width" class="form-label">Width</label>
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" id="dimension_width" name="dimension_width">
+                                            <select class="form-select" name="dimension_width_unit" style="max-width: 100px;">
+                                                <option value="in">in</option>
+                                                <option value="ft">ft</option>
+                                                <option value="mm">mm</option>
+                                                <option value="cm">cm</option>
+                                                <option value="m">m</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label for="dimension_height" class="form-label">Height/Thickness</label>
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" id="dimension_height" name="dimension_height">
+                                            <select class="form-select" name="dimension_height_unit" style="max-width: 100px;">
+                                                <option value="in">in</option>
+                                                <option value="ft">ft</option>
+                                                <option value="mm">mm</option>
+                                                <option value="cm">cm</option>
+                                                <option value="m">m</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Weight -->
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="weight_per_unit" class="form-label">
+                                            <i class="fas fa-weight"></i> Weight per Unit
+                                        </label>
+                                        <div class="input-group">
+                                            <input type="number" step="0.001" class="form-control" id="weight_per_unit" name="weight_per_unit">
+                                            <select class="form-select" name="weight_unit" style="max-width: 100px;">
+                                                <option value="lbs">lbs</option>
+                                                <option value="kg">kg</option>
+                                                <option value="oz">oz</option>
+                                                <option value="g">g</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="color" class="form-label">
+                                            <i class="fas fa-palette"></i> Color/Finish
+                                        </label>
+                                        <input type="text" class="form-control" id="color" name="color" 
+                                               placeholder="e.g., Galvanized, Black Oxide, Zinc Plated">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Advanced JSON Editor -->
+                            <div class="mt-3">
+                                <label for="specifications_json" class="form-label">
+                                    <i class="fas fa-code"></i> Advanced Specifications (JSON)
+                                </label>
+                                <textarea class="form-control json-editor" id="specifications_json" name="specifications" rows="6" 
+                                          placeholder='{"diameter": "1/2\"", "length": "3\"", "material": "galvanized steel", "thread_pitch": "13 TPI", "grade": "5"}'
+                                          onchange="updateSpecInputs()">{{ form_data.specifications if form_data else '{}' }}</textarea>
+                                <div class="validation-feedback" id="json-validation"></div>
+                            </div>
+                        </div>
+
+                        <!-- Supplier Info Tab -->
+                        <div class="tab-pane fade" id="supplier" role="tabpanel">
+                            <div class="supplier-section">
+                                <h5><i class="fas fa-building"></i> Primary Supplier Information</h5>
+                                
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="supplier" class="form-label">Supplier Name *</label>
+                                            <div class="position-relative">
+                                                <input type="text" class="form-control" id="supplier" name="supplier" 
+                                                       value="{{ form_data.supplier if form_data else '' }}" required
+                                                       onkeyup="suggestSuppliers(this.value)">
+                                                <div id="supplier-suggestions" class="autocomplete-suggestions" style="display: none;"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="supplier_sku" class="form-label">Supplier SKU/Part #</label>
+                                            <input type="text" class="form-control" id="supplier_sku" name="supplier_sku" 
+                                                   value="{{ form_data.supplier_sku if form_data else '' }}"
+                                                   placeholder="e.g., SUP-12345-BLT">
+                                            <small class="form-text text-muted">
+                                                The exact SKU from supplier's catalog
+                                            </small>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="manufacturer" class="form-label">Manufacturer</label>
+                                            <input type="text" class="form-control" id="manufacturer" name="manufacturer" 
+                                                   value="{{ form_data.manufacturer if form_data else '' }}"
+                                                   placeholder="e.g., Fastenal, 3M, Milwaukee">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="part_number" class="form-label">Manufacturer Part Number</label>
+                                            <input type="text" class="form-control" id="part_number" name="part_number" 
+                                                   value="{{ form_data.part_number if form_data else '' }}">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="mb-3">
+                                            <label for="cost_per_unit" class="form-label">
+                                                <i class="fas fa-dollar-sign"></i> Cost per Unit
+                                            </label>
+                                            <div class="input-group">
+                                                <span class="input-group-text">$</span>
+                                                <input type="number" step="0.01" class="form-control" id="cost_per_unit" name="cost_per_unit"
+                                                       onchange="calculateTotalValue()">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="mb-3">
+                                            <label for="lead_time" class="form-label">
+                                                <i class="fas fa-clock"></i> Lead Time (days)
+                                            </label>
+                                            <input type="number" class="form-control" id="lead_time" name="lead_time" min="0">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="mb-3">
+                                            <label for="min_order_qty" class="form-label">
+                                                <i class="fas fa-box"></i> Min Order Quantity
+                                            </label>
+                                            <input type="number" class="form-control" id="min_order_qty" name="min_order_qty" min="1">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="checkbox" id="preferred_supplier" name="preferred_supplier" checked>
+                                    <label class="form-check-label" for="preferred_supplier">
+                                        <i class="fas fa-star text-warning"></i> Set as preferred supplier for this item
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Alternative Suppliers -->
+                            <div class="mt-3">
+                                <button type="button" class="btn btn-outline-primary btn-sm" onclick="addAlternativeSupplier()">
+                                    <i class="fas fa-plus"></i> Add Alternative Supplier
+                                </button>
+                                <div id="alternative-suppliers" class="mt-3"></div>
+                            </div>
+                        </div>
+
+                        <!-- Stock & Location Tab -->
+                        <div class="tab-pane fade" id="stock" role="tabpanel">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h5><i class="fas fa-warehouse"></i> Stock Information</h5>
+                                    
+                                    <div class="mb-3">
+                                        <label for="quantity" class="form-label">Initial Quantity *</label>
+                                        <input type="number" class="form-control" id="quantity" name="quantity" 
+                                               value="{{ form_data.quantity if form_data else '0' }}" min="0" required
+                                               onchange="calculateTotalValue()">
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="unit" class="form-label">Unit of Measure *</label>
+                                        <select class="form-control" id="unit" name="unit" required>
+                                            <option value="">Select Unit</option>
+                                            <option value="each">Each (EA)</option>
+                                            <option value="box">Box</option>
+                                            <option value="case">Case</option>
+                                            <option value="pallet">Pallet</option>
+                                            <option value="feet">Feet (ft)</option>
+                                            <option value="meters">Meters (m)</option>
+                                            <option value="inches">Inches (in)</option>
+                                            <option value="yards">Yards (yd)</option>
+                                            <option value="pounds">Pounds (lbs)</option>
+                                            <option value="kilograms">Kilograms (kg)</option>
+                                            <option value="gallons">Gallons (gal)</option>
+                                            <option value="liters">Liters (L)</option>
+                                            <option value="pairs">Pairs</option>
+                                            <option value="rolls">Rolls</option>
+                                            <option value="sheets">Sheets</option>
+                                            <option value="bags">Bags</option>
+                                            <option value="bundles">Bundles</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="mb-3">
+                                                <label for="reorder_threshold" class="form-label text-warning">
+                                                    <i class="fas fa-exclamation-triangle"></i> Reorder Point
+                                                </label>
+                                                <input type="number" class="form-control" id="reorder_threshold" name="reorder_threshold" 
+                                                       value="{{ form_data.reorder_threshold if form_data else '' }}" min="0">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="mb-3">
+                                                <label for="min_stock_level" class="form-label text-danger">
+                                                    <i class="fas fa-arrow-down"></i> Min Stock
+                                                </label>
+                                                <input type="number" class="form-control" id="min_stock_level" name="min_stock_level" min="0">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="mb-3">
+                                                <label for="max_stock_level" class="form-label text-success">
+                                                    <i class="fas fa-arrow-up"></i> Max Stock
+                                                </label>
+                                                <input type="number" class="form-control" id="max_stock_level" name="max_stock_level" min="0">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Stock Value Display -->
+                                    <div class="cost-tracking">
+                                        <h6><i class="fas fa-calculator"></i> Stock Valuation</h6>
+                                        <p class="mb-1">Total Stock Value: <strong id="total-value">$0.00</strong></p>
+                                        <p class="mb-0 text-muted">Based on quantity × unit cost</p>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <h5><i class="fas fa-map-marker-alt"></i> Location Information</h5>
+                                    
+                                    <div class="mb-3">
+                                        <label for="location" class="form-label">Primary Location</label>
+                                        <select class="form-control" id="location" name="location">
+                                            <option value="">Select Location</option>
+                                            <option value="Main Warehouse">Main Warehouse</option>
+                                            <option value="Secondary Warehouse">Secondary Warehouse</option>
+                                            <option value="Job Site Storage">Job Site Storage</option>
+                                            <option value="Shop">Shop</option>
+                                            <option value="Truck 1">Truck 1</option>
+                                            <option value="Truck 2">Truck 2</option>
+                                            <option value="Truck 3">Truck 3</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="bin_location" class="form-label">Bin/Shelf Location</label>
+                                        <input type="text" class="form-control" id="bin_location" name="bin_location" 
+                                               placeholder="e.g., A-12-3, Bay 5 Shelf B">
+                                        <small class="form-text text-muted">
+                                            Specific location within the storage area
+                                        </small>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="serial_numbers" class="form-label">
+                                            <i class="fas fa-barcode"></i> Serial Numbers / Batch Codes
+                                        </label>
+                                        <textarea class="form-control" id="serial_numbers" name="serial_numbers" rows="3" 
+                                                  placeholder="Enter serial numbers or batch codes, one per line or comma-separated">{{ form_data.serial_numbers if form_data else '' }}</textarea>
+                                    </div>
+
+                                    <div class="form-check mb-3">
+                                        <input class="form-check-input" type="checkbox" id="hazmat" name="hazmat">
+                                        <label class="form-check-label" for="hazmat">
+                                            <i class="fas fa-exclamation-triangle text-danger"></i> Hazardous Material
+                                        </label>
+                                    </div>
+
+                                    <div class="form-check mb-3">
+                                        <input class="form-check-input" type="checkbox" id="requires_certification" name="requires_certification">
+                                        <label class="form-check-label" for="requires_certification">
+                                            <i class="fas fa-certificate text-info"></i> Requires Certification/Testing
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Media Tab -->
+                        <div class="tab-pane fade" id="media" role="tabpanel">
+                            <h5><i class="fas fa-camera"></i> Reference Images & Documents</h5>
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label class="form-label">Product Image</label>
+                                    <div class="image-preview-container" onclick="document.getElementById('item_image').click()">
+                                        <i class="fas fa-cloud-upload-alt fa-3x text-muted"></i>
+                                        <p class="mt-2">Click to upload product image</p>
+                                        <p class="text-muted small">JPG, PNG, or GIF up to 5MB</p>
+                                        <img id="image-preview" class="image-preview">
+                                        <input type="file" id="item_image" name="item_image" accept="image/*" style="display: none;" onchange="previewImage(this)">
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <label class="form-label">Technical Documents</label>
+                                    <div class="mb-3">
+                                        <input type="file" class="form-control" name="tech_docs" multiple accept=".pdf,.doc,.docx,.xls,.xlsx">
+                                        <small class="form-text text-muted">
+                                            Upload spec sheets, MSDS, certifications, etc.
+                                        </small>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label for="product_url" class="form-label">Product URL</label>
+                                        <input type="url" class="form-control" id="product_url" name="product_url" 
+                                               placeholder="https://supplier.com/product-page">
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label for="notes" class="form-label">Internal Notes</label>
+                                        <textarea class="form-control" id="notes" name="notes" rows="3" 
+                                                  placeholder="Any special handling instructions, compatibility notes, etc."></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Form Actions -->
+                    {% if not show_grouping_options %}
+                    <div class="mt-4 d-flex justify-content-between align-items-center">
+                        <div>
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-save"></i> Add Item to Inventory
+                            </button>
+                            <button type="submit" name="action" value="add_another" class="btn btn-success btn-lg">
+                                <i class="fas fa-plus"></i> Add & Create Another
+                            </button>
+                        </div>
+                        <a href="{{ url_for('inventory.inventory_list') }}" class="btn btn-secondary">
+                            <i class="fas fa-times"></i> Cancel
+                        </a>
+                    </div>
+                    {% endif %}
+                </form>
+            </div>
+            
+            <!-- Sidebar with Templates and Help -->
+            <div class="col-lg-3">
+                <!-- Quick Templates -->
+                <div class="card mb-3">
+                    <div class="card-header bg-primary text-white">
+                        <h6 class="mb-0"><i class="fas fa-rocket"></i> Quick Templates</h6>
+                    </div>
+                    <div class="card-body p-2">
+                        <div class="d-grid gap-2">
+                            <button class="btn btn-sm btn-outline-primary text-start" onclick="loadQuickTemplate('hex_bolt')">
+                                <i class="fas fa-bolt"></i> Hex Bolt
+                            </button>
+                            <button class="btn btn-sm btn-outline-primary text-start" onclick="loadQuickTemplate('copper_wire')">
+                                <i class="fas fa-plug"></i> Copper Wire
+                            </button>
+                            <button class="btn btn-sm btn-outline-primary text-start" onclick="loadQuickTemplate('safety_gloves')">
+                                <i class="fas fa-hand-paper"></i> Safety Gloves
+                            </button>
+                            <button class="btn btn-sm btn-outline-primary text-start" onclick="loadQuickTemplate('pvc_pipe')">
+                                <i class="fas fa-grip-lines"></i> PVC Pipe
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recently Added Items -->
+                <div class="card mb-3">
+                    <div class="card-header bg-info text-white">
+                        <h6 class="mb-0"><i class="fas fa-history"></i> Recently Added</h6>
+                    </div>
+                    <div class="card-body p-2">
+                        <div class="list-group list-group-flush">
+                            {% for recent in recent_items[:5] %}
+                            <a href="#" class="list-group-item list-group-item-action p-2" onclick="cloneItem({{ recent.id }})">
+                                <div class="d-flex justify-content-between">
+                                    <small>{{ recent.name[:30] }}...</small>
+                                    <span class="badge bg-secondary">{{ recent.quantity }}</span>
+                                </div>
+                            </a>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Help & Guidelines -->
+                <div class="card">
+                    <div class="card-header bg-success text-white">
+                        <h6 class="mb-0"><i class="fas fa-question-circle"></i> Naming Guidelines</h6>
+                    </div>
+                    <div class="card-body small">
+                        <div class="mb-3">
+                            <strong>Bolts & Fasteners:</strong>
+                            <ul class="mb-2">
+                                <li>Diameter (e.g., 1/2", M12)</li>
+                                <li>Length (e.g., 3", 75mm)</li>
+                                <li>Material (e.g., steel, stainless)</li>
+                                <li>Grade (e.g., Grade 5, A2-70)</li>
+                                <li>Thread type (e.g., coarse, fine)</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <strong>Electrical:</strong>
+                            <ul class="mb-2">
+                                <li>Wire gauge (e.g., 12 AWG, 2.5mm²)</li>
+                                <li>Conductor type (copper, aluminum)</li>
+                                <li>Insulation (THHN, XHHW)</li>
+                                <li>Voltage rating</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="alert alert-warning p-2">
+                            <i class="fas fa-lightbulb"></i> <strong>Tip:</strong> Be specific with specifications - this helps the AI predict supplies for future jobs!
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Enhanced template system with construction-specific items
+        const constructionTemplates = {
+            fasteners: {
+                bolt: {
+                    required_specs: {
+                        diameter: { type: 'select', values: ['1/4"', '5/16"', '3/8"', '7/16"', '1/2"', '9/16"', '5/8"', '3/4"', '7/8"', '1"'], label: 'Diameter' },
+                        length: { type: 'text', pattern: '\\d+(\\.\\d+)?"', label: 'Length', unit: 'inches' },
+                        material: { type: 'select', values: ['steel', 'stainless_steel', 'galvanized', 'brass', 'titanium'], label: 'Material' },
+                        grade: { type: 'select', values: ['2', '5', '8', 'A2-70', 'A4-80', 'B7'], label: 'Grade' },
+                        thread_type: { type: 'select', values: ['coarse', 'fine', 'extra_fine'], label: 'Thread Type' }
+                    },
+                    optional_specs: {
+                        head_type: { type: 'select', values: ['hex', 'carriage', 'flange', 'socket'], label: 'Head Type' },
+                        finish: { type: 'select', values: ['plain', 'zinc_plated', 'hot_dip_galvanized', 'black_oxide'], label: 'Finish' }
+                    },
+                    naming_pattern: '{diameter} x {length} {material} Grade {grade} {thread_type} Bolt',
+                    default_unit: 'each'
+                },
+                screw: {
+                    required_specs: {
+                        diameter: { type: 'text', label: 'Diameter' },
+                        length: { type: 'text', label: 'Length' },
+                        head_type: { type: 'select', values: ['flat', 'pan', 'round', 'oval', 'hex'], label: 'Head Type' },
+                        drive_type: { type: 'select', values: ['phillips', 'slotted', 'hex', 'torx', 'square'], label: 'Drive Type' },
+                        material: { type: 'select', values: ['steel', 'stainless_steel', 'brass'], label: 'Material' }
+                    },
+                    naming_pattern: '{diameter} x {length} {head_type} Head {drive_type} {material} Screw',
+                    default_unit: 'each'
+                }
+            },
+            electrical: {
+                cable: {
+                    required_specs: {
+                        gauge: { type: 'select', values: ['18', '16', '14', '12', '10', '8', '6', '4', '2', '1', '1/0', '2/0', '3/0', '4/0'], label: 'Wire Gauge (AWG)' },
+                        conductor_material: { type: 'select', values: ['copper', 'aluminum', 'copper_clad_aluminum'], label: 'Conductor' },
+                        conductor_count: { type: 'select', values: ['2', '3', '4', '5'], label: 'Conductors' },
+                        insulation: { type: 'select', values: ['THHN', 'THWN', 'XHHW', 'USE-2', 'NM-B'], label: 'Insulation Type' },
+                        voltage_rating: { type: 'select', values: ['300V', '600V', '1000V', '2000V'], label: 'Voltage Rating' }
+                    },
+                    optional_specs: {
+                        color: { type: 'text', label: 'Color' },
+                        jacket_type: { type: 'select', values: ['PVC', 'rubber', 'metal_clad'], label: 'Jacket' }
+                    },
+                    naming_pattern: '{gauge} AWG {conductor_count}/{conductor_material} {insulation} {voltage_rating} Cable',
+                    default_unit: 'feet'
+                }
+            }
+        };
+
+        // Initialize category and base name dropdowns
+        const baseNamesByCategory = {{ base_names_by_category | tojson | safe }};
+        const templates = {{ templates | tojson | safe }};
+        let currentTemplate = null;
+        
+        function updateBaseNames() {
+            const categorySelect = document.getElementById('category');
+            const baseNameSelect = document.getElementById('base_name');
+            const selectedCategory = categorySelect.value;
+            
+            // Clear base names
+            baseNameSelect.innerHTML = '<option value="">Select Item Type</option>';
+            
+            if (selectedCategory && baseNamesByCategory[selectedCategory]) {
+                baseNamesByCategory[selectedCategory].forEach(baseName => {
+                    const option = document.createElement('option');
+                    option.value = baseName;
+                    option.textContent = baseName.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+                    baseNameSelect.appendChild(option);
+                });
+            }
+            
+            // Clear template info
+            document.getElementById('template-info').style.display = 'none';
+            document.getElementById('spec-inputs').innerHTML = '';
+        }
+        
+        function updateTemplate() {
+            const categorySelect = document.getElementById('category');
+            const baseNameSelect = document.getElementById('base_name');
+            const selectedCategory = categorySelect.value;
+            const selectedBaseName = baseNameSelect.value;
+            
+            if (selectedCategory && selectedBaseName) {
+                // Check construction templates first
+                if (constructionTemplates[selectedCategory] && constructionTemplates[selectedCategory][selectedBaseName]) {
+                    currentTemplate = constructionTemplates[selectedCategory][selectedBaseName];
+                } else {
+                    // Fall back to database templates
+                    currentTemplate = templates.find(t => 
+                        t.category === selectedCategory && t.base_name === selectedBaseName
+                    );
+                }
+                
+                if (currentTemplate) {
+                    // Show template info
+                    document.getElementById('template-description').textContent = currentTemplate.description || 'Standard template for ' + selectedBaseName;
+                    document.getElementById('naming-pattern').textContent = currentTemplate.naming_pattern;
+                    document.getElementById('template-info').style.display = 'block';
+                    
+                    // Generate specification inputs
+                    generateSpecInputs(currentTemplate);
+                    
+                    // Update unit default
+                    if (currentTemplate.default_unit) {
+                        document.getElementById('unit').value = currentTemplate.default_unit;
+                    }
+                    
+                    // Show required fields
+                    const requiredFields = Object.keys(currentTemplate.required_specs || {});
+                    document.getElementById('required-fields').innerHTML = requiredFields.map(f => 
+                        `<span class="badge bg-danger me-1">${f.replace(/_/g, ' ')}</span>`
+                    ).join('');
+                }
+            }
+        }
+        
+        function generateSpecInputs(template) {
+            const specContainer = document.getElementById('spec-inputs');
+            specContainer.innerHTML = '';
+            
+            // Required specifications
+            if (template.required_specs) {
+                const requiredHeader = document.createElement('h6');
+                requiredHeader.innerHTML = '<i class="fas fa-asterisk text-danger"></i> Required Specifications';
+                requiredHeader.className = 'mb-3 text-danger';
+                specContainer.appendChild(requiredHeader);
+                
+                Object.entries(template.required_specs).forEach(([specName, specConfig]) => {
+                    createSpecInput(specName, specConfig, true, specContainer);
+                });
+            }
+            
+            // Optional specifications
+            if (template.optional_specs) {
+                const optionalHeader = document.createElement('h6');
+                optionalHeader.innerHTML = '<i class="fas fa-plus-circle text-info"></i> Optional Specifications';
+                optionalHeader.className = 'mb-3 mt-4 text-info';
+                specContainer.appendChild(optionalHeader);
+                
+                Object.entries(template.optional_specs).forEach(([specName, specConfig]) => {
+                    createSpecInput(specName, specConfig, false, specContainer);
+                });
+            }
+        }
+        
+        function createSpecInput(specName, specConfig, required, container) {
+            const inputGroup = document.createElement('div');
+            inputGroup.className = 'spec-input-group' + (required ? ' required' : '');
+            
+            const row = document.createElement('div');
+            row.className = 'row align-items-center';
+            
+            const labelCol = document.createElement('div');
+            labelCol.className = 'col-md-4';
+            
+            const label = document.createElement('label');
+            label.className = 'form-label mb-0';
+            label.innerHTML = `${specConfig.label || specName.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}`;
+            if (required) label.innerHTML += ' <span class="text-danger">*</span>';
+            
+            labelCol.appendChild(label);
+            
+            const inputCol = document.createElement('div');
+            inputCol.className = 'col-md-8';
+            
+            let input;
+            if (specConfig.type === 'select' && specConfig.values) {
+                // Create select dropdown
+                input = document.createElement('select');
+                input.className = 'form-control';
+                
+                const defaultOption = document.createElement('option');
+                defaultOption.value = '';
+                defaultOption.textContent = 'Select ' + (specConfig.label || specName.replace(/_/g, ' '));
+                input.appendChild(defaultOption);
+                
+                specConfig.values.forEach(value => {
+                    const option = document.createElement('option');
+                    option.value = value;
+                    option.textContent = value.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+                    input.appendChild(option);
+                });
+            } else {
+                // Create text input
+                input = document.createElement('input');
+                input.type = specConfig.type || 'text';
+                input.className = 'form-control';
+                if (specConfig.pattern) {
+                    input.pattern = specConfig.pattern;
+                }
+                if (specConfig.placeholder) {
+                    input.placeholder = specConfig.placeholder;
+                }
+            }
+            
+            input.id = `spec_${specName}`;
+            input.name = `spec_${specName}`;
+            if (required) input.required = true;
+            input.onchange = function() {
+                updateSpecificationsJSON();
+                updateItemNamePreview();
+            };
+            
+            // Add unit label if specified
+            if (specConfig.unit) {
+                const inputGroup = document.createElement('div');
+                inputGroup.className = 'input-group';
+                inputGroup.appendChild(input);
+                
+                const unitSpan = document.createElement('span');
+                unitSpan.className = 'input-group-text';
+                unitSpan.textContent = specConfig.unit;
+                inputGroup.appendChild(unitSpan);
+                
+                inputCol.appendChild(inputGroup);
+            } else {
+                inputCol.appendChild(input);
+            }
+            
+            row.appendChild(labelCol);
+            row.appendChild(inputCol);
+            inputGroup.appendChild(row);
+            
+            // Add validation feedback
+            const feedback = document.createElement('div');
+            feedback.className = 'validation-feedback';
+            feedback.id = `feedback_${specName}`;
+            inputGroup.appendChild(feedback);
+            
+            container.appendChild(inputGroup);
+        }
+        
+        function updateSpecificationsJSON() {
+            const specs = {};
+            const specInputs = document.querySelectorAll('[id^="spec_"]');
+            
+            specInputs.forEach(input => {
+                const specName = input.id.replace('spec_', '');
+                if (input.value) {
+                    specs[specName] = input.value;
+                }
+            });
+            
+            // Add dimension specs if present
+            const dimensions = ['length', 'width', 'height'].reduce((acc, dim) => {
+                const value = document.getElementById(`dimension_${dim}`)?.value;
+                const unit = document.querySelector(`[name="dimension_${dim}_unit"]`)?.value;
+                if (value) {
+                    acc[dim] = `${value}${unit}`;
+                }
+                return acc;
+            }, {});
+            
+            if (Object.keys(dimensions).length > 0) {
+                specs.dimensions = dimensions;
+            }
+            
+            // Add other specs
+            ['weight_per_unit', 'color'].forEach(field => {
+                const value = document.getElementById(field)?.value;
+                if (value) {
+                    specs[field] = value;
+                }
+            });
+            
+            const jsonTextarea = document.getElementById('specifications_json');
+            jsonTextarea.value = JSON.stringify(specs, null, 2);
+            
+            // Validate JSON
+            validateJSON();
+        }
+        
+        function updateSpecInputs() {
+            try {
+                const specs = JSON.parse(document.getElementById('specifications_json').value);
+                Object.entries(specs).forEach(([specName, value]) => {
+                    const input = document.getElementById(`spec_${specName}`);
+                    if (input) {
+                        input.value = value;
+                    }
+                });
+                updateItemNamePreview();
+            } catch (e) {
+                // Invalid JSON, ignore
+            }
+        }
+        
+        function updateItemNamePreview() {
+            if (!currentTemplate || !currentTemplate.naming_pattern) {
+                return;
+            }
+            
+            let namePattern = currentTemplate.naming_pattern;
+            const specInputs = document.querySelectorAll('[id^="spec_"]');
+            
+            specInputs.forEach(input => {
+                const specName = input.id.replace('spec_', '');
+                const value = input.value || '[' + specName + ']';
+                namePattern = namePattern.replace(`{${specName}}`, value);
+            });
+            
+            // Clean up any remaining placeholders
+            namePattern = namePattern.replace(/\{[^}]+\}/g, '');
+            
+            document.getElementById('item_name_preview').value = namePattern;
+        }
+        
+        function validateJSON() {
+            const jsonTextarea = document.getElementById('specifications_json');
+            const feedback = document.getElementById('json-validation');
+            
+            try {
+                JSON.parse(jsonTextarea.value);
+                feedback.textContent = '✓ Valid JSON';
+                feedback.className = 'validation-feedback valid';
+                jsonTextarea.style.borderColor = '#28a745';
+            } catch (e) {
+                feedback.textContent = '✗ Invalid JSON: ' + e.message;
+                feedback.className = 'validation-feedback invalid';
+                jsonTextarea.style.borderColor = '#dc3545';
+            }
+        }
+        
+        function previewImage(input) {
+            const preview = document.getElementById('image-preview');
+            const file = input.files[0];
+            
+            if (file) {
+                if (file.size > 5 * 1024 * 1024) {
+                    alert('Image size must be less than 5MB');
+                    input.value = '';
+                    return;
+                }
+                
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+        
+        function calculateTotalValue() {
+            const quantity = parseFloat(document.getElementById('quantity').value) || 0;
+            const costPerUnit = parseFloat(document.getElementById('cost_per_unit').value) || 0;
+            const totalValue = quantity * costPerUnit;
+            
+            document.getElementById('total-value').textContent = '$' + totalValue.toFixed(2);
+        }
+        
+        function toggleBulkImport() {
+            const section = document.getElementById('bulkImportSection');
+            section.style.display = section.style.display === 'none' ? 'block' : 'none';
+        }
+        
+        function loadQuickTemplate(templateName) {
+            const quickTemplates = {
+                hex_bolt: {
+                    category: 'fasteners',
+                    base_name: 'bolt',
+                    specs: {
+                        diameter: '1/2"',
+                        length: '3"',
+                        material: 'galvanized',
+                        grade: '5',
+                        thread_type: 'coarse',
+                        head_type: 'hex'
+                    }
+                },
+                copper_wire: {
+                    category: 'electrical',
+                    base_name: 'cable',
+                    specs: {
+                        gauge: '12',
+                        conductor_material: 'copper',
+                        conductor_count: '3',
+                        insulation: 'THHN',
+                        voltage_rating: '600V'
+                    }
+                },
+                safety_gloves: {
+                    category: 'safety',
+                    base_name: 'gloves',
+                    specs: {
+                        material: 'leather',
+                        protection_class: 'cut_resistant',
+                        size: 'large'
+                    }
+                },
+                pvc_pipe: {
+                    category: 'plumbing',
+                    base_name: 'pipe',
+                    specs: {
+                        diameter: '2"',
+                        material: 'PVC',
+                        schedule: '40',
+                        length: '10ft'
+                    }
+                }
+            };
+            
+            const template = quickTemplates[templateName];
+            if (template) {
+                document.getElementById('category').value = template.category;
+                updateBaseNames();
+                
+                setTimeout(() => {
+                    document.getElementById('base_name').value = template.base_name;
+                    updateTemplate();
+                    
+                    // Fill in specifications
+                    Object.entries(template.specs).forEach(([key, value]) => {
+                        const input = document.getElementById(`spec_${key}`);
+                        if (input) {
+                            input.value = value;
+                        }
+                    });
+                    
+                    updateSpecificationsJSON();
+                    updateItemNamePreview();
+                }, 100);
+            }
+        }
+        
+        let supplierSuggestions = ['Home Depot', 'Lowes', 'Fastenal', 'Grainger', 'McMaster-Carr', 'MSC Industrial', 'Ferguson', 'HD Supply'];
+        
+        function suggestSuppliers(value) {
+            const suggestionsDiv = document.getElementById('supplier-suggestions');
+            
+            if (value.length < 2) {
+                suggestionsDiv.style.display = 'none';
+                return;
+            }
+            
+            const matches = supplierSuggestions.filter(s => 
+                s.toLowerCase().includes(value.toLowerCase())
+            );
+            
+            if (matches.length > 0) {
+                suggestionsDiv.innerHTML = matches.map(s => 
+                    `<div class="autocomplete-suggestion" onclick="selectSupplier('${s}')">${s}</div>`
+                ).join('');
+                suggestionsDiv.style.display = 'block';
+            } else {
+                suggestionsDiv.style.display = 'none';
+            }
+        }
+        
+        function selectSupplier(supplier) {
+            document.getElementById('supplier').value = supplier;
+            document.getElementById('supplier-suggestions').style.display = 'none';
+        }
+        
+        let altSupplierCount = 0;
+        
+        function addAlternativeSupplier() {
+            altSupplierCount++;
+            const container = document.getElementById('alternative-suppliers');
+            
+            const supplierDiv = document.createElement('div');
+            supplierDiv.className = 'supplier-section mb-3';
+            supplierDiv.innerHTML = `
+                <h6>Alternative Supplier ${altSupplierCount}</h6>
+                <div class="row">
+                    <div class="col-md-6">
+                        <input type="text" class="form-control mb-2" name="alt_supplier_name_${altSupplierCount}" placeholder="Supplier Name">
+                    </div>
+                    <div class="col-md-6">
+                        <input type="text" class="form-control mb-2" name="alt_supplier_sku_${altSupplierCount}" placeholder="Supplier SKU">
+                    </div>
+                    <div class="col-md-4">
+                        <input type="number" step="0.01" class="form-control" name="alt_supplier_cost_${altSupplierCount}" placeholder="Cost">
+                    </div>
+                    <div class="col-md-4">
+                        <input type="number" class="form-control" name="alt_supplier_lead_${altSupplierCount}" placeholder="Lead Time (days)">
+                    </div>
+                    <div class="col-md-4">
+                        <button type="button" class="btn btn-danger btn-sm" onclick="this.parentElement.parentElement.parentElement.remove()">
+                            <i class="fas fa-trash"></i> Remove
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            container.appendChild(supplierDiv);
+        }
+        
+        // Initialize form if we have form data
+        {% if form_data and form_data.category %}
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('category').value = '{{ form_data.category }}';
+            updateBaseNames();
+            {% if form_data.base_name %}
+            setTimeout(() => {
+                document.getElementById('base_name').value = '{{ form_data.base_name }}';
+                updateTemplate();
+                updateSpecInputs();
+            }, 100);
+            {% endif %}
+        });
+        {% endif %}
+        
+        // Handle tab navigation with keyboard
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.key >= '1' && e.key <= '5') {
+                const tabIndex = parseInt(e.key) - 1;
+                const tabs = document.querySelectorAll('#inventoryTabs .nav-link');
+                if (tabs[tabIndex]) {
+                    tabs[tabIndex].click();
+                }
+            }
+        });
+    </script>
+</body>
+</html>

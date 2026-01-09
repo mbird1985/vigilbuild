@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block content %}
+  <h1>Upload Document</h1>
+  <form method="POST" action="{{ url_for('documents.upload_document') }}" enctype="multipart/form-data">
+    <label>File: <input type="file" name="file" accept=".pdf,.txt,.docx"></label>
+    <label>Title: <input name="title"></label>
+    <label>Category:
+      <select name="category">
+        <option value="Jobs">Jobs</option>
+        <option value="WAC">WAC</option>
+        <option value="HR">HR</option>
+        <option value="Handbook">Handbook</option>
+        <option value="Uncategorized">Uncategorized</option>
+      </select>
+    </label>
+    <label>Tags: <input name="tags" id="tags"></label>
+    <button type="button" onclick="suggestTags()">Suggest Tags</button>
+    <button type="submit">Upload</button>
+    <a href="{{ url_for('documents.document_list') }}">Cancel</a>
+  </form>
+
+  <script>
+    async function suggestTags() {
+      const title = document.querySelector('input[name="title"]').value;
+      const response = await fetch('/api/documents/suggest_tags', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({title})
+      });
+      const data = await response.json();
+      document.getElementById('tags').value = data.tags.join(', ');
+    }
+  </script>
+{% endblock %}

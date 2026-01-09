@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="space-y-4">
+  <div class="flex items-center justify-between">
+    <h1 class="text-2xl font-bold">Column Center</h1>
+    <a class="btn-integration btn-blue" href="{{ url_for('pm.board_detail', board_id=board_id) }}">Back to Board</a>
+  </div>
+  <div class="bg-white rounded shadow p-4">
+    <table class="w-full text-left">
+      <thead class="bg-gray-100">
+        <tr>
+          <th class="px-4 py-2">Name</th>
+          <th class="px-4 py-2">Type</th>
+          <th class="px-4 py-2">Position</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for c in columns %}
+        <tr class="border-t">
+          <td class="px-4 py-2">{{ c.name }}</td>
+          <td class="px-4 py-2">{{ c.type }}</td>
+          <td class="px-4 py-2">{{ c.position }}</td>
+        </tr>
+        {% else %}
+        <tr><td class="px-4 py-4 text-gray-600" colspan="3">No columns yet.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
+
+
+
+
+
+

@@ -1,0 +1,91 @@
+<!-- templates/schedule.html -->
+{% extends "base.html" %}
+{% block content %}
+<div class="container mx-auto p-4">
+    <h1 class="text-2xl font-bold mb-4">Schedule Management</h1>
+    {% if can_edit %}
+    <form method="POST" action="{{ url_for('schedule.create_schedule') }}" class="mb-4">
+        <input type="text" name="title" placeholder="Job Title" class="border p-2 mr-2 rounded" required>
+        <input type="date" name="start_date" placeholder="Start Date" class="border p-2 mr-2 rounded" required>
+        <input type="date" name="end_date" placeholder="End Date" class="border p-2 mr-2 rounded" required>
+        <input type="text" name="description" placeholder="Description" class="border p-2 mr-2 rounded">
+        <input type="text" name="location" placeholder="Location (e.g., Seattle)" class="border p-2 mr-2 rounded">
+        <select name="equipment_id" class="border p-2 mr-2 rounded">
+            <option value="">Select Equipment</option>
+            {% for equip in equipment %}
+            <option value="{{ equip.id }}">{{ equip.unique_id }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Add Job</button>
+    </form>
+    {% endif %}
+    <h2 class="text-xl font-semibold mb-2">Calendar</h2>
+    <div class="bg-white rounded shadow p-4 mb-6">
+        <div id="calendar"></div>
+    </div>
+
+    <h2 class="text-xl font-semibold mb-2">Scheduled Jobs</h2>
+    <table class="w-full border">
+        <tr class="bg-gray-200">
+            <th class="border p-2">Title</th>
+            <th class="border p-2">Start Date</th>
+            <th class="border p-2">End Date</th>
+            <th class="border p-2">Location</th>
+            <th class="border p-2">Equipment</th>
+            <th class="border p-2">Actions</th>
+        </tr>
+        {% for schedule in schedules %}
+        <tr>
+            <td class="border p-2">{{ schedule.title }}</td>
+            <td class="border p-2">{{ schedule.start_date }}</td>
+            <td class="border p-2">{{ schedule.end_date }}</td>
+            <td class="border p-2">{{ schedule.location or 'N/A' }}</td>
+            <td class="border p-2">{{ schedule.resource_name or 'None' }}</td>
+            <td class="border p-2">
+                {% if can_edit %}
+                <a href="{{ url_for('schedule.schedule_detail', event_id=schedule.id) }}" class="text-blue-500 hover:underline">Details</a>
+                <form action="{{ url_for('schedule.update_schedule_route', schedule_id=schedule.id) }}" method="POST" class="inline">
+                    <input type="hidden" name="title" value="{{ schedule.title }}">
+                    <input type="hidden" name="start_date" value="{{ schedule.start_date }}">
+                    <input type="hidden" name="end_date" value="{{ schedule.end_date }}">
+                    <input type="hidden" name="description" value="{{ schedule.description or '' }}">
+                    <input type="hidden" name="location" value="{{ schedule.location or '' }}">
+                    <input type="hidden" name="equipment_id" value="{{ schedule.resource_name or '' }}">
+                    <button type="submit" class="text-blue-500 hover:underline ml-2">Edit</button>
+                </form>
+                <form action="{{ url_for('schedule.delete_schedule_route', schedule_id=schedule.id) }}" method="POST" class="inline">
+                    <button type="submit" class="text-red-500 hover:underline ml-2">Delete</button>
+                </form>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+<link rel="stylesheet" href="/static/fullcalendar.min.css">
+<script src="/static/fullcalendar.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const el = document.getElementById('calendar');
+  const calendar = new FullCalendar.Calendar(el, {
+    initialView: 'dayGridMonth',
+    height: 'auto',
+    headerToolbar: {
+      left: 'prev,next today',
+      center: 'title',
+      right: 'dayGridMonth,timeGridWeek,timeGridDay'
+    },
+    navLinks: true,
+    nowIndicator: true,
+    events: '/schedule/events',
+    eventClick: function(info) {
+      if (info.event.url) {
+        info.jsEvent.preventDefault();
+        window.location.href = info.event.url;
+      }
+    }
+  });
+  calendar.render();
+});
+</script>
+{% endblock %}

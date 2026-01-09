@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="space-y-4">
+  <div class="flex items-center justify-between">
+    <h1 class="text-2xl font-bold">Boards</h1>
+    <button id="createBoardBtn" class="btn-integration btn-teal">Create Board</button>
+  </div>
+
+  <div class="bg-white rounded shadow">
+    <table class="w-full text-left">
+      <thead class="bg-gray-100">
+        <tr>
+          <th class="px-4 py-2">Name</th>
+          <th class="px-4 py-2">Private</th>
+          <th class="px-4 py-2">Shareable</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for b in boards %}
+        <tr class="border-t">
+          <td class="px-4 py-2">
+            <a class="text-blue-600 underline" href="{{ url_for('pm.board_detail', board_id=b.id) }}">{{ b.name }}</a>
+          </td>
+          <td class="px-4 py-2">{{ 'Yes' if b.is_private else 'No' }}</td>
+          <td class="px-4 py-2">{{ 'Yes' if b.is_shareable else 'No' }}</td>
+        </tr>
+        {% else %}
+        <tr><td class="px-4 py-4 text-gray-600" colspan="3">No boards yet.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <dialog id="boardDialog" class="p-0 rounded">
+    <form method="dialog" class="bg-white rounded shadow w-[36rem]">
+      <div class="p-4 border-b font-semibold">Create Board</div>
+      <div class="p-4 space-y-3">
+        <label class="block">
+          <span class="text-sm text-gray-700">Name</span>
+          <input id="boardName" class="w-full border rounded p-2" />
+        </label>
+        <label class="inline-flex items-center gap-2">
+          <input id="boardPrivate" type="checkbox" />
+          <span>Private board</span>
+        </label>
+        <label class="inline-flex items-center gap-2">
+          <input id="boardShareable" type="checkbox" />
+          <span>Shareable (external guests)</span>
+        </label>
+      </div>
+      <div class="p-4 border-t flex justify-end gap-2">
+        <button class="btn-integration btn-orange" value="cancel">Cancel</button>
+        <button class="btn-integration btn-teal" id="createBoard">Create</button>
+      </div>
+    </form>
+  </dialog>
+
+</div>
+
+<script>
+const dialog = document.getElementById('boardDialog');
+document.getElementById('createBoardBtn').addEventListener('click', () => dialog.showModal());
+document.getElementById('createBoard').addEventListener('click', async (e) => {
+  e.preventDefault();
+  const name = document.getElementById('boardName').value.trim();
+  if (!name) return;
+  const is_private = document.getElementById('boardPrivate').checked;
+  const is_shareable = document.getElementById('boardShareable').checked;
+  const res = await fetch('/pm/boards/create', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ name, is_private, is_shareable })
+  });
+  if (res.ok) location.reload();
+});
+</script>
+{% endblock %}
+
+

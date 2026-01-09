@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="space-y-4">
+  <div class="flex items-center justify-between">
+    <h1 class="text-2xl font-bold">{{ customer.name }} — {{ customer.company or '' }}</h1>
+    <a class="btn-integration btn-blue" href="{{ url_for('equipment.maintenance_customers') }}">Back</a>
+  </div>
+  <div class="bg-white rounded shadow p-4">
+    <div class="grid md:grid-cols-2 gap-3">
+      <div><div class="text-sm text-gray-600">Email</div><div class="font-medium">{{ customer.email or '-' }}</div></div>
+      <div><div class="text-sm text-gray-600">Phone</div><div class="font-medium">{{ customer.phone or '-' }}</div></div>
+    </div>
+  </div>
+  <div class="bg-white rounded shadow p-4">
+    <div class="font-semibold mb-2">Vehicles / Assets</div>
+    <form method="post" action="{{ url_for('equipment.maintenance_customer_add_vehicle', customer_id=customer.id) }}" class="flex flex-wrap gap-2 mb-3">
+      <input name="equipment_id" placeholder="Equipment ID" class="border rounded p-2">
+      <input name="vin" placeholder="VIN" class="border rounded p-2">
+      <input name="plate" placeholder="Plate" class="border rounded p-2">
+      <input name="description" placeholder="Description" class="border rounded p-2 flex-1">
+      <button class="btn-integration btn-teal">Add</button>
+    </form>
+    <table class="w-full text-left">
+      <thead class="bg-gray-100"><tr><th class="px-2 py-1">ID</th><th class="px-2 py-1">Equipment</th><th class="px-2 py-1">VIN</th><th class="px-2 py-1">Plate</th><th class="px-2 py-1">Description</th></tr></thead>
+      <tbody>
+        {% for v in vehicles %}
+        <tr class="border-t"><td class="px-2 py-1">{{ v.id }}</td><td class="px-2 py-1">{{ v.equipment_id or '-' }}</td><td class="px-2 py-1">{{ v.vin or '-' }}</td><td class="px-2 py-1">{{ v.plate or '-' }}</td><td class="px-2 py-1">{{ v.description or '-' }}</td></tr>
+        {% else %}
+        <tr><td class="px-2 py-2 text-gray-600" colspan="5">No vehicles/assets.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
+
+
+
+
+
+

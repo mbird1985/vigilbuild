@@ -1,0 +1,137 @@
+<!--templates/predict_job_usage.html-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Predict Job Usage - {{ job.name }}</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+    <div class="container py-4">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card shadow">
+                    <div class="card-header bg-primary text-white">
+                        <h4 class="mb-0">
+                            <i class="fas fa-brain me-2"></i>
+                            AI-Powered Usage Prediction
+                        </h4>
+                        <p class="mb-0 mt-1 opacity-75">Job: {{ job.name }}</p>
+                    </div>
+                    <div class="card-body">
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i>
+                            Our ML model analyzes historical job data to predict consumable usage based on job characteristics.
+                        </div>
+
+                        <form method="POST" action="{{ url_for('inventory.predict_job_usage', job_id=job.id) }}">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="square_footage" class="form-label">
+                                            <i class="fas fa-ruler-combined text-primary me-1"></i>
+                                            Square Footage *
+                                        </label>
+                                        <input type="number" class="form-control" id="square_footage" name="square_footage" 
+                                               value="{{ job.square_footage or 1000 }}" required min="1">
+                                        <div class="form-text">Total area to be worked on</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="crew_size" class="form-label">
+                                            <i class="fas fa-users text-primary me-1"></i>
+                                            Crew Size *
+                                        </label>
+                                        <input type="number" class="form-control" id="crew_size" name="crew_size" 
+                                               value="{{ job.crew_size or 3 }}" required min="1" max="20">
+                                        <div class="form-text">Number of workers on the job</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="duration_days" class="form-label">
+                                            <i class="fas fa-calendar-alt text-primary me-1"></i>
+                                            Duration (Days) *
+                                        </label>
+                                        <input type="number" class="form-control" id="duration_days" name="duration_days" 
+                                               value="5" required min="1" max="365">
+                                        <div class="form-text">Expected job duration in days</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="location" class="form-label">
+                                            <i class="fas fa-map-marker-alt text-primary me-1"></i>
+                                            Location
+                                        </label>
+                                        <input type="text" class="form-control" id="location" name="location" 
+                                               value="{{ job.location or '' }}"
+                                               placeholder="e.g., Seattle, WA">
+                                        <div class="form-text">Job location (affects material availability)</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mb-4">
+                                <h6 class="text-muted">Current Job Details</h6>
+                                <div class="bg-light p-3 rounded">
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <strong>Job Type:</strong> {{ job.job_type or 'Not specified' }}
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <strong>Location:</strong> {{ job.location or 'Not specified' }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                <a href="{{ url_for('main.dashboard') }}" class="btn btn-secondary">
+                                    <i class="fas fa-arrow-left me-1"></i> Cancel
+                                </a>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-magic me-1"></i> Generate Predictions
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Information Panel -->
+                <div class="card mt-4">
+                    <div class="card-header">
+                        <h6 class="mb-0">
+                            <i class="fas fa-lightbulb me-2"></i>
+                            How It Works
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <p class="mb-2">Our AI model considers:</p>
+                        <ul class="list-unstyled">
+                            <li><i class="fas fa-check text-success me-2"></i> Historical usage patterns from similar jobs</li>
+                            <li><i class="fas fa-check text-success me-2"></i> Job size, crew size, and duration relationships</li>
+                            <li><i class="fas fa-check text-success me-2"></i> Seasonal and location-based variations</li>
+                            <li><i class="fas fa-check text-success me-2"></i> Item specifications and categories</li>
+                        </ul>
+                        <div class="alert alert-warning mt-3">
+                            <small>
+                                <i class="fas fa-exclamation-triangle me-1"></i>
+                                Predictions are estimates based on historical data. Always review and adjust based on specific job requirements.
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

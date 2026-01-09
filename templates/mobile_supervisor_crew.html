@@ -1,0 +1,163 @@
+{% extends "mobile_base.html" %}
+{% block title %}Crew Management{% endblock %}
+{% block header_title %}Crew{% endblock %}
+
+{% block header_left %}
+<a href="{{ url_for('mobile.supervisor_dashboard') }}" class="p-2 touch-btn">
+    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+    </svg>
+</a>
+{% endblock %}
+
+{% block header_right %}
+<button onclick="showFilterSheet()" class="p-2 touch-btn">
+    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/>
+    </svg>
+</button>
+{% endblock %}
+
+{% block content %}
+<div class="p-4">
+    <!-- Status Overview -->
+    <div class="grid grid-cols-3 gap-3 mb-4">
+        <div class="bg-green-50 rounded-xl p-3 text-center">
+            <div class="text-xl font-bold text-green-600">{{ crew_members|selectattr('status', 'equalto', 'active')|list|length }}</div>
+            <div class="text-xs text-green-700">Active</div>
+        </div>
+        <div class="bg-yellow-50 rounded-xl p-3 text-center">
+            <div class="text-xl font-bold text-yellow-600">{{ crew_members|selectattr('status', 'equalto', 'break')|list|length }}</div>
+            <div class="text-xs text-yellow-700">On Break</div>
+        </div>
+        <div class="bg-gray-100 rounded-xl p-3 text-center">
+            <div class="text-xl font-bold text-gray-600">{{ crew_members|selectattr('status', 'equalto', 'offline')|list|length }}</div>
+            <div class="text-xs text-gray-700">Offline</div>
+        </div>
+    </div>
+
+    <!-- Crew List -->
+    <div class="bg-white rounded-xl shadow-sm">
+        <div class="divide-y">
+            {% for member in crew_members %}
+            <div class="p-4 flex items-center gap-4" onclick="location.href='{{ url_for('mobile.supervisor_crew_member', user_id=member.id) }}'">
+                <div class="relative">
+                    <div class="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center text-lg font-semibold text-gray-600">
+                        {{ member.username[0]|upper if member.username else 'U' }}
+                    </div>
+                    <span class="absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-white
+                        {% if member.status == 'active' %}bg-green-500
+                        {% elif member.status == 'break' %}bg-yellow-500
+                        {% else %}bg-gray-400{% endif %}">
+                    </span>
+                </div>
+                <div class="flex-1">
+                    <h3 class="font-medium">{{ member.username }}</h3>
+                    <p class="text-sm text-gray-500">{{ member.current_job or 'No active job' }}</p>
+                    {% if member.location_updated %}
+                    <p class="text-xs text-gray-400">Last seen {{ member.location_updated }}</p>
+                    {% endif %}
+                </div>
+                <div class="flex items-center gap-2">
+                    <button onclick="event.stopPropagation(); callMember('{{ member.phone }}')" class="p-2 text-blue-600">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
+                        </svg>
+                    </button>
+                    <button onclick="event.stopPropagation(); messageMember({{ member.id }})" class="p-2 text-gray-500">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                        </svg>
+                    </button>
+                    <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                    </svg>
+                </div>
+            </div>
+            {% else %}
+            <div class="p-8 text-center text-gray-500">
+                <svg class="w-16 h-16 mx-auto text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
+                </svg>
+                <p>No crew members found</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block nav %}
+<nav class="mobile-nav bg-white border-t flex justify-around py-2">
+    <a href="{{ url_for('mobile.supervisor_dashboard') }}" class="flex flex-col items-center p-2 text-gray-500">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+        </svg>
+        <span class="text-xs mt-1">Dashboard</span>
+    </a>
+    <a href="{{ url_for('mobile.supervisor_crew') }}" class="flex flex-col items-center p-2 text-blue-600">
+        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M12 12.75c1.63 0 3.07.39 4.24.9 1.08.48 1.76 1.56 1.76 2.73V18H6v-1.61c0-1.18.68-2.26 1.76-2.73 1.17-.52 2.61-.91 4.24-.91zM4 13c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm1.13 1.1c-.37-.06-.74-.1-1.13-.1-.99 0-1.93.21-2.78.58A2.01 2.01 0 000 16.43V18h4.5v-1.61c0-.83.23-1.61.63-2.29zM20 13c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm4 3.43c0-.81-.48-1.53-1.22-1.85A6.95 6.95 0 0020 14c-.39 0-.76.04-1.13.1.4.68.63 1.46.63 2.29V18H24v-1.57zM12 6c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3z"/>
+        </svg>
+        <span class="text-xs mt-1">Crew</span>
+    </a>
+    <a href="{{ url_for('mobile.supervisor_all_jobs') }}" class="flex flex-col items-center p-2 text-gray-500">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+        </svg>
+        <span class="text-xs mt-1">Jobs</span>
+    </a>
+    <a href="{{ url_for('mobile.supervisor_map') }}" class="flex flex-col items-center p-2 text-gray-500">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
+        </svg>
+        <span class="text-xs mt-1">Map</span>
+    </a>
+</nav>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function callMember(phone) {
+    if (phone) {
+        window.location.href = 'tel:' + phone;
+    } else {
+        showToast('No phone number available');
+    }
+}
+
+function messageMember(userId) {
+    const content = `
+        <h3 class="font-semibold text-lg mb-4">Send Message</h3>
+        <form method="POST" action="/mobile/api/message">
+            <input type="hidden" name="user_id" value="${userId}">
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Message</label>
+                    <textarea name="message" rows="3" required class="w-full border border-gray-300 rounded-lg p-3" placeholder="Type your message..."></textarea>
+                </div>
+                <div class="flex gap-3">
+                    <button type="button" onclick="closeActionSheet()" class="flex-1 py-3 border border-gray-300 rounded-lg font-medium">Cancel</button>
+                    <button type="submit" class="flex-1 py-3 bg-blue-600 text-white rounded-lg font-medium">Send</button>
+                </div>
+            </div>
+        </form>
+    `;
+    showActionSheet(content);
+}
+
+function showFilterSheet() {
+    const content = `
+        <h3 class="font-semibold text-lg mb-4">Filter Crew</h3>
+        <div class="space-y-3">
+            <a href="?status=all" class="block p-4 border rounded-lg hover:bg-gray-50">All Members</a>
+            <a href="?status=active" class="block p-4 border rounded-lg hover:bg-gray-50">Active Only</a>
+            <a href="?status=break" class="block p-4 border rounded-lg hover:bg-gray-50">On Break</a>
+            <a href="?status=offline" class="block p-4 border rounded-lg hover:bg-gray-50">Offline</a>
+            <button onclick="closeActionSheet()" class="w-full py-3 text-gray-500 font-medium">Cancel</button>
+        </div>
+    `;
+    showActionSheet(content);
+}
+</script>
+{% endblock %}

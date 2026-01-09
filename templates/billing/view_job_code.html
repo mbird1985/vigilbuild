@@ -1,0 +1,229 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mx-auto p-4 max-w-4xl">
+  <div class="mb-6">
+    <div class="flex justify-between items-center">
+      <div>
+        <h1 class="text-2xl font-bold mb-2">Job Code Details</h1>
+        <a href="{{ url_for('billing.job_codes') }}" class="text-blue-600 hover:text-blue-800">← Back to Job Codes</a>
+      </div>
+      <div class="flex space-x-3">
+        <a href="{{ url_for('billing.edit_job_code', id=job_code.id) }}" 
+           class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded">
+          Edit
+        </a>
+        <button onclick="confirmDelete()" 
+                class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded">
+          Delete
+        </button>
+      </div>
+    </div>
+  </div>
+  
+  <div class="bg-white shadow-md rounded-lg p-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      
+      <!-- Basic Information -->
+      <div class="md:col-span-2 border-b border-gray-200 pb-4 mb-4">
+        <h2 class="text-lg font-semibold text-gray-900 mb-3">Basic Information</h2>
+      </div>
+      
+      <!-- Source File -->
+      <div>
+        <label class="block text-sm font-medium text-gray-500">Source File</label>
+        <p class="mt-1 text-sm text-gray-900">{{ job_code.source_file or 'N/A' }}</p>
+      </div>
+      
+      <!-- Service Unit -->
+      <div>
+        <label class="block text-sm font-medium text-gray-500">Service Unit</label>
+        <p class="mt-1 text-sm text-gray-900 font-medium">{{ job_code.service_unit or 'N/A' }}</p>
+      </div>
+      
+      <!-- Core Code -->
+      <div>
+        <label class="block text-sm font-medium text-gray-500">Core Code</label>
+        <p class="mt-1 text-sm text-gray-900">{{ job_code.core_code or 'N/A' }}</p>
+      </div>
+      
+      <!-- Service Master -->
+      <div>
+        <label class="block text-sm font-medium text-gray-500">Service Master</label>
+        <p class="mt-1 text-sm text-gray-900">{{ job_code.service_master or 'N/A' }}</p>
+      </div>
+      
+      <!-- Unit of Measure -->
+      <div>
+        <label class="block text-sm font-medium text-gray-500">Unit of Measure</label>
+        <p class="mt-1 text-sm text-gray-900">{{ job_code.unit_of_measure or 'N/A' }}</p>
+      </div>
+      
+      <!-- SAP Service Master -->
+      <div>
+        <label class="block text-sm font-medium text-gray-500">SAP Service Master</label>
+        <p class="mt-1 text-sm text-gray-900">{{ job_code.sap_service_master_ or 'N/A' }}</p>
+      </div>
+      
+      <!-- Task Code Description -->
+      <div>
+        <label class="block text-sm font-medium text-gray-500">Task Code Description</label>
+        <p class="mt-1 text-sm text-gray-900">{{ job_code.task_code_description or 'N/A' }}</p>
+      </div>
+      
+      <!-- Unnamed 2 -->
+      <div>
+        <label class="block text-sm font-medium text-gray-500">Unnamed 2</label>
+        <p class="mt-1 text-sm text-gray-900">{{ job_code.unnamed_2 or 'N/A' }}</p>
+      </div>
+      
+      <!-- UOM -->
+      <div>
+        <label class="block text-sm font-medium text-gray-500">UOM</label>
+        <p class="mt-1 text-sm text-gray-900">{{ job_code.uom or 'N/A' }}</p>
+      </div>
+      
+      <!-- O&M Contract Service Units -->
+      <div>
+        <label class="block text-sm font-medium text-gray-500">O&M Contract Service Units</label>
+        <p class="mt-1 text-sm text-gray-900">{{ job_code.om_contract_service_units or 'N/A' }}</p>
+      </div>
+      
+      <!-- Core Service Master -->
+      <div>
+        <label class="block text-sm font-medium text-gray-500">Core Service Master</label>
+        <p class="mt-1 text-sm text-gray-900">{{ job_code.core_service_master or 'N/A' }}</p>
+      </div>
+      
+      <!-- Non-Core Code -->
+      <div>
+        <label class="block text-sm font-medium text-gray-500">Non-Core Code</label>
+        <p class="mt-1 text-sm text-gray-900">{{ job_code.non_core_code or 'N/A' }}</p>
+      </div>
+      
+      <!-- Non-Core Service Master -->
+      <div>
+        <label class="block text-sm font-medium text-gray-500">Non-Core Service Master</label>
+        <p class="mt-1 text-sm text-gray-900">{{ job_code.non_core_service_master or 'N/A' }}</p>
+      </div>
+      
+      <!-- Work Type -->
+      <div>
+        <label class="block text-sm font-medium text-gray-500">Work Type</label>
+        <p class="mt-1 text-sm text-gray-900">{{ job_code.work_type or 'N/A' }}</p>
+      </div>
+      
+      <!-- Category -->
+      <div>
+        <label class="block text-sm font-medium text-gray-500">Category</label>
+        <p class="mt-1 text-sm text-gray-900">
+          {% if job_code.category %}
+            <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
+              {{ job_code.category }}
+            </span>
+          {% else %}
+            N/A
+          {% endif %}
+        </p>
+      </div>
+      
+      <!-- Created At -->
+      <div>
+        <label class="block text-sm font-medium text-gray-500">Created At</label>
+        <p class="mt-1 text-sm text-gray-900">{{ job_code.created_at.strftime('%Y-%m-%d %H:%M') if job_code.created_at else 'N/A' }}</p>
+      </div>
+    </div>
+    
+    <!-- Detailed Descriptions -->
+    <div class="mt-8 space-y-6">
+      <div class="border-t border-gray-200 pt-6">
+        <h2 class="text-lg font-semibold text-gray-900 mb-4">Detailed Information</h2>
+      </div>
+      
+      <!-- Definition -->
+      {% if job_code.definition %}
+      <div>
+        <label class="block text-sm font-medium text-gray-500 mb-2">Definition</label>
+        <div class="bg-gray-50 p-3 rounded-md">
+          <p class="text-sm text-gray-900">{{ job_code.definition }}</p>
+        </div>
+      </div>
+      {% endif %}
+      
+      <!-- Clarification -->
+      {% if job_code.clarification %}
+      <div>
+        <label class="block text-sm font-medium text-gray-500 mb-2">Clarification</label>
+        <div class="bg-gray-50 p-3 rounded-md">
+          <p class="text-sm text-gray-900">{{ job_code.clarification }}</p>
+        </div>
+      </div>
+      {% endif %}
+      
+      <!-- Description -->
+      {% if job_code.description %}
+      <div>
+        <label class="block text-sm font-medium text-gray-500 mb-2">Description</label>
+        <div class="bg-gray-50 p-3 rounded-md">
+          <p class="text-sm text-gray-900">{{ job_code.description }}</p>
+        </div>
+      </div>
+      {% endif %}
+      
+      <!-- Explanation -->
+      {% if job_code.explanation %}
+      <div>
+        <label class="block text-sm font-medium text-gray-500 mb-2">Explanation</label>
+        <div class="bg-gray-50 p-3 rounded-md">
+          <p class="text-sm text-gray-900">{{ job_code.explanation }}</p>
+        </div>
+      </div>
+      {% endif %}
+      
+      <!-- Definitions -->
+      {% if job_code.definitions %}
+      <div>
+        <label class="block text-sm font-medium text-gray-500 mb-2">Definitions</label>
+        <div class="bg-gray-50 p-3 rounded-md">
+          <p class="text-sm text-gray-900">{{ job_code.definitions }}</p>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div id="deleteModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden">
+  <div class="flex justify-center items-center h-full">
+    <div class="bg-white p-6 rounded-lg shadow-lg max-w-md w-full mx-4">
+      <h3 class="text-lg font-semibold text-gray-900 mb-4">Confirm Delete</h3>
+      <p class="text-gray-600 mb-6">Are you sure you want to delete this job code? This action cannot be undone.</p>
+      <div class="flex justify-end space-x-3">
+        <button onclick="closeDeleteModal()" 
+                class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">
+          Cancel
+        </button>
+        <form method="POST" action="{{ url_for('billing.delete_job_code', id=job_code.id) }}" class="inline">
+          <button type="submit" 
+                  class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700">
+            Delete
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function confirmDelete() {
+  document.getElementById('deleteModal').classList.remove('hidden');
+}
+
+function closeDeleteModal() {
+  document.getElementById('deleteModal').classList.add('hidden');
+}
+</script>
+{% endblock %}
+
+

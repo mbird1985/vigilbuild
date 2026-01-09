@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block title %}Work Order Templates - Maintenance{% endblock %}
+{% block content %}
+<div class="container mx-auto px-4 py-6">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-bold text-gray-800">Work Order Templates</h1>
+        <a href="{{ url_for('equipment.maintenance_wo_template_new') }}" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+            + New Template
+        </a>
+    </div>
+
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+        {% for message in messages %}{{ message }}{% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
+
+    <div class="bg-white rounded-lg shadow overflow-hidden">
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Job Type</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Equipment Type</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Est. Hours</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+                {% for template in templates %}
+                <tr>
+                    <td class="px-6 py-4">
+                        <div class="font-medium">{{ template.name }}</div>
+                        <div class="text-sm text-gray-500">{{ template.description[:60] if template.description else '' }}...</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap capitalize">{{ template.job_type }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">{{ template.equipment_type or 'All' }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">{{ template.estimated_hours or '-' }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        {% if template.is_active %}
+                        <span class="px-2 py-1 text-xs rounded-full bg-green-100 text-green-800">Active</span>
+                        {% else %}
+                        <span class="px-2 py-1 text-xs rounded-full bg-gray-100 text-gray-800">Inactive</span>
+                        {% endif %}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <a href="{{ url_for('equipment.maintenance_wo_template_edit', template_id=template.id) }}" class="text-blue-600 hover:underline mr-3">Edit</a>
+                        <a href="{{ url_for('equipment.maintenance_job_from_template') }}?template_id={{ template.id }}" class="text-green-600 hover:underline">Use</a>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="6" class="px-6 py-8 text-center text-gray-500">
+                        No work order templates found. <a href="{{ url_for('equipment.maintenance_wo_template_new') }}" class="text-blue-600 hover:underline">Create one</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

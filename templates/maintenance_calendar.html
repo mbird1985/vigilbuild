@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="space-y-6">
+  <div class="flex items-center justify-between">
+    <h2 class="text-2xl font-semibold text-teal-800">Maintenance Calendar</h2>
+    <a href="{{ url_for('equipment.maintenance_landing') }}" class="text-teal-600 hover:text-teal-800">Back</a>
+  </div>
+  <div class="bg-white rounded-lg shadow-md p-4">
+    <div id="maint-calendar"></div>
+  </div>
+  <link rel="stylesheet" href="/static/fullcalendar.min.css">
+  <script src="/static/fullcalendar.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const el = document.getElementById('maint-calendar');
+      const calendar = new FullCalendar.Calendar(el, {
+        initialView: 'dayGridMonth',
+        headerToolbar: { left: 'prev,next today', center: 'title', right: 'dayGridMonth,timeGridWeek,timeGridDay' },
+        events: '/equipment/maintenance/events',
+        eventDrop: async function(info) {
+          await fetch('/equipment/maintenance/update_due_date', { method: 'POST', headers: { 'Content-Type':'application/json' }, body: JSON.stringify({ id: info.event.id, due_date: info.event.startStr }) });
+        },
+        editable: true,
+        eventClick: function(info){ if(info.event.url){ info.jsEvent.preventDefault(); window.location.href = info.event.url; } }
+      });
+      calendar.render();
+    });
+  </script>
+</div>
+{% endblock %}
+
+

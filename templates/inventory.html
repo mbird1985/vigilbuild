@@ -1,0 +1,421 @@
+<!--Enhanced Inventory List with Granular Separation-->
+{% extends "base.html" %}
+{% block content %}
+<div class="space-y-6">
+  <div class="flex justify-between items-center">
+    <h2 class="text-2xl font-semibold text-teal-800">Inventory Management</h2>
+    <div class="flex space-x-3">
+      {% if can_edit %}
+      <a href="{{ url_for('inventory.add_inventory') }}" class="btn-integration btn-teal">
+        Add Item
+      </a>
+      {% endif %}
+      <div class="flex items-center space-x-2">
+        <label class="text-sm font-medium text-gray-700">View:</label>
+        <select onchange="changeView(this.value)" class="px-2 py-1 text-sm border border-gray-300 rounded-md">
+          <option value="individual" {{ 'selected' if current_view == 'individual' else '' }}>Individual Items</option>
+          <option value="grouped" {{ 'selected' if current_view == 'grouped' else '' }}>Grouped by Specs</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Enhanced Inventory Statistics -->
+  <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+    <div class="bg-white rounded-lg shadow-md p-4">
+      <div class="flex items-center">
+        <div class="flex-shrink-0">
+          <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+            <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4-8-4m16 0v10l-8 4-8-4V7"/>
+            </svg>
+          </div>
+        </div>
+        <div class="ml-4">
+          <p class="text-sm font-medium text-gray-500">Total Items</p>
+          <p class="text-lg font-semibold text-gray-900">{{ stats.total_items }}</p>
+        </div>
+      </div>
+    </div>
+
+    {% if stats.unique_item_types %}
+    <div class="bg-white rounded-lg shadow-md p-4">
+      <div class="flex items-center">
+        <div class="flex-shrink-0">
+          <div class="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
+            <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+            </svg>
+          </div>
+        </div>
+        <div class="ml-4">
+          <p class="text-sm font-medium text-gray-500">Unique Types</p>
+          <p class="text-lg font-semibold text-gray-900">{{ stats.unique_item_types }}</p>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+
+    <div class="bg-white rounded-lg shadow-md p-4">
+      <div class="flex items-center">
+        <div class="flex-shrink-0">
+          <div class="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
+            <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+          </div>
+        </div>
+        <div class="ml-4">
+          <p class="text-sm font-medium text-gray-500">In Stock</p>
+          <p class="text-lg font-semibold text-gray-900">{{ stats.in_stock }}</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-lg shadow-md p-4">
+      <div class="flex items-center">
+        <div class="flex-shrink-0">
+          <div class="w-8 h-8 bg-yellow-100 rounded-lg flex items-center justify-center">
+            <svg class="w-5 h-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.864-.833-2.634 0L4.18 16.5c-.77.833.192 2.5 1.732 2.5z"/>
+            </svg>
+          </div>
+        </div>
+        <div class="ml-4">
+          <p class="text-sm font-medium text-gray-500">Low Stock</p>
+          <p class="text-lg font-semibold text-gray-900">{{ stats.low_stock }}</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-lg shadow-md p-4">
+      <div class="flex items-center">
+        <div class="flex-shrink-0">
+          <div class="w-8 h-8 bg-red-100 rounded-lg flex items-center justify-center">
+            <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+          </div>
+        </div>
+        <div class="ml-4">
+          <p class="text-sm font-medium text-gray-500">Out of Stock</p>
+          <p class="text-lg font-semibold text-gray-900">{{ stats.out_of_stock }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Enhanced Search and Filter Bar -->
+  <div class="bg-white rounded-lg shadow-md p-4">
+    <form method="GET" class="grid grid-cols-1 md:grid-cols-6 gap-4 items-end">
+      <!-- Search Input -->
+      <div class="md:col-span-2">
+        <label for="search" class="block text-sm font-medium text-gray-700 mb-1">Search Inventory</label>
+        <input type="text" 
+               id="search" 
+               name="search" 
+               value="{{ search_query }}"
+               placeholder="Search name, SKU, supplier, specs..."
+               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent">
+      </div>
+      
+      <!-- Category Filter -->
+      <div>
+        <label for="category" class="block text-sm font-medium text-gray-700 mb-1">Category</label>
+        <select name="category" id="category" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500">
+          <option value="">All Categories</option>
+          <option value="fasteners" {{ 'selected' if current_category == 'fasteners' else '' }}>Fasteners</option>
+          <option value="electrical" {{ 'selected' if current_category == 'electrical' else '' }}>Electrical</option>
+          <option value="safety" {{ 'selected' if current_category == 'safety' else '' }}>Safety</option>
+          <option value="hardware" {{ 'selected' if current_category == 'hardware' else '' }}>Hardware</option>
+        </select>
+      </div>
+      
+      <!-- Stock Status Filter -->
+      <div>
+        <label for="filter" class="block text-sm font-medium text-gray-700 mb-1">Stock Status</label>
+        <select name="filter" id="filter" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500">
+          <option value="">All Items</option>
+          <option value="in_stock" {{ 'selected' if current_filter == 'in_stock' else '' }}>In Stock</option>
+          <option value="low_stock" {{ 'selected' if current_filter == 'low_stock' else '' }}>Low Stock</option>
+          <option value="out_of_stock" {{ 'selected' if current_filter == 'out_of_stock' else '' }}>Out of Stock</option>
+          <option value="overstocked" {{ 'selected' if current_filter == 'overstocked' else '' }}>Overstocked</option>
+        </select>
+      </div>
+      
+      <!-- Sort By -->
+      <div>
+        <label for="sort" class="block text-sm font-medium text-gray-700 mb-1">Sort By</label>
+        <select name="sort" id="sort" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500">
+          <option value="name" {{ 'selected' if current_sort == 'name' else '' }}>Name</option>
+          <option value="category" {{ 'selected' if current_sort == 'category' else '' }}>Category</option>
+          <option value="supplier" {{ 'selected' if current_sort == 'supplier' else '' }}>Supplier</option>
+          <option value="quantity" {{ 'selected' if current_sort == 'quantity' else '' }}>Quantity</option>
+          <option value="internal_sku" {{ 'selected' if current_sort == 'internal_sku' else '' }}>Internal SKU</option>
+          <option value="cost" {{ 'selected' if current_sort == 'cost' else '' }}>Cost</option>
+        </select>
+      </div>
+      
+      <!-- Actions -->
+      <div class="flex space-x-2">
+        <button type="submit" class="btn-integration btn-blue">
+          Search
+        </button>
+        
+        {% if search_query or current_filter or current_sort != 'name' or current_order != 'asc' %}
+        <a href="{{ url_for('inventory.inventory_list') }}" class="btn-integration btn-orange">
+          Clear
+        </a>
+        {% endif %}
+      </div>
+      
+      <!-- Hidden Fields -->
+      <input type="hidden" name="order" value="{{ current_order }}">
+      <input type="hidden" name="view" value="{{ current_view }}">
+    </form>
+  </div>
+
+  <!-- Results Summary -->
+  {% if search_query or current_filter or current_category %}
+  <div class="bg-blue-50 border border-blue-200 rounded-md p-3">
+    <p class="text-blue-800">
+      <span class="font-medium">{{ inventory|length }}</span> items found
+      {% if search_query %}for "{{ search_query }}"{% endif %}
+      {% if current_category %}in {{ current_category.title() }}{% endif %}
+      {% if current_filter %}with status: {{ current_filter.replace('_', ' ').title() }}{% endif %}
+    </p>
+  </div>
+  {% endif %}
+
+  <!-- Enhanced Inventory Table -->
+  <div class="bg-white rounded-lg shadow-md overflow-hidden">
+    {% if inventory %}
+    <div class="overflow-x-auto">
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-50">
+          <tr>
+            <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <a href="?search={{ search_query }}&category={{ current_category }}&filter={{ current_filter }}&sort=name&order={{ 'desc' if current_sort == 'name' and current_order == 'asc' else 'asc' }}&view={{ current_view }}" 
+                 class="text-gray-500 hover:text-gray-700">
+                Item Details
+                {% if current_sort == 'name' %}
+                  {% if current_order == 'asc' %}↑{% else %}↓{% endif %}
+                {% endif %}
+              </a>
+            </th>
+            <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Specifications
+            </th>
+            <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <a href="?search={{ search_query }}&category={{ current_category }}&filter={{ current_filter }}&sort=supplier&order={{ 'desc' if current_sort == 'supplier' and current_order == 'asc' else 'asc' }}&view={{ current_view }}" 
+                 class="text-gray-500 hover:text-gray-700">
+                Supplier Info
+                {% if current_sort == 'supplier' %}
+                  {% if current_order == 'asc' %}↑{% else %}↓{% endif %}
+                {% endif %}
+              </a>
+            </th>
+            <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <a href="?search={{ search_query }}&category={{ current_category }}&filter={{ current_filter }}&sort=quantity&order={{ 'desc' if current_sort == 'quantity' and current_order == 'asc' else 'asc' }}&view={{ current_view }}" 
+                 class="text-gray-500 hover:text-gray-700">
+                Stock & Cost
+                {% if current_sort == 'quantity' %}
+                  {% if current_order == 'asc' %}↑{% else %}↓{% endif %}
+                {% endif %}
+              </a>
+            </th>
+            <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Status
+            </th>
+            <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Actions
+            </th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+          {% for item in inventory %}
+          <tr class="hover:bg-gray-50">
+            <!-- Item Details Column -->
+            <td class="px-3 py-4">
+              <div class="flex items-start space-x-3">
+                {% if item.image_path %}
+                <img src="{{ url_for('static', filename=item.image_path) }}" 
+                     alt="{{ item.name }}" 
+                     class="w-12 h-12 rounded-lg object-cover border border-gray-200">
+                {% else %}
+                <div class="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center">
+                  <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4-8-4m16 0v10l-8 4-8-4V7"/>
+                  </svg>
+                </div>
+                {% endif %}
+                
+                <div class="flex-1 min-w-0">
+                  <div class="text-sm font-medium text-gray-900 truncate">{{ item.name }}</div>
+                  <div class="text-xs text-gray-500">
+                    {% if item.category %}
+                    <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800 mr-1">
+                      {{ item.category.title() }}
+                    </span>
+                    {% endif %}
+                    {% if item.internal_sku %}
+                    <span class="font-mono">{{ item.internal_sku }}</span>
+                    {% endif %}
+                  </div>
+                  {% if item.location %}
+                  <div class="text-xs text-gray-500 mt-1">
+                    📍 {{ item.location }}
+                    {% if item.bin_location %} | {{ item.bin_location }}{% endif %}
+                  </div>
+                  {% endif %}
+                </div>
+              </div>
+            </td>
+
+            <!-- Specifications Column -->
+            <td class="px-3 py-4">
+              {% if item.specifications %}
+              <div class="text-xs space-y-1">
+                {% for key, value in item.specifications.items() %}
+                <div class="flex justify-between">
+                  <span class="text-gray-500">{{ key.replace('_', ' ').title() }}:</span>
+                  <span class="font-medium text-gray-900">{{ value }}</span>
+                </div>
+                {% endfor %}
+              </div>
+              {% else %}
+              <span class="text-xs text-gray-400">No specifications</span>
+              {% endif %}
+            </td>
+
+            <!-- Supplier Info Column -->
+            <td class="px-3 py-4">
+              <div class="text-sm">
+                <div class="font-medium text-gray-900">{{ item.supplier or 'Not specified' }}</div>
+                {% if item.manufacturer %}
+                <div class="text-xs text-gray-500">Mfg: {{ item.manufacturer }}</div>
+                {% endif %}
+                {% if item.supplier_sku %}
+                <div class="text-xs text-gray-500 font-mono">SKU: {{ item.supplier_sku }}</div>
+                {% endif %}
+                {% if item.part_number %}
+                <div class="text-xs text-gray-500 font-mono">P/N: {{ item.part_number }}</div>
+                {% endif %}
+              </div>
+            </td>
+
+            <!-- Stock & Cost Column -->
+            <td class="px-3 py-4">
+              <div class="text-sm">
+                <div class="font-medium text-gray-900">{{ item.quantity }} {{ item.unit or 'units' }}</div>
+                {% if item.cost_per_unit %}
+                <div class="text-xs text-gray-500">${{ "%.2f"|format(item.cost_per_unit) }}/{{ item.unit or 'unit' }}</div>
+                {% endif %}
+                {% if item.stock_value %}
+                <div class="text-xs font-medium text-green-600">Value: ${{ "%.2f"|format(item.stock_value) }}</div>
+                {% endif %}
+                {% if item.reorder_threshold %}
+                <div class="text-xs text-gray-500">Reorder: {{ item.reorder_threshold }}</div>
+                {% endif %}
+              </div>
+            </td>
+
+            <!-- Status Column -->
+            <td class="px-3 py-4">
+              <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full
+                {% if item.stock_status == 'out_of_stock' %}bg-red-100 text-red-800
+                {% elif item.stock_status == 'low_stock' %}bg-yellow-100 text-yellow-800
+                {% elif item.is_overstocked %}bg-orange-100 text-orange-800
+                {% else %}bg-green-100 text-green-800{% endif %}">
+                {% if item.stock_status == 'out_of_stock' %}Out
+                {% elif item.stock_status == 'low_stock' %}Low
+                {% elif item.is_overstocked %}Over
+                {% else %}OK{% endif %}
+              </span>
+              
+              {% if item.needs_reorder %}
+              <div class="mt-1">
+                <span class="inline-flex px-1 py-0.5 text-xs font-semibold rounded bg-red-100 text-red-800">
+                  ⚠️ Reorder
+                </span>
+              </div>
+              {% endif %}
+            </td>
+
+            <!-- Actions Column -->
+            <td class="px-3 py-4 text-sm">
+              <div class="flex flex-col space-y-1">
+                <div class="flex space-x-1">
+                  <a href="{{ url_for('inventory.inventory_detail', item_id=item.id) }}" 
+                     class="btn-integration btn-blue" style="padding: 2px 6px; font-size: 11px;">
+                    View
+                  </a>
+                  {% if can_edit %}
+                  <a href="{{ url_for('inventory.edit_inventory', item_id=item.id) }}" 
+                     class="btn-integration btn-orange" style="padding: 2px 6px; font-size: 11px;">
+                    Edit
+                  </a>
+                  {% endif %}
+                </div>
+                
+                {% if can_edit %}
+                <!-- Quick Adjust Buttons -->
+                <div class="flex space-x-1">
+                  <form method="POST" action="{{ url_for('inventory.adjust_inventory', item_id=item.id) }}" style="display: inline;">
+                    <input type="hidden" name="adjustment_type" value="add">
+                    <input type="hidden" name="adjustment_amount" value="1">
+                    <button type="submit" class="btn-integration btn-teal" style="padding: 2px 4px; font-size: 10px;" title="Add 1">
+                      +1
+                    </button>
+                  </form>
+                  {% if item.quantity > 0 %}
+                  <form method="POST" action="{{ url_for('inventory.adjust_inventory', item_id=item.id) }}" style="display: inline;">
+                    <input type="hidden" name="adjustment_type" value="subtract">
+                    <input type="hidden" name="adjustment_amount" value="1">
+                    <button type="submit" class="btn-integration btn-orange" style="padding: 2px 4px; font-size: 10px;" title="Subtract 1">
+                      -1
+                    </button>
+                  </form>
+                  {% endif %}
+                </div>
+                {% endif %}
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <div class="text-center py-12">
+      <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4-8-4m16 0v10l-8 4-8-4V7" />
+      </svg>
+      <h3 class="mt-2 text-sm font-medium text-gray-900">No inventory items found</h3>
+      <p class="mt-1 text-sm text-gray-500">
+        {% if search_query or current_filter %}
+          Try adjusting your search terms or filters.
+        {% else %}
+          Get started by adding some inventory items.
+        {% endif %}
+      </p>
+      {% if can_edit and not search_query and not current_filter %}
+      <div class="mt-6">
+        <a href="{{ url_for('inventory.add_inventory') }}" class="btn-integration btn-teal">
+          Add Inventory Item
+        </a>
+      </div>
+      {% endif %}
+    </div>
+    {% endif %}
+  </div>
+</div>
+
+<script>
+function changeView(view) {
+  const url = new URL(window.location);
+  url.searchParams.set('view', view);
+  window.location.href = url.toString();
+}
+</script>
+{% endblock %}

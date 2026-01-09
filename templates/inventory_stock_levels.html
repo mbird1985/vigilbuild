@@ -1,0 +1,215 @@
+{% extends "base.html" %}
+{% block title %}Stock Levels & Reorder - Inventory{% endblock %}
+{% block content %}
+<div class="container mx-auto px-4 py-6">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-bold text-gray-800">Stock Levels & Reorder Management</h1>
+        <div class="flex gap-3">
+            <a href="{{ url_for('inventory.generate_purchase_order') }}" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+                Generate Purchase Order
+            </a>
+        </div>
+    </div>
+
+    <!-- Stock Overview -->
+    <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 mb-6">
+        <div class="bg-white rounded-lg shadow p-4 text-center">
+            <div class="text-2xl font-bold text-gray-800">{{ stats.total_items }}</div>
+            <div class="text-sm text-gray-500">Total Items</div>
+        </div>
+        <div class="bg-white rounded-lg shadow p-4 text-center">
+            <div class="text-2xl font-bold text-green-600">{{ stats.healthy_stock }}</div>
+            <div class="text-sm text-gray-500">Healthy Stock</div>
+        </div>
+        <div class="bg-white rounded-lg shadow p-4 text-center">
+            <div class="text-2xl font-bold text-yellow-600">{{ stats.low_stock }}</div>
+            <div class="text-sm text-gray-500">Low Stock</div>
+        </div>
+        <div class="bg-white rounded-lg shadow p-4 text-center">
+            <div class="text-2xl font-bold text-red-600">{{ stats.out_of_stock }}</div>
+            <div class="text-sm text-gray-500">Out of Stock</div>
+        </div>
+        <div class="bg-white rounded-lg shadow p-4 text-center">
+            <div class="text-2xl font-bold text-purple-600">{{ stats.overstocked }}</div>
+            <div class="text-sm text-gray-500">Overstocked</div>
+        </div>
+        <div class="bg-white rounded-lg shadow p-4 text-center">
+            <div class="text-2xl font-bold text-gray-800">${{ '{:,.0f}'.format(stats.total_value) }}</div>
+            <div class="text-sm text-gray-500">Total Value</div>
+        </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="bg-white rounded-lg shadow mb-6">
+        <div class="border-b flex">
+            <button onclick="showTab('reorder')" id="tab-reorder" class="px-6 py-3 font-medium border-b-2 border-blue-600 text-blue-600">
+                Reorder Suggestions ({{ reorder_suggestions|length }})
+            </button>
+            <button onclick="showTab('low')" id="tab-low" class="px-6 py-3 font-medium text-gray-500 hover:text-gray-700">
+                Low Stock ({{ low_stock_items|length }})
+            </button>
+            <button onclick="showTab('overstocked')" id="tab-overstocked" class="px-6 py-3 font-medium text-gray-500 hover:text-gray-700">
+                Overstocked ({{ overstocked_items|length }})
+            </button>
+        </div>
+
+        <!-- Reorder Suggestions Tab -->
+        <div id="content-reorder" class="p-4">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Item</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Current</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Min Level</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Daily Usage</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Days Left</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Suggested Qty</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Est. Cost</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Urgency</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200">
+                    {% for item in reorder_suggestions %}
+                    <tr class="{% if item.urgency == 'critical' %}bg-red-50{% elif item.urgency == 'high' %}bg-yellow-50{% endif %}">
+                        <td class="px-4 py-3">
+                            <a href="{{ url_for('inventory.inventory_detail', item_id=item.id) }}" class="text-blue-600 hover:underline font-medium">
+                                {{ item.name }}
+                            </a>
+                            <p class="text-xs text-gray-500">{{ item.part_number or '-' }}</p>
+                        </td>
+                        <td class="px-4 py-3 {% if item.current_qty == 0 %}text-red-600 font-bold{% endif %}">{{ item.current_qty }}</td>
+                        <td class="px-4 py-3">{{ item.min_level }}</td>
+                        <td class="px-4 py-3">{{ item.avg_daily_usage|round(1) }}</td>
+                        <td class="px-4 py-3 {% if item.days_until_stockout and item.days_until_stockout < 7 %}text-red-600 font-medium{% endif %}">
+                            {{ item.days_until_stockout or 'N/A' }}
+                        </td>
+                        <td class="px-4 py-3 font-medium">{{ item.suggested_order_qty }}</td>
+                        <td class="px-4 py-3">${{ '{:,.2f}'.format(item.estimated_cost or 0) }}</td>
+                        <td class="px-4 py-3">
+                            {% if item.urgency == 'critical' %}
+                            <span class="px-2 py-1 text-xs rounded-full bg-red-100 text-red-800">Critical</span>
+                            {% elif item.urgency == 'high' %}
+                            <span class="px-2 py-1 text-xs rounded-full bg-yellow-100 text-yellow-800">High</span>
+                            {% else %}
+                            <span class="px-2 py-1 text-xs rounded-full bg-gray-100 text-gray-800">Normal</span>
+                            {% endif %}
+                        </td>
+                        <td class="px-4 py-3">
+                            <form method="POST" action="{{ url_for('inventory.add_to_purchase_order') }}" class="inline">
+                                <input type="hidden" name="item_id" value="{{ item.id }}">
+                                <input type="hidden" name="quantity" value="{{ item.suggested_order_qty }}">
+                                <button type="submit" class="text-blue-600 hover:underline text-sm">Add to PO</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="9" class="px-4 py-8 text-center text-gray-500">No reorder suggestions at this time.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Low Stock Tab -->
+        <div id="content-low" class="p-4 hidden">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Item</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Category</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Current Qty</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Min Level</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Deficit</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Stock %</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Supplier</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200">
+                    {% for item in low_stock_items %}
+                    <tr>
+                        <td class="px-4 py-3">
+                            <a href="{{ url_for('inventory.inventory_detail', item_id=item.id) }}" class="text-blue-600 hover:underline font-medium">
+                                {{ item.name }}
+                            </a>
+                        </td>
+                        <td class="px-4 py-3 capitalize">{{ item.category }}</td>
+                        <td class="px-4 py-3 {% if item.current_qty == 0 %}text-red-600 font-bold{% endif %}">{{ item.current_qty }}</td>
+                        <td class="px-4 py-3">{{ item.min_level or item.reorder_point or '-' }}</td>
+                        <td class="px-4 py-3 text-red-600">-{{ item.deficit }}</td>
+                        <td class="px-4 py-3">
+                            <div class="flex items-center gap-2">
+                                <div class="w-16 bg-gray-200 rounded-full h-2">
+                                    <div class="bg-red-600 h-2 rounded-full" style="width: {{ [item.stock_percentage, 100]|min }}%"></div>
+                                </div>
+                                <span class="text-sm">{{ item.stock_percentage }}%</span>
+                            </div>
+                        </td>
+                        <td class="px-4 py-3">{{ item.supplier or '-' }}</td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="7" class="px-4 py-8 text-center text-gray-500">No low stock items.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Overstocked Tab -->
+        <div id="content-overstocked" class="p-4 hidden">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Item</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Category</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Current Qty</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Max Level</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Excess Qty</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Excess Value</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200">
+                    {% for item in overstocked_items %}
+                    <tr>
+                        <td class="px-4 py-3">
+                            <a href="{{ url_for('inventory.inventory_detail', item_id=item.id) }}" class="text-blue-600 hover:underline font-medium">
+                                {{ item.name }}
+                            </a>
+                        </td>
+                        <td class="px-4 py-3 capitalize">{{ item.category }}</td>
+                        <td class="px-4 py-3">{{ item.current_qty }}</td>
+                        <td class="px-4 py-3">{{ item.max_level }}</td>
+                        <td class="px-4 py-3 text-purple-600 font-medium">+{{ item.excess_qty }}</td>
+                        <td class="px-4 py-3">${{ '{:,.2f}'.format(item.excess_value or 0) }}</td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="6" class="px-4 py-8 text-center text-gray-500">No overstocked items.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+function showTab(tab) {
+    // Hide all content
+    document.querySelectorAll('[id^="content-"]').forEach(el => el.classList.add('hidden'));
+    // Remove active state from all tabs
+    document.querySelectorAll('[id^="tab-"]').forEach(el => {
+        el.classList.remove('border-b-2', 'border-blue-600', 'text-blue-600');
+        el.classList.add('text-gray-500');
+    });
+
+    // Show selected content and activate tab
+    document.getElementById('content-' + tab).classList.remove('hidden');
+    const activeTab = document.getElementById('tab-' + tab);
+    activeTab.classList.add('border-b-2', 'border-blue-600', 'text-blue-600');
+    activeTab.classList.remove('text-gray-500');
+}
+</script>
+{% endblock %}

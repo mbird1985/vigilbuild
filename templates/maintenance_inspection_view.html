@@ -1,0 +1,214 @@
+{% extends "base.html" %}
+{% block title %}Inspection #{{ inspection.id }} Details{% endblock %}
+{% block content %}
+<div class="container mx-auto px-4 py-6">
+    <div class="flex justify-between items-center mb-6">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-800">Inspection #{{ inspection.id }}</h1>
+            <p class="text-gray-600">{{ inspection.equipment_unique_id }} - {{ inspection.equipment_brand }} {{ inspection.equipment_model }}</p>
+        </div>
+        <div class="flex items-center gap-3">
+            {% if inspection.status == 'passed' %}
+            <span class="px-4 py-2 text-sm rounded-full bg-green-100 text-green-800 font-medium">Passed</span>
+            {% elif inspection.status == 'failed' %}
+            <span class="px-4 py-2 text-sm rounded-full bg-red-100 text-red-800 font-medium">Failed</span>
+            {% else %}
+            <span class="px-4 py-2 text-sm rounded-full bg-yellow-100 text-yellow-800 font-medium">In Progress</span>
+            {% endif %}
+            <a href="{{ url_for('equipment.maintenance_inspections_list') }}" class="text-gray-600 hover:text-gray-800">&larr; Back</a>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Main Content -->
+        <div class="lg:col-span-2 space-y-6">
+            <!-- Summary -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <h2 class="text-lg font-semibold mb-4">Inspection Summary</h2>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div class="text-center p-4 bg-gray-50 rounded-lg">
+                        <div class="text-2xl font-bold text-gray-800">{{ inspection.items|length }}</div>
+                        <div class="text-sm text-gray-500">Total Items</div>
+                    </div>
+                    <div class="text-center p-4 bg-green-50 rounded-lg">
+                        <div class="text-2xl font-bold text-green-600">{{ inspection.items|selectattr('status', 'equalto', 'ok')|list|length }}</div>
+                        <div class="text-sm text-gray-500">Passed</div>
+                    </div>
+                    <div class="text-center p-4 bg-red-50 rounded-lg">
+                        <div class="text-2xl font-bold text-red-600">{{ inspection.items|selectattr('status', 'equalto', 'fail')|list|length }}</div>
+                        <div class="text-sm text-gray-500">Failed</div>
+                    </div>
+                    <div class="text-center p-4 bg-gray-50 rounded-lg">
+                        <div class="text-2xl font-bold text-gray-600">{{ inspection.items|selectattr('status', 'equalto', 'na')|list|length }}</div>
+                        <div class="text-sm text-gray-500">N/A</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Checklist Items -->
+            <div class="bg-white rounded-lg shadow">
+                <div class="p-4 border-b">
+                    <h2 class="text-lg font-semibold">Inspection Items</h2>
+                </div>
+                <div class="divide-y">
+                    {% for item in inspection.items %}
+                    <div class="p-4 {% if item.status == 'fail' %}bg-red-50{% elif item.status == 'ok' %}bg-green-50{% endif %}">
+                        <div class="flex items-start justify-between">
+                            <div class="flex-1">
+                                <div class="flex items-center gap-2">
+                                    {% if item.status == 'ok' %}
+                                    <svg class="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                    </svg>
+                                    {% elif item.status == 'fail' %}
+                                    <svg class="w-5 h-5 text-red-600" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                                    </svg>
+                                    {% else %}
+                                    <svg class="w-5 h-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"/>
+                                    </svg>
+                                    {% endif %}
+                                    <span class="font-medium">{{ item.label }}</span>
+                                    {% if item.category %}
+                                    <span class="text-xs text-gray-500">({{ item.category }})</span>
+                                    {% endif %}
+                                </div>
+                                {% if item.notes %}
+                                <p class="text-sm text-gray-600 mt-1 ml-7">{{ item.notes }}</p>
+                                {% endif %}
+                            </div>
+                            <div>
+                                {% if item.status == 'ok' %}
+                                <span class="px-2 py-1 text-xs rounded-full bg-green-100 text-green-800">OK</span>
+                                {% elif item.status == 'fail' %}
+                                <span class="px-2 py-1 text-xs rounded-full bg-red-100 text-red-800">FAIL</span>
+                                {% else %}
+                                <span class="px-2 py-1 text-xs rounded-full bg-gray-100 text-gray-800">N/A</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="p-8 text-center text-gray-500">
+                        No inspection items recorded.
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Failed Items Detail -->
+            {% set failed_items = inspection.items|selectattr('status', 'equalto', 'fail')|list %}
+            {% if failed_items %}
+            <div class="bg-red-50 border border-red-200 rounded-lg p-6">
+                <h3 class="font-semibold text-red-800 mb-4">Failed Items Requiring Attention</h3>
+                <ul class="space-y-3">
+                    {% for item in failed_items %}
+                    <li class="flex items-start gap-2">
+                        <svg class="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                        </svg>
+                        <div>
+                            <span class="font-medium text-red-800">{{ item.label }}</span>
+                            {% if item.notes %}
+                            <p class="text-sm text-red-700">{{ item.notes }}</p>
+                            {% endif %}
+                        </div>
+                    </li>
+                    {% endfor %}
+                </ul>
+                <div class="mt-4">
+                    <a href="{{ url_for('equipment.maintenance_job_create') }}?equipment_id={{ inspection.equipment_id }}&source=inspection&inspection_id={{ inspection.id }}"
+                       class="inline-flex items-center px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">
+                        Create Repair Job for Failed Items
+                    </a>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Completion Notes -->
+            {% if inspection.completion_notes %}
+            <div class="bg-white rounded-lg shadow p-6">
+                <h2 class="text-lg font-semibold mb-2">Completion Notes</h2>
+                <p class="text-gray-700">{{ inspection.completion_notes }}</p>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Sidebar -->
+        <div class="lg:col-span-1 space-y-6">
+            <!-- Inspection Details -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <h3 class="font-semibold mb-4">Details</h3>
+                <dl class="space-y-3 text-sm">
+                    <div>
+                        <dt class="text-gray-500">Inspection Type</dt>
+                        <dd class="font-medium capitalize">{{ inspection.inspection_type }}</dd>
+                    </div>
+                    <div>
+                        <dt class="text-gray-500">Inspector</dt>
+                        <dd class="font-medium">{{ inspection.inspector_name or 'Unknown' }}</dd>
+                    </div>
+                    <div>
+                        <dt class="text-gray-500">Started</dt>
+                        <dd class="font-medium">{{ inspection.created_at.strftime('%Y-%m-%d %H:%M') if inspection.created_at else '-' }}</dd>
+                    </div>
+                    <div>
+                        <dt class="text-gray-500">Completed</dt>
+                        <dd class="font-medium">{{ inspection.completed_at.strftime('%Y-%m-%d %H:%M') if inspection.completed_at else '-' }}</dd>
+                    </div>
+                    {% if inspection.template_name %}
+                    <div>
+                        <dt class="text-gray-500">Template Used</dt>
+                        <dd class="font-medium">{{ inspection.template_name }}</dd>
+                    </div>
+                    {% endif %}
+                </dl>
+            </div>
+
+            <!-- Signature -->
+            {% if inspection.signature_data %}
+            <div class="bg-white rounded-lg shadow p-6">
+                <h3 class="font-semibold mb-4">Electronic Signature</h3>
+                <div class="border rounded p-2 bg-gray-50">
+                    <img src="{{ inspection.signature_data }}" alt="Signature" class="max-w-full">
+                </div>
+                <p class="text-sm text-gray-500 mt-2">Signed by {{ inspection.signature_name or inspection.inspector_name }}</p>
+            </div>
+            {% endif %}
+
+            <!-- Equipment Info -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <h3 class="font-semibold mb-4">Equipment</h3>
+                <dl class="space-y-2 text-sm">
+                    <div>
+                        <dt class="text-gray-500">ID</dt>
+                        <dd class="font-medium">{{ inspection.equipment_unique_id }}</dd>
+                    </div>
+                    <div>
+                        <dt class="text-gray-500">Make/Model</dt>
+                        <dd class="font-medium">{{ inspection.equipment_brand }} {{ inspection.equipment_model }}</dd>
+                    </div>
+                </dl>
+                <a href="{{ url_for('equipment.equipment_detail', equipment_id=inspection.equipment_id) }}"
+                   class="text-blue-600 hover:underline text-sm mt-3 inline-block">View Equipment Details</a>
+            </div>
+
+            <!-- Actions -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <h3 class="font-semibold mb-4">Actions</h3>
+                <div class="space-y-2">
+                    <a href="{{ url_for('equipment.maintenance_inspection_pdf', inspection_id=inspection.id) }}"
+                       class="block w-full text-center px-4 py-2 border border-gray-300 rounded hover:bg-gray-50">
+                        Download PDF Report
+                    </a>
+                    <a href="{{ url_for('equipment.maintenance_inspection_new') }}?equipment_id={{ inspection.equipment_id }}"
+                       class="block w-full text-center px-4 py-2 border border-gray-300 rounded hover:bg-gray-50">
+                        Start New Inspection
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

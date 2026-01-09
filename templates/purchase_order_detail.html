@@ -1,0 +1,226 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="max-w-6xl mx-auto">
+    <!-- Header -->
+    <div class="flex justify-between items-start mb-6">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-800">{{ po.po_number }}</h1>
+            <p class="text-gray-600">{{ po.supplier_name }}</p>
+        </div>
+        <div class="flex items-center space-x-3">
+            {% set status_colors = {
+                'draft': 'bg-gray-200 text-gray-800',
+                'submitted': 'bg-blue-200 text-blue-800',
+                'acknowledged': 'bg-indigo-200 text-indigo-800',
+                'shipped': 'bg-purple-200 text-purple-800',
+                'partially_received': 'bg-yellow-200 text-yellow-800',
+                'delivered': 'bg-green-200 text-green-800',
+                'cancelled': 'bg-red-200 text-red-800'
+            } %}
+            <span class="px-4 py-2 rounded-full text-lg font-medium {{ status_colors.get(po.status, 'bg-gray-200') }}">
+                {{ po.status|replace('_', ' ')|title }}
+            </span>
+            <a href="{{ url_for('inventory.purchase_orders_list') }}" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded">
+                Back to Orders
+            </a>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Order Details -->
+        <div class="lg:col-span-2 space-y-6">
+            <!-- Order Info -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <h2 class="text-lg font-semibold mb-4 border-b pb-2">Order Information</h2>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div>
+                        <label class="text-sm text-gray-500">Order Date</label>
+                        <p class="font-medium">{{ po.order_date.strftime('%Y-%m-%d') if po.order_date else 'N/A' }}</p>
+                    </div>
+                    <div>
+                        <label class="text-sm text-gray-500">Expected Delivery</label>
+                        <p class="font-medium">{{ po.expected_delivery_date.strftime('%Y-%m-%d') if po.expected_delivery_date else 'N/A' }}</p>
+                    </div>
+                    <div>
+                        <label class="text-sm text-gray-500">Actual Delivery</label>
+                        <p class="font-medium">{{ po.actual_delivery_date.strftime('%Y-%m-%d') if po.actual_delivery_date else 'Pending' }}</p>
+                    </div>
+                    <div>
+                        <label class="text-sm text-gray-500">Created By</label>
+                        <p class="font-medium">{{ po.created_by_name or 'System' }}</p>
+                    </div>
+                </div>
+                {% if po.notes %}
+                <div class="mt-4 p-3 bg-yellow-50 rounded border border-yellow-200">
+                    <label class="text-sm text-gray-500">Notes</label>
+                    <p>{{ po.notes }}</p>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Line Items -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <h2 class="text-lg font-semibold mb-4 border-b pb-2">Order Items</h2>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Item</th>
+                                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">SKU</th>
+                                <th class="px-4 py-2 text-right text-xs font-medium text-gray-500 uppercase">Ordered</th>
+                                <th class="px-4 py-2 text-right text-xs font-medium text-gray-500 uppercase">Received</th>
+                                <th class="px-4 py-2 text-right text-xs font-medium text-gray-500 uppercase">Unit Price</th>
+                                <th class="px-4 py-2 text-right text-xs font-medium text-gray-500 uppercase">Total</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200">
+                            {% for item in po.items %}
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-4 py-3">
+                                    <a href="{{ url_for('inventory.inventory_detail', item_id=item.consumable_id) }}" class="text-blue-600 hover:underline">
+                                        {{ item.item_name }}
+                                    </a>
+                                </td>
+                                <td class="px-4 py-3 text-gray-500 text-sm">{{ item.internal_sku or 'N/A' }}</td>
+                                <td class="px-4 py-3 text-right">{{ item.quantity_ordered }}</td>
+                                <td class="px-4 py-3 text-right">
+                                    <span class="{% if item.quantity_received >= item.quantity_ordered %}text-green-600{% elif item.quantity_received > 0 %}text-yellow-600{% else %}text-gray-500{% endif %}">
+                                        {{ item.quantity_received }}
+                                    </span>
+                                </td>
+                                <td class="px-4 py-3 text-right">${{ "{:.2f}".format(item.unit_price) }}</td>
+                                <td class="px-4 py-3 text-right font-medium">${{ "{:.2f}".format(item.line_total) }}</td>
+                            </tr>
+                            {% if item.condition_notes %}
+                            <tr class="bg-yellow-50">
+                                <td colspan="6" class="px-4 py-2 text-sm text-yellow-800">
+                                    Note: {{ item.condition_notes }}
+                                </td>
+                            </tr>
+                            {% endif %}
+                            {% endfor %}
+                        </tbody>
+                        <tfoot class="bg-gray-50 font-medium">
+                            <tr>
+                                <td colspan="5" class="px-4 py-2 text-right">Subtotal</td>
+                                <td class="px-4 py-2 text-right">${{ "{:.2f}".format(po.subtotal) }}</td>
+                            </tr>
+                            {% if po.tax_amount %}
+                            <tr>
+                                <td colspan="5" class="px-4 py-2 text-right">Tax</td>
+                                <td class="px-4 py-2 text-right">${{ "{:.2f}".format(po.tax_amount) }}</td>
+                            </tr>
+                            {% endif %}
+                            {% if po.shipping_cost %}
+                            <tr>
+                                <td colspan="5" class="px-4 py-2 text-right">Shipping</td>
+                                <td class="px-4 py-2 text-right">${{ "{:.2f}".format(po.shipping_cost) }}</td>
+                            </tr>
+                            {% endif %}
+                            <tr class="text-lg">
+                                <td colspan="5" class="px-4 py-3 text-right">Total</td>
+                                <td class="px-4 py-3 text-right text-green-600">${{ "{:.2f}".format(po.total_amount) }}</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Shipment Tracking -->
+            {% if po.shipments %}
+            <div class="bg-white rounded-lg shadow p-6">
+                <h2 class="text-lg font-semibold mb-4 border-b pb-2">Shipment Tracking</h2>
+                <div class="space-y-3">
+                    {% for shipment in po.shipments %}
+                    <div class="flex justify-between items-center p-3 bg-gray-50 rounded">
+                        <div>
+                            <p class="font-medium">{{ shipment.carrier }} - {{ shipment.tracking_number }}</p>
+                            <p class="text-sm text-gray-500">{{ shipment.current_location or 'Location unknown' }}</p>
+                        </div>
+                        <div class="text-right">
+                            <span class="px-2 py-1 text-sm rounded
+                                {% if shipment.status == 'delivered' %}bg-green-100 text-green-800
+                                {% elif shipment.status == 'in_transit' %}bg-blue-100 text-blue-800
+                                {% else %}bg-gray-100 text-gray-800{% endif %}">
+                                {{ shipment.status|replace('_', ' ')|title }}
+                            </span>
+                            {% if shipment.estimated_arrival %}
+                            <p class="text-sm text-gray-500 mt-1">ETA: {{ shipment.estimated_arrival.strftime('%Y-%m-%d') }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Actions Sidebar -->
+        <div class="space-y-6">
+            <!-- Status Update -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <h2 class="text-lg font-semibold mb-4 border-b pb-2">Update Status</h2>
+                <form action="{{ url_for('inventory.update_order_status', po_id=po.id) }}" method="POST">
+                    <select name="status" class="w-full border border-gray-300 rounded px-3 py-2 mb-3">
+                        <option value="draft" {% if po.status == 'draft' %}selected{% endif %}>Draft</option>
+                        <option value="submitted" {% if po.status == 'submitted' %}selected{% endif %}>Submitted</option>
+                        <option value="acknowledged" {% if po.status == 'acknowledged' %}selected{% endif %}>Acknowledged</option>
+                        <option value="shipped" {% if po.status == 'shipped' %}selected{% endif %}>Shipped</option>
+                        <option value="partially_received" {% if po.status == 'partially_received' %}selected{% endif %}>Partially Received</option>
+                        <option value="delivered" {% if po.status == 'delivered' %}selected{% endif %}>Delivered</option>
+                        <option value="cancelled" {% if po.status == 'cancelled' %}selected{% endif %}>Cancelled</option>
+                    </select>
+                    <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">
+                        Update Status
+                    </button>
+                </form>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <h2 class="text-lg font-semibold mb-4 border-b pb-2">Actions</h2>
+                <div class="space-y-2">
+                    {% if po.status in ['shipped', 'partially_received', 'acknowledged'] %}
+                    <a href="{{ url_for('inventory.receive_order', po_id=po.id) }}"
+                       class="block bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded text-center">
+                        Receive Items
+                    </a>
+                    {% endif %}
+                    <a href="{{ url_for('inventory.supplier_detail', supplier_id=po.supplier_id) }}"
+                       class="block bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded text-center">
+                        View Supplier
+                    </a>
+                    <button onclick="window.print()"
+                            class="w-full bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded">
+                        Print Order
+                    </button>
+                </div>
+            </div>
+
+            <!-- Order Summary -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <h2 class="text-lg font-semibold mb-4 border-b pb-2">Summary</h2>
+                <div class="space-y-3">
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Items</span>
+                        <span class="font-medium">{{ po.items|length }}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Total Qty Ordered</span>
+                        <span class="font-medium">{{ po.items|sum(attribute='quantity_ordered') }}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Total Qty Received</span>
+                        <span class="font-medium text-green-600">{{ po.items|sum(attribute='quantity_received') }}</span>
+                    </div>
+                    <hr>
+                    <div class="flex justify-between text-lg">
+                        <span class="text-gray-600">Total Value</span>
+                        <span class="font-bold text-green-600">${{ "{:,.2f}".format(po.total_amount) }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,176 @@
+{% extends "base.html" %}
+{% block title %}Link Equipment - {{ provider.name }}{% endblock %}
+{% block content %}
+<div class="container mx-auto px-4 py-6">
+    <div class="mb-6">
+        <a href="{{ url_for('equipment.maintenance_telematics_providers') }}"
+           class="text-gray-600 hover:text-gray-900 inline-flex items-center gap-1">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+            </svg>
+            Back to Providers
+        </a>
+        <h1 class="text-2xl font-bold text-gray-800 mt-2">Link Equipment to {{ provider.name }}</h1>
+        <p class="text-gray-600 mt-1">Match your local equipment to vehicles in {{ provider.name }} to enable GPS tracking</p>
+    </div>
+
+    {% if vehicles %}
+    <form method="POST" class="bg-white rounded-lg shadow overflow-hidden">
+        <div class="p-4 bg-gray-50 border-b flex justify-between items-center">
+            <div>
+                <span class="text-sm text-gray-600">
+                    <strong>{{ vehicles|length }}</strong> vehicles found in {{ provider.name }}
+                </span>
+            </div>
+            <div class="flex gap-2">
+                <input type="text" id="equipmentSearch" placeholder="Search equipment..."
+                       class="border border-gray-300 rounded-lg px-3 py-1.5 text-sm"
+                       onkeyup="filterEquipment()">
+            </div>
+        </div>
+
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Local Equipment</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Link to Provider Vehicle</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200" id="equipmentTable">
+                {% for eq in equipment %}
+                <tr class="hover:bg-gray-50 equipment-row" data-search="{{ eq.unique_id|lower }} {{ eq.type|lower }}">
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="flex items-center">
+                            <div class="flex-shrink-0 h-8 w-8 rounded-full bg-gray-100 flex items-center justify-center">
+                                <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/>
+                                </svg>
+                            </div>
+                            <div class="ml-3">
+                                <div class="text-sm font-medium text-gray-900">{{ eq.unique_id }}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {{ eq.type or 'Unknown' }}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <select name="link_{{ eq.id }}" class="border border-gray-300 rounded-lg px-3 py-1.5 text-sm w-64"
+                                onchange="updateLinkStatus(this)">
+                            <option value="">-- Not Linked --</option>
+                            {% for v in vehicles %}
+                            <option value="{{ v.provider_id }}"
+                                    {% if eq.linked_to == v.provider_id %}selected{% endif %}>
+                                {{ v.name or v.provider_id }}
+                                {% if v.vin %} (VIN: {{ v.vin[-6:] }}){% endif %}
+                                {% if v.license_plate %} - {{ v.license_plate }}{% endif %}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        {% if eq.linked_to %}
+                        <span class="px-2 py-1 text-xs rounded-full bg-green-100 text-green-800">Linked</span>
+                        {% else %}
+                        <span class="px-2 py-1 text-xs rounded-full bg-gray-100 text-gray-500">Not Linked</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div class="p-4 bg-gray-50 border-t flex justify-between items-center">
+            <div class="text-sm text-gray-600">
+                <span id="linkedCount">{{ equipment|selectattr('linked_to')|list|length }}</span> of {{ equipment|length }} equipment linked
+            </div>
+            <div class="flex gap-3">
+                <a href="{{ url_for('equipment.maintenance_telematics_providers') }}"
+                   class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">
+                    Cancel
+                </a>
+                <button type="submit"
+                        class="bg-orange-600 hover:bg-orange-700 text-white px-6 py-2 rounded-lg font-medium">
+                    Save Links
+                </button>
+            </div>
+        </div>
+    </form>
+
+    <!-- Provider Vehicles Reference -->
+    <div class="mt-8">
+        <h2 class="text-lg font-semibold text-gray-800 mb-4">Available Vehicles from {{ provider.name }}</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {% for v in vehicles %}
+            <div class="bg-white rounded-lg shadow p-4">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="font-medium text-gray-900">{{ v.name or v.provider_id }}</span>
+                    <span class="text-xs text-gray-500">ID: {{ v.provider_id[:12] }}...</span>
+                </div>
+                <div class="text-sm text-gray-500 space-y-1">
+                    {% if v.vin %}<div>VIN: {{ v.vin }}</div>{% endif %}
+                    {% if v.license_plate %}<div>Plate: {{ v.license_plate }}</div>{% endif %}
+                    {% if v.make or v.model %}
+                    <div>{{ v.make or '' }} {{ v.model or '' }} {% if v.year %}({{ v.year }}){% endif %}</div>
+                    {% endif %}
+                    {% if v.serial %}<div>Serial: {{ v.serial }}</div>{% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    {% else %}
+    <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-6 text-center">
+        <svg class="w-12 h-12 mx-auto text-yellow-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+        </svg>
+        <h3 class="text-lg font-medium text-yellow-800 mb-2">Could Not Retrieve Vehicles</h3>
+        <p class="text-yellow-700 mb-4">Unable to fetch vehicles from {{ provider.name }}. Please check your provider configuration.</p>
+        <a href="{{ url_for('equipment.maintenance_telematics_provider_edit', provider_id=provider.id) }}"
+           class="inline-block bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded-lg">
+            Check Provider Settings
+        </a>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+function filterEquipment() {
+    const search = document.getElementById('equipmentSearch').value.toLowerCase();
+    const rows = document.querySelectorAll('.equipment-row');
+
+    rows.forEach(row => {
+        const text = row.getAttribute('data-search');
+        if (text.includes(search)) {
+            row.style.display = '';
+        } else {
+            row.style.display = 'none';
+        }
+    });
+}
+
+function updateLinkStatus(select) {
+    const row = select.closest('tr');
+    const statusCell = row.querySelector('td:last-child span');
+
+    if (select.value) {
+        statusCell.className = 'px-2 py-1 text-xs rounded-full bg-green-100 text-green-800';
+        statusCell.textContent = 'Linked';
+    } else {
+        statusCell.className = 'px-2 py-1 text-xs rounded-full bg-gray-100 text-gray-500';
+        statusCell.textContent = 'Not Linked';
+    }
+
+    // Update linked count
+    const linkedCount = document.querySelectorAll('select[name^="link_"]').length;
+    let linked = 0;
+    document.querySelectorAll('select[name^="link_"]').forEach(s => {
+        if (s.value) linked++;
+    });
+    document.getElementById('linkedCount').textContent = linked;
+}
+</script>
+{% endblock %}

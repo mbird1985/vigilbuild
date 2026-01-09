@@ -1,0 +1,229 @@
+{% extends "base.html" %}
+{% block title %}Potelco Knowledge Base - Search{% endblock %}
+{% block content %}
+<div class="space-y-6">
+  <div class="bg-white p-6 rounded-lg shadow-md max-w-2xl mx-auto">
+    <form class="space-y-4">
+      <div>
+        <label for="query" class="block text-teal-800 font-medium">Search Term:</label>
+        <input id="query" type="text" placeholder="Search documentation..." class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500" onkeypress="if(event.key === 'Enter') search()">
+      </div>
+      <div>
+        <label for="category" class="block text-teal-800 font-medium">Category:</label>
+        <select id="category" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500">
+          <option value="">All Categories</option>
+          <option value="Jobs">Jobs</option>
+          <option value="WAC">WAC</option>
+          <option value="HR">HR</option>
+          <option value="Handbook">Handbook</option>
+          <option value="Uncategorized">Uncategorized</option>
+          <option value="External">External</option>
+        </select>
+      </div>
+      <div>
+        <label for="job_site" class="block text-teal-800 font-medium">Job Site:</label>
+        <input id="job_site" type="text" placeholder="Enter job site..." class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500">
+      </div>
+      <div>
+        <label for="people" class="block text-teal-800 font-medium">People:</label>
+        <input id="people" type="text" placeholder="Enter people..." class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500">
+      </div>
+      <div>
+        <label for="tags" class="block text-teal-800 font-medium">Tags:</label>
+        <input id="tags" type="text" placeholder="e.g., safety,training (comma-separated)" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500">
+      </div>
+      <div>
+        <label for="date_from" class="block text-teal-800 font-medium">From Date:</label>
+        <input id="date_from" type="date" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500">
+      </div>
+      <div>
+        <label for="date_to" class="block text-teal-800 font-medium">To Date:</label>
+        <input id="date_to" type="date" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500">
+      </div>
+      <div>
+        <label for="version" class="block text-teal-800 font-medium">Version:</label>
+        <input id="version" type="text" placeholder="e.g., 1.0" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500">
+      </div>
+      <div>
+        <label for="source" class="block text-teal-800 font-medium">Source:</label>
+        <select id="source" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500">
+          <option value="">All Sources</option>
+          <option value="local">Local Upload</option>
+          <option value="external_api">External API</option>
+        </select>
+      </div>
+      <div class="text-center">
+        <button type="button" onclick="search()" class="bg-teal-500 text-white px-4 py-2 rounded-lg hover:bg-teal-600">Search</button>
+      </div>
+    </form>
+  </div>
+  <div id="results" class="max-w-4xl mx-auto"></div>
+</div>
+
+<script src="https://unpkg.com/dexie/dist/dexie.js"></script>
+<script>
+  const db = new Dexie('PotelcoDB');
+  db.version(1).stores({
+    documents: '++id, title, content, url, category, job_site, people, tags, version, upload_date'
+  });
+
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/sw.js').then(reg => {
+      console.log('Service Worker registered:', reg);
+    }).catch(err => {
+      console.error('Service Worker registration failed:', err);
+    });
+  }
+
+  let localPrefs = JSON.parse(localStorage.getItem('userPrefs')) || {
+    notifications: true,
+    email: '{{ current_user.id }}',
+    favorites: []
+  };
+
+  function cacheAllDocuments() {
+    fetch('/all_documents')
+      .then(response => response.json())
+      .then(docs => {
+        db.documents.clear().then(() => {
+          db.documents.bulkPut(docs);
+          console.log('Cached all documents:', docs.length);
+          caches.open('potelco-documents-v1').then(cache => {
+            const urls = docs.map(doc => doc.url.startsWith('/uploads/') ? doc.url : null).filter(Boolean);
+            cache.addAll(urls).then(() => console.log('External documents cached'));
+          });
+        });
+        fetch('/profile').then(resp => resp.json()).then(prefs => {
+          localPrefs = prefs;
+          localStorage.setItem('userPrefs', JSON.stringify(localPrefs));
+        });
+      })
+      .catch(err => console.error('Failed to cache documents:', err));
+  }
+
+  if (navigator.onLine) {
+    cacheAllDocuments();
+  }
+
+  function search() {
+    let query = document.getElementById("query").value.toLowerCase();
+    let category = document.getElementById("category").value;
+    let job_site = document.getElementById("job_site").value.toLowerCase();
+    let people = document.getElementById("people").value.toLowerCase();
+    let tags = document.getElementById("tags").value.toLowerCase();
+    let date_from = document.getElementById("date_from").value;
+    let date_to = document.getElementById("date_to").value;
+    let version = document.getElementById("version").value;
+    let source = document.getElementById("source").value;
+    console.log("Searching with:", {query, category, job_site, people, tags, date_from, date_to, version, source});
+    document.getElementById("results").innerHTML = "<p class='text-gray-700'>Searching...</p>";
+
+    if (navigator.onLine) {
+      let url = "/search?q=" + encodeURIComponent(query);
+      if (category) url += "&category=" + encodeURIComponent(category);
+      if (job_site) url += "&job_site=" + encodeURIComponent(job_site);
+      if (people) url += "&people=" + encodeURIComponent(people);
+      if (tags) url += "&tags=" + encodeURIComponent(tags);
+      if (date_from) url += "&date_from=" + encodeURIComponent(date_from);
+      if (date_to) url += "&date_to=" + encodeURIComponent(date_to);
+      if (version) url += "&version=" + encodeURIComponent(version);
+      if (source) url += "&source=" + encodeURIComponent(source);
+      
+      fetch(url)
+        .then(response => response.json())
+        .then(data => {
+          console.log("Online results:", data);
+          displayResults(data, true, query);
+          cacheAllDocuments();
+        })
+        .catch(error => {
+          console.error('Online search failed:', error);
+          offlineSearch(query, category, job_site, people, tags, date_from, date_to, version, source);
+        });
+    } else {
+      offlineSearch(query, category, job_site, people, tags, date_from, date_to, version, source);
+    }
+  }
+
+  function offlineSearch(query, category, job_site, people, tags, date_from, date_to, version, source) {
+    db.documents.toArray().then(docs => {
+      let results = docs.filter(doc => {
+        let matchesQuery = !query || doc.title.toLowerCase().includes(query) || doc.content.toLowerCase().includes(query);
+        let matchesCategory = !category || doc.category === category;
+        let matchesJobSite = !job_site || doc.job_site.toLowerCase().includes(job_site);
+        let matchesPeople = !people || doc.people.toLowerCase().includes(people);
+        let matchesTags = !tags || tags.split(',').every(tag => doc.tags.map(t => t.toLowerCase()).includes(tag.trim()));
+        let matchesDate = (!date_from || doc.upload_date >= date_from) && (!date_to || doc.upload_date <= date_to);
+        let matchesVersion = !version || doc.version === version;
+        let matchesSource = !source || doc.metadata?.source === source;
+        return matchesQuery && matchesCategory && matchesJobSite && matchesPeople && matchesTags && matchesDate && matchesVersion && matchesSource;
+      }).map(doc => {
+        let content = doc.content.slice(0, 200);
+        if (query) {
+          const words = query.split(/\s+/);
+          let regexPattern = words.map(word => `(${word})`).join('|');
+          const regex = new RegExp(regexPattern, 'gi');
+          content = content.replace(regex, '<mark>$&</mark>');
+        }
+        console.log(`Offline hit: ${doc.title}, Content snippet: ${content}, Full content includes query: ${doc.content.toLowerCase().includes(query)}`);
+        return {
+          title: doc.title,
+          score: 1,
+          content: content,
+          url: doc.url,
+          isFavorite: localPrefs.favorites.includes(doc.title),
+          id: doc.id
+        };
+      });
+      console.log("Offline results:", results);
+      displayResults(results, false, query);
+      document.getElementById("results").innerHTML += "<p class='text-gray-700'>Offline mode: Showing cached results.</p>";
+    });
+  }
+
+  function displayResults(data, isOnline, query) {
+    let results = document.getElementById("results");
+    if (data.length === 0) {
+      results.innerHTML = "<p class='text-gray-700'>No results found.</p>";
+    } else {
+      results.innerHTML = data.map(hit => {
+        let content = isOnline && hit.highlight && hit.highlight.content ? 
+          hit.highlight.content[0] : hit.content;
+        let title = isOnline && hit.highlight && hit.highlight.title ? 
+          hit.highlight.title[0] : hit.title;
+        let viewUrl = hit.url.startsWith('/uploads/') ? hit.url : `/view/${hit.id}?q=${encodeURIComponent(query)}`;
+        console.log(`Result: ${title}, Snippet: ${content}, URL: ${viewUrl}`);
+        return `
+          <div class="bg-white p-4 rounded-lg shadow-md mb-4">
+            <h3 class="text-lg font-semibold text-teal-800">${title}</h3>
+            <p class="text-gray-600">Score: ${hit.score}</p>
+            <p class="text-gray-700">${content}...</p>
+            <div class="flex gap-2">
+              <a href="${viewUrl}" target="_blank" class="text-orange-500 hover:underline">View Full Document</a>
+              <button onclick="toggleFavorite('${hit.title}')" class="bg-gray-500 text-white px-3 py-1 rounded-lg hover:bg-gray-600">${hit.isFavorite ? 'Unfavorite' : 'Favorite'}</button>
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+  }
+
+  function toggleFavorite(title) {
+    let index = localPrefs.favorites.indexOf(title);
+    if (index === -1) {
+      localPrefs.favorites.push(title);
+    } else {
+      localPrefs.favorites.splice(index, 1);
+    }
+    localStorage.setItem('userPrefs', JSON.stringify(localPrefs));
+    if (navigator.onLine) {
+      fetch('/profile', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+        body: `email=${encodeURIComponent(localPrefs.email)}&notifications=${localPrefs.notifications}&favorites=${encodeURIComponent(localPrefs.favorites.join(','))}`
+      });
+    }
+    search();
+  }
+</script>
+{% endblock %}

@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="space-y-4">
+  <h1 class="text-2xl font-bold">New Estimate</h1>
+  <form method="post" class="bg-white rounded shadow p-4 grid md:grid-cols-2 gap-3">
+    <label class="block"><span class="text-sm">Customer</span>
+      <select name="customer_id" class="w-full border rounded p-2">
+        <option value="">--</option>
+        {% for c in customers %}
+        <option value="{{ c.id }}">{{ c.name }} ({{ c.company }})</option>
+        {% endfor %}
+      </select>
+    </label>
+    <label class="block"><span class="text-sm">Equipment</span>
+      <select name="equipment_id" class="w-full border rounded p-2">
+        <option value="">--</option>
+        {% for e in equipment %}
+        <option value="{{ e.id }}">{{ e.unique_id }}</option>
+        {% endfor %}
+      </select>
+    </label>
+    <div class="md:col-span-2 text-right"><button class="btn-integration btn-teal">Create</button></div>
+  </form>
+</div>
+{% endblock %}
+
+
+
+
+
+

@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="space-y-6">
+  <h2 class="text-2xl font-semibold text-teal-800">Version History for {{ title }}</h2>
+
+  <div class="bg-white p-6 rounded-lg shadow-md">
+    <table class="w-full border-collapse">
+      <thead class="bg-teal-800 text-white">
+        <tr>
+          <th class="p-3 text-left">Version</th>
+          <th class="p-3 text-left">Status</th>
+          <th class="p-3 text-left">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for version in versions %}
+          <tr class="border-b hover:bg-gray-50">
+            <td class="p-3">{{ version.version }}</td>
+            <td class="p-3">{{ 'Current' if version.is_current else 'Archived' }}</td>
+            <td class="p-3"><a href="{{ version.url }}" target="_blank" class="text-orange-500 hover:underline">View</a></td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <div class="mt-4">
+      <a href="/documents" class="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600">Back to Documents</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

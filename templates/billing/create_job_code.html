@@ -1,0 +1,172 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mx-auto p-4 max-w-4xl">
+  <div class="mb-6">
+    <h1 class="text-2xl font-bold mb-2">Create New Job Code</h1>
+    <a href="{{ url_for('billing.job_codes') }}" class="text-blue-600 hover:text-blue-800">← Back to Job Codes</a>
+  </div>
+  
+  <form method="POST" class="bg-white shadow-md rounded-lg p-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      
+      <!-- Source File -->
+      <div>
+        <label for="source_file" class="block text-sm font-medium text-gray-700 mb-2">Source File</label>
+        <input type="text" id="source_file" name="source_file" 
+               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+      </div>
+      
+      <!-- Service Unit -->
+      <div>
+        <label for="service_unit" class="block text-sm font-medium text-gray-700 mb-2">Service Unit</label>
+        <input type="text" id="service_unit" name="service_unit" 
+               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+      </div>
+      
+      <!-- Core Code -->
+      <div>
+        <label for="core_code" class="block text-sm font-medium text-gray-700 mb-2">Core Code</label>
+        <input type="text" id="core_code" name="core_code" 
+               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+      </div>
+      
+      <!-- Service Master -->
+      <div>
+        <label for="service_master" class="block text-sm font-medium text-gray-700 mb-2">Service Master</label>
+        <input type="text" id="service_master" name="service_master" 
+               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+      </div>
+      
+      <!-- Unit of Measure -->
+      <div>
+        <label for="unit_of_measure" class="block text-sm font-medium text-gray-700 mb-2">Unit of Measure</label>
+        <input type="text" id="unit_of_measure" name="unit_of_measure" 
+               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+      </div>
+      
+      <!-- SAP Service Master -->
+      <div>
+        <label for="sap_service_master_" class="block text-sm font-medium text-gray-700 mb-2">SAP Service Master</label>
+        <input type="text" id="sap_service_master_" name="sap_service_master_" 
+               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+      </div>
+      
+      <!-- Task Code Description -->
+      <div>
+        <label for="task_code_description" class="block text-sm font-medium text-gray-700 mb-2">Task Code Description</label>
+        <input type="text" id="task_code_description" name="task_code_description" 
+               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+      </div>
+      
+      <!-- Unnamed 2 -->
+      <div>
+        <label for="unnamed_2" class="block text-sm font-medium text-gray-700 mb-2">Unnamed 2</label>
+        <input type="text" id="unnamed_2" name="unnamed_2" 
+               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+      </div>
+      
+      <!-- UOM -->
+      <div>
+        <label for="uom" class="block text-sm font-medium text-gray-700 mb-2">UOM</label>
+        <input type="text" id="uom" name="uom" 
+               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+      </div>
+      
+      <!-- O&M Contract Service Units -->
+      <div>
+        <label for="om_contract_service_units" class="block text-sm font-medium text-gray-700 mb-2">O&M Contract Service Units</label>
+        <input type="text" id="om_contract_service_units" name="om_contract_service_units" 
+               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+      </div>
+      
+      <!-- Core Service Master -->
+      <div>
+        <label for="core_service_master" class="block text-sm font-medium text-gray-700 mb-2">Core Service Master</label>
+        <input type="text" id="core_service_master" name="core_service_master" 
+               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+      </div>
+      
+      <!-- Non-Core Code -->
+      <div>
+        <label for="non_core_code" class="block text-sm font-medium text-gray-700 mb-2">Non-Core Code</label>
+        <input type="text" id="non_core_code" name="non_core_code" 
+               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+      </div>
+      
+      <!-- Non-Core Service Master -->
+      <div>
+        <label for="non_core_service_master" class="block text-sm font-medium text-gray-700 mb-2">Non-Core Service Master</label>
+        <input type="text" id="non_core_service_master" name="non_core_service_master" 
+               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+      </div>
+      
+      <!-- Work Type -->
+      <div>
+        <label for="work_type" class="block text-sm font-medium text-gray-700 mb-2">Work Type</label>
+        <input type="text" id="work_type" name="work_type" 
+               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+      </div>
+      
+      <!-- Category -->
+      <div>
+        <label for="category" class="block text-sm font-medium text-gray-700 mb-2">Category</label>
+        <input type="text" id="category" name="category" 
+               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+      </div>
+    </div>
+    
+    <!-- Text Areas for longer content -->
+    <div class="grid grid-cols-1 gap-6 mt-6">
+      <!-- Definition -->
+      <div>
+        <label for="definition" class="block text-sm font-medium text-gray-700 mb-2">Definition</label>
+        <textarea id="definition" name="definition" rows="3"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+      </div>
+      
+      <!-- Clarification -->
+      <div>
+        <label for="clarification" class="block text-sm font-medium text-gray-700 mb-2">Clarification</label>
+        <textarea id="clarification" name="clarification" rows="3"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+      </div>
+      
+      <!-- Description -->
+      <div>
+        <label for="description" class="block text-sm font-medium text-gray-700 mb-2">Description</label>
+        <textarea id="description" name="description" rows="3"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+      </div>
+      
+      <!-- Explanation -->
+      <div>
+        <label for="explanation" class="block text-sm font-medium text-gray-700 mb-2">Explanation</label>
+        <textarea id="explanation" name="explanation" rows="3"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+      </div>
+      
+      <!-- Definitions -->
+      <div>
+        <label for="definitions" class="block text-sm font-medium text-gray-700 mb-2">Definitions</label>
+        <textarea id="definitions" name="definitions" rows="3"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+      </div>
+    </div>
+    
+    <!-- Submit Buttons -->
+    <div class="flex justify-end space-x-4 mt-8">
+      <a href="{{ url_for('billing.job_codes') }}" 
+         class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">
+        Cancel
+      </a>
+      <button type="submit" 
+              class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+        Create Job Code
+      </button>
+    </div>
+  </form>
+</div>
+{% endblock %}
+
+

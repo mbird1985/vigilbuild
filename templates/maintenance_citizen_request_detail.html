@@ -1,0 +1,264 @@
+{% extends "base.html" %}
+{% block title %}Request #{{ request.id }} - Citizen Request{% endblock %}
+{% block content %}
+<div class="container mx-auto px-4 py-6">
+    <div class="flex justify-between items-center mb-6">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-800">Request #{{ request.id }}</h1>
+            <p class="text-gray-600 capitalize">{{ request.request_type|replace('_', ' ') }}</p>
+        </div>
+        <div class="flex items-center gap-3">
+            {% if request.status == 'new' %}
+            <span class="px-4 py-2 text-sm rounded-full bg-blue-100 text-blue-800 font-medium">New</span>
+            {% elif request.status == 'in_progress' %}
+            <span class="px-4 py-2 text-sm rounded-full bg-yellow-100 text-yellow-800 font-medium">In Progress</span>
+            {% elif request.status == 'resolved' %}
+            <span class="px-4 py-2 text-sm rounded-full bg-green-100 text-green-800 font-medium">Resolved</span>
+            {% elif request.status == 'closed' %}
+            <span class="px-4 py-2 text-sm rounded-full bg-gray-100 text-gray-800 font-medium">Closed</span>
+            {% endif %}
+            <a href="{{ url_for('equipment.maintenance_citizen_requests') }}" class="text-gray-600 hover:text-gray-800">&larr; Back</a>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Main Content -->
+        <div class="lg:col-span-2 space-y-6">
+            <!-- Request Details -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <h2 class="text-lg font-semibold mb-4">Request Details</h2>
+                <div class="space-y-4">
+                    <div>
+                        <label class="text-sm text-gray-500">Description</label>
+                        <p class="mt-1 text-gray-800">{{ request.description }}</p>
+                    </div>
+                    {% if request.location %}
+                    <div>
+                        <label class="text-sm text-gray-500">Location</label>
+                        <p class="mt-1 text-gray-800">{{ request.location }}</p>
+                    </div>
+                    {% endif %}
+                    {% if request.latitude and request.longitude %}
+                    <div>
+                        <label class="text-sm text-gray-500">GPS Coordinates</label>
+                        <p class="mt-1">
+                            <a href="https://www.google.com/maps?q={{ request.latitude }},{{ request.longitude }}"
+                               target="_blank" class="text-blue-600 hover:underline">
+                                {{ request.latitude }}, {{ request.longitude }}
+                            </a>
+                        </p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Photo Evidence -->
+            {% if request.photo_url %}
+            <div class="bg-white rounded-lg shadow p-6">
+                <h2 class="text-lg font-semibold mb-4">Photo</h2>
+                <img src="{{ request.photo_url }}" alt="Request Photo" class="max-w-full rounded-lg">
+            </div>
+            {% endif %}
+
+            <!-- Status Updates / Timeline -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <h2 class="text-lg font-semibold mb-4">Activity Timeline</h2>
+                <div class="space-y-4">
+                    <div class="flex gap-4">
+                        <div class="flex-shrink-0">
+                            <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
+                                <svg class="w-4 h-4 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clip-rule="evenodd"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <div>
+                            <p class="font-medium">Request Submitted</p>
+                            <p class="text-sm text-gray-500">{{ request.created_at.strftime('%Y-%m-%d %H:%M') if request.created_at else '-' }}</p>
+                        </div>
+                    </div>
+
+                    {% if request.job_id %}
+                    <div class="flex gap-4">
+                        <div class="flex-shrink-0">
+                            <div class="w-8 h-8 rounded-full bg-yellow-100 flex items-center justify-center">
+                                <svg class="w-4 h-4 text-yellow-600" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V7.414A2 2 0 0015.414 6L12 2.586A2 2 0 0010.586 2H6zm5 6a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V8z" clip-rule="evenodd"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <div>
+                            <p class="font-medium">Work Order Created</p>
+                            <p class="text-sm text-gray-500">
+                                <a href="{{ url_for('equipment.maintenance_job_detail', job_id=request.job_id) }}"
+                                   class="text-blue-600 hover:underline">Job #{{ request.job_id }}</a>
+                            </p>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    {% if request.status == 'resolved' %}
+                    <div class="flex gap-4">
+                        <div class="flex-shrink-0">
+                            <div class="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center">
+                                <svg class="w-4 h-4 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <div>
+                            <p class="font-medium">Resolved</p>
+                            <p class="text-sm text-gray-500">{{ request.resolved_at.strftime('%Y-%m-%d %H:%M') if request.resolved_at else '-' }}</p>
+                            {% if request.resolution_notes %}
+                            <p class="text-sm text-gray-600 mt-1">{{ request.resolution_notes }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Update Status -->
+            {% if request.status not in ['resolved', 'closed'] %}
+            <div class="bg-white rounded-lg shadow p-6">
+                <h2 class="text-lg font-semibold mb-4">Update Request</h2>
+                <form method="POST">
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Update Status</label>
+                            <select name="status" class="mt-1 block w-full border border-gray-300 rounded-md p-2">
+                                <option value="new" {% if request.status == 'new' %}selected{% endif %}>New</option>
+                                <option value="in_progress" {% if request.status == 'in_progress' %}selected{% endif %}>In Progress</option>
+                                <option value="resolved">Resolved</option>
+                                <option value="closed">Closed (No Action)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Notes</label>
+                            <textarea name="notes" rows="3" class="mt-1 block w-full border border-gray-300 rounded-md p-2"
+                                      placeholder="Add resolution notes..."></textarea>
+                        </div>
+                        <button type="submit" name="action" value="update_status"
+                                class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                            Update Status
+                        </button>
+                    </div>
+                </form>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Sidebar -->
+        <div class="lg:col-span-1 space-y-6">
+            <!-- Request Info -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <h3 class="font-semibold mb-4">Request Information</h3>
+                <dl class="space-y-3 text-sm">
+                    <div>
+                        <dt class="text-gray-500">Request Type</dt>
+                        <dd class="font-medium capitalize">{{ request.request_type|replace('_', ' ') }}</dd>
+                    </div>
+                    <div>
+                        <dt class="text-gray-500">Priority</dt>
+                        <dd>
+                            {% if request.priority == 'high' or request.priority == 'emergency' %}
+                            <span class="px-2 py-1 text-xs rounded-full bg-red-100 text-red-800 capitalize">{{ request.priority }}</span>
+                            {% elif request.priority == 'low' %}
+                            <span class="px-2 py-1 text-xs rounded-full bg-gray-100 text-gray-800 capitalize">{{ request.priority }}</span>
+                            {% else %}
+                            <span class="px-2 py-1 text-xs rounded-full bg-yellow-100 text-yellow-800 capitalize">{{ request.priority or 'Normal' }}</span>
+                            {% endif %}
+                        </dd>
+                    </div>
+                    <div>
+                        <dt class="text-gray-500">Submitted</dt>
+                        <dd class="font-medium">{{ request.created_at.strftime('%Y-%m-%d %H:%M') if request.created_at else '-' }}</dd>
+                    </div>
+                    {% if request.tracking_number %}
+                    <div>
+                        <dt class="text-gray-500">Tracking #</dt>
+                        <dd class="font-medium font-mono">{{ request.tracking_number }}</dd>
+                    </div>
+                    {% endif %}
+                </dl>
+            </div>
+
+            <!-- Reporter Info -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <h3 class="font-semibold mb-4">Reporter</h3>
+                <dl class="space-y-3 text-sm">
+                    {% if request.reporter_name %}
+                    <div>
+                        <dt class="text-gray-500">Name</dt>
+                        <dd class="font-medium">{{ request.reporter_name }}</dd>
+                    </div>
+                    {% endif %}
+                    {% if request.reporter_email %}
+                    <div>
+                        <dt class="text-gray-500">Email</dt>
+                        <dd>
+                            <a href="mailto:{{ request.reporter_email }}" class="text-blue-600 hover:underline">{{ request.reporter_email }}</a>
+                        </dd>
+                    </div>
+                    {% endif %}
+                    {% if request.reporter_phone %}
+                    <div>
+                        <dt class="text-gray-500">Phone</dt>
+                        <dd>
+                            <a href="tel:{{ request.reporter_phone }}" class="text-blue-600 hover:underline">{{ request.reporter_phone }}</a>
+                        </dd>
+                    </div>
+                    {% endif %}
+                    {% if not request.reporter_name and not request.reporter_email %}
+                    <p class="text-gray-500">Anonymous submission</p>
+                    {% endif %}
+                </dl>
+            </div>
+
+            <!-- Related Work Order -->
+            {% if request.job_id %}
+            <div class="bg-blue-50 rounded-lg p-6">
+                <h3 class="font-semibold text-blue-800 mb-2">Linked Work Order</h3>
+                <p class="text-blue-700 mb-3">This request has been converted to a maintenance job.</p>
+                <a href="{{ url_for('equipment.maintenance_job_detail', job_id=request.job_id) }}"
+                   class="inline-block px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+                    View Job #{{ request.job_id }}
+                </a>
+            </div>
+            {% else %}
+            <!-- Create Work Order -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <h3 class="font-semibold mb-4">Create Work Order</h3>
+                <p class="text-sm text-gray-600 mb-3">Convert this request into a maintenance job.</p>
+                <form method="POST">
+                    <input type="hidden" name="action" value="convert_to_job">
+                    <div class="space-y-3">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Equipment (optional)</label>
+                            <select name="equipment_id" class="mt-1 block w-full border border-gray-300 rounded-md p-2 text-sm">
+                                <option value="">Not specified</option>
+                                {% for eq in equipment %}
+                                <option value="{{ eq.id }}">{{ eq.unique_id }} - {{ eq.brand }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Assign To</label>
+                            <select name="assigned_to" class="mt-1 block w-full border border-gray-300 rounded-md p-2 text-sm">
+                                <option value="">Unassigned</option>
+                                {% for user in users %}
+                                <option value="{{ user.id }}">{{ user.username }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <button type="submit" class="w-full bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+                            Create Work Order
+                        </button>
+                    </div>
+                </form>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

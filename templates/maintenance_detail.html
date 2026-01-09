@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="space-y-6">
+  <div class="flex items-center justify-between">
+    <h2 class="text-2xl font-semibold text-teal-800">Maintenance Detail - {{ equipment.unique_id }}</h2>
+    <a href="{{ url_for('equipment.maintenance_landing') }}" class="text-teal-600 hover:text-teal-800">Back to Maintenance</a>
+  </div>
+
+  <!-- Equipment Card -->
+  <div class="bg-white rounded-lg shadow-md p-4">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+      <div>
+        <div class="text-gray-500">Type</div>
+        <div class="font-medium">{{ equipment.equipment_type }}</div>
+      </div>
+      <div>
+        <div class="text-gray-500">Brand/Model</div>
+        <div class="font-medium">{{ equipment.brand }} {{ equipment.model }}</div>
+      </div>
+      <div>
+        <div class="text-gray-500">Hours</div>
+        <div class="font-medium">{{ equipment.hours }}</div>
+      </div>
+      <div>
+        <div class="text-gray-500">Maintenance Threshold</div>
+        <div class="font-medium">{{ equipment.maintenance_threshold or '-' }}</div>
+      </div>
+      <div>
+        <div class="text-gray-500">Last Maintenance</div>
+        <div class="font-medium">{{ equipment.last_maintenance or '-' }}</div>
+      </div>
+      <div>
+        <div class="text-gray-500">Status</div>
+        <div class="font-medium">{{ equipment.status }}</div>
+      </div>
+      <div>
+        <div class="text-gray-500">Due</div>
+        <div class="font-medium">{{ equipment.maintenance_due or '-' }}</div>
+      </div>
+    </div>
+
+    <form method="POST" action="{{ url_for('equipment.maintenance_change_status', equipment_id=equipment.id) }}" class="mt-4">
+      <label class="text-sm text-gray-700 mr-2">Change Status:</label>
+      <select name="status" class="px-2 py-1 border rounded">
+        {% for s in ['active','available','under maintenance','out'] %}
+          <option value="{{ s }}" {{ 'selected' if equipment.status == s else '' }}>{{ s.title() }}</option>
+        {% endfor %}
+      </select>
+      <button type="submit" class="btn-integration btn-teal ml-2">Update</button>
+    </form>
+  </div>
+
+  <!-- Schedule -->
+  <div class="bg-white rounded-lg shadow-md overflow-hidden">
+    <div class="px-4 py-2 border-b bg-gray-50 text-gray-700 font-medium">Maintenance Schedule</div>
+    <form method="POST" action="{{ url_for('equipment.maintenance_update_schedule', equipment_id=equipment.id) }}" class="p-4 grid grid-cols-1 md:grid-cols-5 gap-2">
+      <select name="schedule_type" class="px-2 py-1 border rounded">
+        <option value="time">Time-based</option>
+        <option value="hours">Hours-based</option>
+      </select>
+      <input type="number" name="interval_days" placeholder="Interval Days" class="px-2 py-1 border rounded">
+      <input type="number" name="interval_hours" placeholder="Interval Hours" class="px-2 py-1 border rounded">
+      <input type="text" name="notes" placeholder="Notes" class="px-2 py-1 border rounded">
+      <button type="submit" class="btn-integration btn-teal">Save Schedule</button>
+    </form>
+    <div class="overflow-x-auto">
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-50">
+          <tr>
+            <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Type</th>
+            <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Interval (Days)</th>
+            <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Interval (Hours)</th>
+            <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Last Performed</th>
+            <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Next Due</th>
+            <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Active</th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+          {% for s in schedule %}
+          <tr class="hover:bg-gray-50 text-sm">
+            <td class="px-3 py-2">{{ s.schedule_type }}</td>
+            <td class="px-3 py-2">{{ s.interval_days or '-' }}</td>
+            <td class="px-3 py-2">{{ s.interval_hours or '-' }}</td>
+            <td class="px-3 py-2">{{ s.last_performed or '-' }}</td>
+            <td class="px-3 py-2">{{ s.next_due or '-' }}</td>
+            <td class="px-3 py-2">{{ 'Yes' if s.active else 'No' }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- History -->
+  <div class="bg-white rounded-lg shadow-md overflow-hidden">
+    <div class="px-4 py-2 border-b bg-gray-50 text-gray-700 font-medium">Maintenance History</div>
+    <form method="POST" enctype="multipart/form-data" action="{{ url_for('equipment.maintenance_log_action', equipment_id=equipment.id) }}" class="p-4 grid grid-cols-1 md:grid-cols-6 gap-2">
+      <input type="text" name="action" placeholder="Action (e.g., Oil Change)" class="px-2 py-1 border rounded" required>
+      <input type="text" name="details" placeholder="Details" class="px-2 py-1 border rounded">
+      <select name="status" class="px-2 py-1 border rounded">
+        <option value="completed">Completed</option>
+        <option value="in_progress">In Progress</option>
+        <option value="deferred">Deferred</option>
+      </select>
+      <input type="file" name="document" class="px-2 py-1 border rounded">
+      <div class="md:col-span-2">
+        <button type="submit" class="btn-integration btn-teal">Log Action</button>
+      </div>
+    </form>
+    <div class="px-4 pb-2 text-sm text-gray-600">Attach incident photos or reports here to keep a full record.</div>
+    <div class="overflow-x-auto">
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-50">
+          <tr>
+            <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Action</th>
+            <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Details</th>
+            <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+            <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Performed By</th>
+            <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Performed At</th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+          {% for h in history %}
+          <tr class="hover:bg-gray-50 text-sm">
+            <td class="px-3 py-2">{{ h.action }}</td>
+            <td class="px-3 py-2">{{ h.details or '-' }}</td>
+            <td class="px-3 py-2">{{ h.status }}</td>
+            <td class="px-3 py-2">{{ h.performed_by or '-' }}</td>
+            <td class="px-3 py-2">{{ h.performed_at }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+

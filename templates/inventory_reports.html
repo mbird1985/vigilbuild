@@ -1,0 +1,524 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="max-w-7xl mx-auto space-y-6">
+    <div class="flex justify-between items-center">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-800">Inventory Reports</h1>
+            <p class="text-gray-600">Comprehensive analytics and reporting</p>
+        </div>
+        <div class="flex space-x-2">
+            <button onclick="window.print()" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded">
+                Print Report
+            </button>
+            <a href="{{ url_for('inventory.export_report', format='csv') }}" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded">
+                Export CSV
+            </a>
+        </div>
+    </div>
+
+    <!-- Report Type Tabs -->
+    <div class="bg-white rounded-lg shadow">
+        <div class="border-b flex overflow-x-auto">
+            <button class="tab-btn px-6 py-3 font-medium text-blue-600 border-b-2 border-blue-600" data-tab="overview">Overview</button>
+            <button class="tab-btn px-6 py-3 font-medium text-gray-500 hover:text-gray-700" data-tab="spending">Spending Analysis</button>
+            <button class="tab-btn px-6 py-3 font-medium text-gray-500 hover:text-gray-700" data-tab="suppliers">Supplier Performance</button>
+            <button class="tab-btn px-6 py-3 font-medium text-gray-500 hover:text-gray-700" data-tab="stock">Stock Status</button>
+            <button class="tab-btn px-6 py-3 font-medium text-gray-500 hover:text-gray-700" data-tab="trends">Price Trends</button>
+            <button class="tab-btn px-6 py-3 font-medium text-gray-500 hover:text-gray-700" data-tab="orders">Order History</button>
+        </div>
+
+        <!-- Overview Tab -->
+        <div id="tab-overview" class="tab-content p-6">
+            <!-- Summary KPIs -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                <div class="bg-blue-50 rounded-lg p-4">
+                    <p class="text-sm text-blue-600">Total Inventory Value</p>
+                    <p class="text-2xl font-bold text-blue-800">${{ "{:,.2f}".format(value_report.total_value or 0) }}</p>
+                </div>
+                <div class="bg-green-50 rounded-lg p-4">
+                    <p class="text-sm text-green-600">Active Items</p>
+                    <p class="text-2xl font-bold text-green-800">{{ value_report.total_items or 0 }}</p>
+                </div>
+                <div class="bg-purple-50 rounded-lg p-4">
+                    <p class="text-sm text-purple-600">Total Units</p>
+                    <p class="text-2xl font-bold text-purple-800">{{ "{:,}".format(value_report.total_units or 0) }}</p>
+                </div>
+                <div class="bg-orange-50 rounded-lg p-4">
+                    <p class="text-sm text-orange-600">Categories</p>
+                    <p class="text-2xl font-bold text-orange-800">{{ value_report.category_breakdown|length if value_report.category_breakdown else 0 }}</p>
+                </div>
+            </div>
+
+            <!-- Stock Health -->
+            {% set total_items = stats.total or 1 %}
+            {% set in_stock_pct = [((stats.in_stock or 0) / total_items * 100), 100] | min %}
+            {% set low_stock_pct = [((stats.low_stock or 0) / total_items * 100), 100] | min %}
+            {% set out_stock_pct = [((stats.out_of_stock or 0) / total_items * 100), 100] | min %}
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                <div class="bg-white border rounded-lg p-4 overflow-hidden">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-gray-600">In Stock</span>
+                        <span class="text-green-600 font-bold">{{ stats.in_stock or 0 }}</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
+                        <div class="bg-green-500 h-2 rounded-full" style="width: {{ in_stock_pct }}%; max-width: 100%;"></div>
+                    </div>
+                </div>
+                <div class="bg-white border rounded-lg p-4 overflow-hidden">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-gray-600">Low Stock</span>
+                        <span class="text-yellow-600 font-bold">{{ stats.low_stock or 0 }}</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
+                        <div class="bg-yellow-500 h-2 rounded-full" style="width: {{ low_stock_pct }}%; max-width: 100%;"></div>
+                    </div>
+                </div>
+                <div class="bg-white border rounded-lg p-4 overflow-hidden">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-gray-600">Out of Stock</span>
+                        <span class="text-red-600 font-bold">{{ stats.out_of_stock or 0 }}</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
+                        <div class="bg-red-500 h-2 rounded-full" style="width: {{ out_stock_pct }}%; max-width: 100%;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Value by Category Chart -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="bg-white border rounded-lg p-4">
+                    <h3 class="font-semibold text-gray-800 mb-4">Value by Category</h3>
+                    <div id="categoryChart" style="height: 300px;"></div>
+                </div>
+                <div class="bg-white border rounded-lg p-4">
+                    <h3 class="font-semibold text-gray-800 mb-4">Top Value Items</h3>
+                    <div class="space-y-2 max-h-72 overflow-y-auto">
+                        {% for row in value_report.top_value_items[:10] %}
+                        <div class="flex justify-between items-center p-2 bg-gray-50 rounded">
+                            <div>
+                                <span class="font-medium">{{ row.name }}</span>
+                                <span class="text-xs text-gray-500 ml-2">{{ row.sku }}</span>
+                            </div>
+                            <span class="font-bold text-blue-600">${{ "{:,.2f}".format(row.total_value) }}</span>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Spending Analysis Tab -->
+        <div id="tab-spending" class="tab-content p-6 hidden">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                <div class="bg-blue-50 rounded-lg p-4">
+                    <p class="text-sm text-blue-600">Total Spend (YTD)</p>
+                    <p class="text-2xl font-bold text-blue-800">${{ "{:,.2f}".format(spending.ytd_total or 0) }}</p>
+                </div>
+                <div class="bg-green-50 rounded-lg p-4">
+                    <p class="text-sm text-green-600">This Month</p>
+                    <p class="text-2xl font-bold text-green-800">${{ "{:,.2f}".format(spending.month_total or 0) }}</p>
+                </div>
+                <div class="bg-purple-50 rounded-lg p-4">
+                    <p class="text-sm text-purple-600">Avg Monthly</p>
+                    <p class="text-2xl font-bold text-purple-800">${{ "{:,.2f}".format(spending.avg_monthly or 0) }}</p>
+                </div>
+            </div>
+
+            <div class="bg-white border rounded-lg p-4 mb-6">
+                <h3 class="font-semibold text-gray-800 mb-4">Monthly Spending Trend</h3>
+                <div id="spendingChart" style="height: 300px;"></div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="bg-white border rounded-lg p-4">
+                    <h3 class="font-semibold text-gray-800 mb-4">Spending by Category</h3>
+                    <div id="spendByCategoryChart" style="height: 250px;"></div>
+                </div>
+                <div class="bg-white border rounded-lg p-4">
+                    <h3 class="font-semibold text-gray-800 mb-4">Top Suppliers by Spend</h3>
+                    <div class="space-y-2">
+                        {% for supplier in spending.by_supplier[:10] %}
+                        <div class="flex justify-between items-center p-2 bg-gray-50 rounded">
+                            <a href="{{ url_for('inventory.supplier_detail', supplier_id=supplier.supplier_id) }}" class="text-blue-600 hover:underline">
+                                {{ supplier.supplier_name }}
+                            </a>
+                            <div class="text-right">
+                                <span class="font-bold">${{ "{:,.2f}".format(supplier.total_orders) }}</span>
+                                <span class="text-xs text-gray-500 block">{{ supplier.order_count }} orders</span>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Supplier Performance Tab -->
+        <div id="tab-suppliers" class="tab-content p-6 hidden">
+            <div class="bg-white border rounded-lg overflow-hidden">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Supplier</th>
+                            <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">Orders</th>
+                            <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">Total Spend</th>
+                            <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">Avg Lead Time</th>
+                            <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">Items Supplied</th>
+                            <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200">
+                        {% for supplier in supplier_performance %}
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-4 py-3">
+                                <a href="{{ url_for('inventory.supplier_detail', supplier_id=supplier.id) }}" class="text-blue-600 hover:underline font-medium">
+                                    {{ supplier.name }}
+                                </a>
+                            </td>
+                            <td class="px-4 py-3 text-right">{{ supplier.order_count or 0 }}</td>
+                            <td class="px-4 py-3 text-right font-medium">${{ "{:,.2f}".format(supplier.total_spend or 0) }}</td>
+                            <td class="px-4 py-3 text-right">
+                                {% if supplier.avg_lead_time %}{{ "{:.1f}".format(supplier.avg_lead_time) }} days{% else %}-{% endif %}
+                            </td>
+                            <td class="px-4 py-3 text-right">{{ supplier.item_count or 0 }}</td>
+                            <td class="px-4 py-3 text-center">
+                                {% if supplier.preferred %}
+                                <span class="px-2 py-1 text-xs bg-yellow-100 text-yellow-800 rounded">Preferred</span>
+                                {% endif %}
+                                {% if supplier.active %}
+                                <span class="px-2 py-1 text-xs bg-green-100 text-green-800 rounded">Active</span>
+                                {% else %}
+                                <span class="px-2 py-1 text-xs bg-gray-100 text-gray-600 rounded">Inactive</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="6" class="px-4 py-8 text-center text-gray-500">No supplier data available</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Stock Status Tab -->
+        <div id="tab-stock" class="tab-content p-6 hidden">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                <!-- Low Stock Items -->
+                <div class="bg-white border rounded-lg overflow-hidden">
+                    <div class="px-4 py-3 bg-yellow-50 border-b">
+                        <h3 class="font-semibold text-yellow-800">Low Stock Items ({{ low_stock_items|length }})</h3>
+                    </div>
+                    <div class="max-h-80 overflow-y-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50 sticky top-0">
+                                <tr>
+                                    <th class="px-3 py-2 text-left text-xs font-medium text-gray-500">Item</th>
+                                    <th class="px-3 py-2 text-right text-xs font-medium text-gray-500">Qty</th>
+                                    <th class="px-3 py-2 text-right text-xs font-medium text-gray-500">Reorder At</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-200">
+                                {% for item in low_stock_items %}
+                                <tr class="hover:bg-yellow-50">
+                                    <td class="px-3 py-2">
+                                        <a href="{{ url_for('inventory.inventory_detail', item_id=item.id) }}" class="text-blue-600 hover:underline">
+                                            {{ item.name }}
+                                        </a>
+                                    </td>
+                                    <td class="px-3 py-2 text-right font-medium text-yellow-600">{{ item.quantity }}</td>
+                                    <td class="px-3 py-2 text-right text-gray-500">{{ item.reorder_threshold or item.minimum_stock_level or '-' }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Out of Stock Items -->
+                <div class="bg-white border rounded-lg overflow-hidden">
+                    <div class="px-4 py-3 bg-red-50 border-b">
+                        <h3 class="font-semibold text-red-800">Out of Stock Items ({{ out_of_stock_items|length }})</h3>
+                    </div>
+                    <div class="max-h-80 overflow-y-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50 sticky top-0">
+                                <tr>
+                                    <th class="px-3 py-2 text-left text-xs font-medium text-gray-500">Item</th>
+                                    <th class="px-3 py-2 text-left text-xs font-medium text-gray-500">Category</th>
+                                    <th class="px-3 py-2 text-right text-xs font-medium text-gray-500">Last Ordered</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-200">
+                                {% for item in out_of_stock_items %}
+                                <tr class="hover:bg-red-50">
+                                    <td class="px-3 py-2">
+                                        <a href="{{ url_for('inventory.inventory_detail', item_id=item.id) }}" class="text-blue-600 hover:underline">
+                                            {{ item.name }}
+                                        </a>
+                                    </td>
+                                    <td class="px-3 py-2 text-gray-500">{{ item.category or '-' }}</td>
+                                    <td class="px-3 py-2 text-right text-gray-500">{{ item.last_ordered or '-' }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dead Stock -->
+            <div class="bg-white border rounded-lg overflow-hidden">
+                <div class="px-4 py-3 bg-gray-100 border-b">
+                    <h3 class="font-semibold text-gray-800">Dead Stock (No movement in 90+ days)</h3>
+                </div>
+                <div class="max-h-64 overflow-y-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50 sticky top-0">
+                            <tr>
+                                <th class="px-3 py-2 text-left text-xs font-medium text-gray-500">Item</th>
+                                <th class="px-3 py-2 text-right text-xs font-medium text-gray-500">Qty</th>
+                                <th class="px-3 py-2 text-right text-xs font-medium text-gray-500">Value</th>
+                                <th class="px-3 py-2 text-right text-xs font-medium text-gray-500">Days Inactive</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200">
+                            {% for item in dead_stock %}
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-3 py-2">{{ item.name }}</td>
+                                <td class="px-3 py-2 text-right">{{ item.quantity }}</td>
+                                <td class="px-3 py-2 text-right">${{ "{:,.2f}".format(item.value or 0) }}</td>
+                                <td class="px-3 py-2 text-right text-red-600">{{ item.days_inactive or 90 }}+</td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="4" class="px-3 py-8 text-center text-gray-500">No dead stock identified</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Price Trends Tab -->
+        <div id="tab-trends" class="tab-content p-6 hidden">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                <div class="bg-red-50 rounded-lg p-4">
+                    <p class="text-sm text-red-600">Price Increases (90 days)</p>
+                    <p class="text-2xl font-bold text-red-800">{{ price_stats.increases or 0 }}</p>
+                    <p class="text-xs text-red-500">Avg: +{{ "{:.1f}".format(price_stats.avg_increase or 0) }}%</p>
+                </div>
+                <div class="bg-green-50 rounded-lg p-4">
+                    <p class="text-sm text-green-600">Price Decreases (90 days)</p>
+                    <p class="text-2xl font-bold text-green-800">{{ price_stats.decreases or 0 }}</p>
+                    <p class="text-xs text-green-500">Avg: {{ "{:.1f}".format(price_stats.avg_decrease or 0) }}%</p>
+                </div>
+                <div class="bg-blue-50 rounded-lg p-4">
+                    <p class="text-sm text-blue-600">Items Affected</p>
+                    <p class="text-2xl font-bold text-blue-800">{{ price_stats.items_affected or 0 }}</p>
+                </div>
+            </div>
+
+            <div class="bg-white border rounded-lg p-4 mb-6">
+                <h3 class="font-semibold text-gray-800 mb-4">Recent Price Changes</h3>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-3 py-2 text-left text-xs font-medium text-gray-500">Date</th>
+                                <th class="px-3 py-2 text-left text-xs font-medium text-gray-500">Item</th>
+                                <th class="px-3 py-2 text-left text-xs font-medium text-gray-500">Supplier</th>
+                                <th class="px-3 py-2 text-right text-xs font-medium text-gray-500">Old Price</th>
+                                <th class="px-3 py-2 text-right text-xs font-medium text-gray-500">New Price</th>
+                                <th class="px-3 py-2 text-right text-xs font-medium text-gray-500">Change</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200">
+                            {% for change in price_history[:20] %}
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-3 py-2 text-sm text-gray-600">
+                                    {{ change.recorded_at.strftime('%Y-%m-%d') if change.recorded_at else '-' }}
+                                </td>
+                                <td class="px-3 py-2">
+                                    <a href="{{ url_for('inventory.item_price_trends', item_id=change.consumable_id) }}" class="text-blue-600 hover:underline">
+                                        {{ change.item_name }}
+                                    </a>
+                                </td>
+                                <td class="px-3 py-2 text-gray-600">{{ change.supplier_name or '-' }}</td>
+                                <td class="px-3 py-2 text-right">${{ "{:.2f}".format(change.old_price or 0) }}</td>
+                                <td class="px-3 py-2 text-right font-medium">${{ "{:.2f}".format(change.new_price) }}</td>
+                                <td class="px-3 py-2 text-right">
+                                    {% if change.change_percentage > 0 %}
+                                    <span class="text-red-600">+{{ "{:.1f}".format(change.change_percentage) }}%</span>
+                                    {% elif change.change_percentage < 0 %}
+                                    <span class="text-green-600">{{ "{:.1f}".format(change.change_percentage) }}%</span>
+                                    {% else %}
+                                    <span class="text-gray-400">0%</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="6" class="px-3 py-8 text-center text-gray-500">No price changes recorded</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% if price_history|length > 20 %}
+                <div class="mt-4 text-center">
+                    <a href="{{ url_for('inventory.price_history_list') }}" class="text-blue-600 hover:underline">View all price history</a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Order History Tab -->
+        <div id="tab-orders" class="tab-content p-6 hidden">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                <div class="bg-blue-50 rounded-lg p-4">
+                    <p class="text-sm text-blue-600">Total Orders</p>
+                    <p class="text-2xl font-bold text-blue-800">{{ order_stats.total or 0 }}</p>
+                </div>
+                <div class="bg-yellow-50 rounded-lg p-4">
+                    <p class="text-sm text-yellow-600">Pending</p>
+                    <p class="text-2xl font-bold text-yellow-800">{{ order_stats.pending or 0 }}</p>
+                </div>
+                <div class="bg-purple-50 rounded-lg p-4">
+                    <p class="text-sm text-purple-600">In Transit</p>
+                    <p class="text-2xl font-bold text-purple-800">{{ order_stats.in_transit or 0 }}</p>
+                </div>
+                <div class="bg-green-50 rounded-lg p-4">
+                    <p class="text-sm text-green-600">Delivered</p>
+                    <p class="text-2xl font-bold text-green-800">{{ order_stats.delivered or 0 }}</p>
+                </div>
+            </div>
+
+            <div class="bg-white border rounded-lg overflow-hidden">
+                <div class="px-4 py-3 bg-gray-50 border-b flex justify-between items-center">
+                    <h3 class="font-semibold text-gray-800">Recent Purchase Orders</h3>
+                    <a href="{{ url_for('inventory.purchase_orders_list') }}" class="text-blue-600 hover:underline text-sm">View All</a>
+                </div>
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-4 py-2 text-left text-xs font-medium text-gray-500">PO #</th>
+                            <th class="px-4 py-2 text-left text-xs font-medium text-gray-500">Supplier</th>
+                            <th class="px-4 py-2 text-left text-xs font-medium text-gray-500">Date</th>
+                            <th class="px-4 py-2 text-right text-xs font-medium text-gray-500">Amount</th>
+                            <th class="px-4 py-2 text-center text-xs font-medium text-gray-500">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200">
+                        {% for order in recent_orders %}
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-4 py-2">
+                                <a href="{{ url_for('inventory.purchase_order_detail', po_id=order.id) }}" class="text-blue-600 hover:underline font-mono">
+                                    {{ order.po_number }}
+                                </a>
+                            </td>
+                            <td class="px-4 py-2">{{ order.supplier_name }}</td>
+                            <td class="px-4 py-2 text-gray-600">{{ order.order_date.strftime('%Y-%m-%d') if order.order_date else '-' }}</td>
+                            <td class="px-4 py-2 text-right font-medium">${{ "{:,.2f}".format(order.total_amount or 0) }}</td>
+                            <td class="px-4 py-2 text-center">
+                                {% if order.status == 'delivered' %}
+                                <span class="px-2 py-1 text-xs bg-green-100 text-green-800 rounded">Delivered</span>
+                                {% elif order.status == 'shipped' %}
+                                <span class="px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded">Shipped</span>
+                                {% elif order.status == 'submitted' %}
+                                <span class="px-2 py-1 text-xs bg-yellow-100 text-yellow-800 rounded">Submitted</span>
+                                {% else %}
+                                <span class="px-2 py-1 text-xs bg-gray-100 text-gray-600 rounded">{{ order.status }}</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="5" class="px-4 py-8 text-center text-gray-500">No purchase orders found</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+<script>
+    // Tab switching
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.tab-btn').forEach(b => {
+                b.classList.remove('text-blue-600', 'border-b-2', 'border-blue-600');
+                b.classList.add('text-gray-500');
+            });
+            btn.classList.add('text-blue-600', 'border-b-2', 'border-blue-600');
+            btn.classList.remove('text-gray-500');
+
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
+            document.getElementById('tab-' + btn.dataset.tab).classList.remove('hidden');
+        });
+    });
+
+    // Category Chart
+    const categoryData = {{ value_report.category_breakdown | tojson if value_report.category_breakdown else '[]' }};
+    if (categoryData.length > 0) {
+        Plotly.newPlot('categoryChart', [{
+            values: categoryData.map(c => c.value),
+            labels: categoryData.map(c => c.category || 'Uncategorized'),
+            type: 'pie',
+            hole: 0.4,
+            textinfo: 'percent',
+            marker: {
+                colors: ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#EC4899', '#06B6D4', '#84CC16']
+            }
+        }], {
+            margin: { t: 20, b: 20, l: 20, r: 20 },
+            showlegend: true,
+            legend: { orientation: 'h', y: -0.1 }
+        }, { responsive: true });
+    }
+
+    // Spending Chart
+    const spendingData = {{ spending.monthly | tojson if spending.monthly else '[]' }};
+    if (spendingData.length > 0) {
+        Plotly.newPlot('spendingChart', [{
+            x: spendingData.map(s => s.month),
+            y: spendingData.map(s => s.amount),
+            type: 'bar',
+            marker: { color: '#3B82F6' }
+        }], {
+            margin: { t: 20, r: 20, l: 60, b: 50 },
+            xaxis: { title: 'Month' },
+            yaxis: { title: 'Spend ($)', tickformat: '$,.0f' }
+        }, { responsive: true });
+    }
+
+    // Spend by Category Chart
+    const spendByCat = {{ spending.by_category | tojson if spending.by_category else '[]' }};
+    if (spendByCat.length > 0) {
+        Plotly.newPlot('spendByCategoryChart', [{
+            values: spendByCat.map(c => c.amount),
+            labels: spendByCat.map(c => c.category || 'Other'),
+            type: 'pie',
+            marker: {
+                colors: ['#10B981', '#3B82F6', '#F59E0B', '#EF4444', '#8B5CF6']
+            }
+        }], {
+            margin: { t: 20, b: 20, l: 20, r: 20 },
+            showlegend: true
+        }, { responsive: true });
+    }
+</script>
+
+<style>
+    @media print {
+        .tab-btn { display: none !important; }
+        .tab-content { display: block !important; page-break-inside: avoid; }
+        .hidden { display: block !important; }
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="space-y-6">
+  <div class="bg-white p-6 rounded-lg shadow-md max-w-4xl mx-auto">
+    <h2 class="text-2xl font-semibold text-teal-800">{{ doc.title }} <span class="text-gray-600">(Version: {{ doc.metadata.version }})</span></h2>
+    <p class="text-gray-700 mt-2">Category: {{ doc.metadata.category }} | Tags: {{ doc.metadata.tags|join(', ') }}</p>
+    <pre id="document-content" class="mt-4 text-gray-700 whitespace-pre-wrap">{{ doc.content }}</pre>
+  </div>
+</div>
+
+<script>
+  const query = {{ query|tojson }};
+  if (query) {
+    const contentElement = document.getElementById('document-content');
+    let content = contentElement.innerHTML;
+    const regex = new RegExp(`(${query})`, 'gi');
+    content = content.replace(regex, '<mark class="bg-yellow-200">$1</mark>');
+    contentElement.innerHTML = content;
+  }
+</script>
+{% endblock %}

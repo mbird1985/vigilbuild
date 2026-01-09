@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="space-y-4">
+  <div class="flex items-center justify-between">
+    <h1 class="text-2xl font-bold">{{ board.name }} — Forms</h1>
+    <a class="btn-integration btn-blue" href="{{ url_for('pm.board_detail', board_id=board.id, view='kanban') }}">Kanban</a>
+  </div>
+  <div class="bg-white rounded shadow p-4">
+    <div class="text-gray-600">Forms view placeholder. Define forms that map to board columns and accept external submissions.</div>
+  </div>
+</div>
+{% endblock %}
+
+
+
+
+
+

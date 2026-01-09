@@ -1,0 +1,235 @@
+{% extends "base.html" %}
+{% block title %}{% if provider %}Edit{% else %}Add{% endif %} GPS Provider{% endblock %}
+{% block content %}
+<div class="container mx-auto px-4 py-6 max-w-2xl">
+    <div class="mb-6">
+        <a href="{{ url_for('equipment.maintenance_telematics_providers') }}"
+           class="text-gray-600 hover:text-gray-900 inline-flex items-center gap-1">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+            </svg>
+            Back to Providers
+        </a>
+        <h1 class="text-2xl font-bold text-gray-800 mt-2">
+            {% if provider %}Edit GPS Provider{% else %}Add GPS Provider{% endif %}
+        </h1>
+    </div>
+
+    <form method="POST" class="bg-white rounded-lg shadow p-6 space-y-6">
+        <!-- Provider Name -->
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Provider Name</label>
+            <input type="text" name="name" required
+                   value="{{ provider.name if provider else '' }}"
+                   class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                   placeholder="e.g., Main Fleet GPS">
+            <p class="text-xs text-gray-500 mt-1">A friendly name to identify this provider</p>
+        </div>
+
+        <!-- Provider Type -->
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Provider Type</label>
+            <select name="provider_type" id="providerType" required
+                    class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                    onchange="showProviderFields()">
+                <option value="">Select a provider...</option>
+                <option value="samsara" {% if provider and provider.provider_type == 'samsara' %}selected{% endif %}>Samsara</option>
+                <option value="geotab" {% if provider and provider.provider_type == 'geotab' %}selected{% endif %}>Geotab</option>
+                <option value="verizon_connect" {% if provider and provider.provider_type == 'verizon_connect' %}selected{% endif %}>Verizon Connect</option>
+                <option value="generic" {% if provider and provider.provider_type == 'generic' %}selected{% endif %}>Generic API</option>
+            </select>
+        </div>
+
+        <!-- Samsara Fields -->
+        <div id="samsaraFields" class="space-y-4 hidden">
+            <div class="bg-orange-50 border border-orange-200 rounded-lg p-4">
+                <h3 class="font-medium text-orange-800 mb-2">Samsara Configuration</h3>
+                <p class="text-sm text-orange-700 mb-4">Get your API token from the Samsara dashboard under Settings > API Tokens</p>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">API Token</label>
+                        <input type="password" name="api_key" id="samsara_api_key"
+                               value="{{ provider.config.api_key if provider and provider.provider_type == 'samsara' else '' }}"
+                               class="w-full border border-gray-300 rounded-lg px-4 py-2"
+                               placeholder="samsara_api_xxxxxxxxxxxx">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Base URL (optional)</label>
+                        <input type="text" name="base_url" id="samsara_base_url"
+                               value="{{ provider.config.base_url if provider and provider.provider_type == 'samsara' else 'https://api.samsara.com' }}"
+                               class="w-full border border-gray-300 rounded-lg px-4 py-2"
+                               placeholder="https://api.samsara.com">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Geotab Fields -->
+        <div id="geotabFields" class="space-y-4 hidden">
+            <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+                <h3 class="font-medium text-green-800 mb-2">Geotab Configuration</h3>
+                <p class="text-sm text-green-700 mb-4">Use your Geotab MyGeotab credentials</p>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Username</label>
+                        <input type="text" name="username" id="geotab_username"
+                               value="{{ provider.config.username if provider and provider.provider_type == 'geotab' else '' }}"
+                               class="w-full border border-gray-300 rounded-lg px-4 py-2"
+                               placeholder="user@company.com">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                        <input type="password" name="password" id="geotab_password"
+                               value="{{ provider.config.password if provider and provider.provider_type == 'geotab' else '' }}"
+                               class="w-full border border-gray-300 rounded-lg px-4 py-2">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Database Name</label>
+                        <input type="text" name="database" id="geotab_database"
+                               value="{{ provider.config.database if provider and provider.provider_type == 'geotab' else '' }}"
+                               class="w-full border border-gray-300 rounded-lg px-4 py-2"
+                               placeholder="Your Geotab database name">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Base URL (optional)</label>
+                        <input type="text" name="base_url" id="geotab_base_url"
+                               value="{{ provider.config.base_url if provider and provider.provider_type == 'geotab' else 'https://my.geotab.com/apiv1' }}"
+                               class="w-full border border-gray-300 rounded-lg px-4 py-2">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Verizon Connect Fields -->
+        <div id="verizonFields" class="space-y-4 hidden">
+            <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+                <h3 class="font-medium text-red-800 mb-2">Verizon Connect Configuration</h3>
+                <p class="text-sm text-red-700 mb-4">Contact Verizon Connect to obtain API credentials</p>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">API Key</label>
+                        <input type="password" name="api_key" id="verizon_api_key"
+                               value="{{ provider.config.api_key if provider and provider.provider_type == 'verizon_connect' else '' }}"
+                               class="w-full border border-gray-300 rounded-lg px-4 py-2">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Account ID</label>
+                        <input type="text" name="account_id" id="verizon_account_id"
+                               value="{{ provider.config.account_id if provider and provider.provider_type == 'verizon_connect' else '' }}"
+                               class="w-full border border-gray-300 rounded-lg px-4 py-2">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Base URL (optional)</label>
+                        <input type="text" name="base_url" id="verizon_base_url"
+                               value="{{ provider.config.base_url if provider and provider.provider_type == 'verizon_connect' else 'https://fim.api.verizonconnect.com/api' }}"
+                               class="w-full border border-gray-300 rounded-lg px-4 py-2">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Generic API Fields -->
+        <div id="genericFields" class="space-y-4 hidden">
+            <div class="bg-gray-50 border border-gray-200 rounded-lg p-4">
+                <h3 class="font-medium text-gray-800 mb-2">Generic API Configuration</h3>
+                <p class="text-sm text-gray-600 mb-4">Configure a custom GPS API endpoint</p>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Base URL</label>
+                        <input type="text" name="base_url" id="generic_base_url"
+                               value="{{ provider.config.base_url if provider and provider.provider_type == 'generic' else '' }}"
+                               class="w-full border border-gray-300 rounded-lg px-4 py-2"
+                               placeholder="https://your-gps-api.com/api">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">API Key</label>
+                        <input type="password" name="api_key" id="generic_api_key"
+                               value="{{ provider.config.api_key if provider and provider.provider_type == 'generic' else '' }}"
+                               class="w-full border border-gray-300 rounded-lg px-4 py-2">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Authentication Type</label>
+                        <select name="auth_type" id="generic_auth_type"
+                                class="w-full border border-gray-300 rounded-lg px-4 py-2">
+                            <option value="bearer" {% if provider and provider.config.auth_type == 'bearer' %}selected{% endif %}>Bearer Token</option>
+                            <option value="basic" {% if provider and provider.config.auth_type == 'basic' %}selected{% endif %}>Basic Auth</option>
+                            <option value="header" {% if provider and provider.config.auth_type == 'header' %}selected{% endif %}>Custom Header</option>
+                            <option value="none" {% if provider and provider.config.auth_type == 'none' %}selected{% endif %}>None</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Auth Header Name (for custom header)</label>
+                        <input type="text" name="auth_header" id="generic_auth_header"
+                               value="{{ provider.config.auth_header if provider and provider.provider_type == 'generic' else 'Authorization' }}"
+                               class="w-full border border-gray-300 rounded-lg px-4 py-2"
+                               placeholder="Authorization">
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Vehicles Endpoint</label>
+                            <input type="text" name="vehicles_endpoint" id="generic_vehicles_endpoint"
+                                   value="{{ provider.config.vehicles_endpoint if provider and provider.provider_type == 'generic' else '/vehicles' }}"
+                                   class="w-full border border-gray-300 rounded-lg px-4 py-2"
+                                   placeholder="/vehicles">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Locations Endpoint</label>
+                            <input type="text" name="locations_endpoint" id="generic_locations_endpoint"
+                                   value="{{ provider.config.locations_endpoint if provider and provider.provider_type == 'generic' else '/locations' }}"
+                                   class="w-full border border-gray-300 rounded-lg px-4 py-2"
+                                   placeholder="/locations">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Active Status -->
+        <div class="flex items-center gap-2">
+            <input type="checkbox" name="is_active" id="is_active"
+                   {% if not provider or provider.is_active %}checked{% endif %}
+                   class="h-4 w-4 text-orange-600 focus:ring-orange-500 border-gray-300 rounded">
+            <label for="is_active" class="text-sm font-medium text-gray-700">Active</label>
+            <span class="text-xs text-gray-500">(Active providers will be synced automatically)</span>
+        </div>
+
+        <!-- Submit -->
+        <div class="flex gap-4 pt-4 border-t">
+            <button type="submit"
+                    class="bg-orange-600 hover:bg-orange-700 text-white px-6 py-2 rounded-lg font-medium">
+                {% if provider %}Update Provider{% else %}Add Provider{% endif %}
+            </button>
+            <a href="{{ url_for('equipment.maintenance_telematics_providers') }}"
+               class="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">
+                Cancel
+            </a>
+        </div>
+    </form>
+</div>
+
+<script>
+function showProviderFields() {
+    const type = document.getElementById('providerType').value;
+
+    // Hide all provider fields
+    document.getElementById('samsaraFields').classList.add('hidden');
+    document.getElementById('geotabFields').classList.add('hidden');
+    document.getElementById('verizonFields').classList.add('hidden');
+    document.getElementById('genericFields').classList.add('hidden');
+
+    // Show selected provider fields
+    if (type === 'samsara') {
+        document.getElementById('samsaraFields').classList.remove('hidden');
+    } else if (type === 'geotab') {
+        document.getElementById('geotabFields').classList.remove('hidden');
+    } else if (type === 'verizon_connect') {
+        document.getElementById('verizonFields').classList.remove('hidden');
+    } else if (type === 'generic') {
+        document.getElementById('genericFields').classList.remove('hidden');
+    }
+}
+
+// Show fields on page load if editing
+document.addEventListener('DOMContentLoaded', showProviderFields);
+</script>
+{% endblock %}

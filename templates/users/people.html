@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mx-auto p-4">
+  <h1 class="text-2xl font-bold mb-4">People</h1>
+
+  <a href="{{ url_for('users.add_person') }}" class="bg-green-600 text-white px-4 py-2 rounded inline-block mb-4">Add Person</a>
+
+  <table class="w-full border-collapse border border-gray-300">
+    <thead>
+      <tr class="bg-gray-200">
+        <th class="p-2">Name</th>
+        <th class="p-2">Email</th>
+        <th class="p-2">Job Title</th>
+        <th class="p-2">Role</th>
+        <th class="p-2">Certifications</th>
+        <th class="p-2">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for p in people %}
+      <tr>
+        <td class="p-2 border"><a class="text-blue-600 underline" href="{{ url_for('users.person_detail', id=p.id) }}">{{ p.full_name }}</a></td>
+        <td class="p-2 border">{{ p.email }}</td>
+        <td class="p-2 border">{{ p.job_title }}</td>
+        <td class="p-2 border">{{ p.role }}</td>
+        <td class="p-2 border">{{ (p.certifications or []) | join(', ') }}</td>
+        <td class="p-2 border">
+          <a href="{{ url_for('users.edit_person', id=p.id) }}" class="bg-blue-600 text-white px-2 py-1 rounded">Edit</a>
+          <form method="POST" action="{{ url_for('users.delete_person', id=p.id) }}" class="inline" onsubmit="return confirm('Are you sure?')">
+            <button type="submit" class="bg-red-600 text-white px-2 py-1 rounded">Delete</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
+
+
