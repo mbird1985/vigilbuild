@@ -6,16 +6,47 @@ These pages are publicly accessible (no authentication required)
 
 from flask import Blueprint, render_template, request, jsonify, flash, redirect, url_for
 from datetime import datetime
-from services.email_service import send_notification
-from config import SMTP_USER
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 import os
 
 marketing_bp = Blueprint('marketing', __name__)
 
-# Email address for receiving demo requests and inquiries
-# This can be overridden via environment variable
+# Email configuration from environment variables
+SMTP_SERVER = os.getenv('SMTP_SERVER', 'smtp.gmail.com')
+SMTP_PORT = int(os.getenv('SMTP_PORT', '587'))
+SMTP_USER = os.getenv('SMTP_USER', '')
+SMTP_PASS = os.getenv('SMTP_PASS', '')
 MARKETING_EMAIL = os.getenv('MARKETING_EMAIL', 'info@vigilbuild.com')
 SALES_EMAIL = os.getenv('SALES_EMAIL', 'info@vigilbuild.com')
+
+
+def send_email(subject, body, recipients, is_html=True):
+    """Send email using SMTP"""
+    if not SMTP_USER or not SMTP_PASS:
+        print(f"SMTP not configured - Email not sent: {subject}")
+        return False
+
+    try:
+        msg = MIMEMultipart('alternative')
+        msg['Subject'] = subject
+        msg['From'] = SMTP_USER
+        msg['To'] = ', '.join(recipients)
+
+        content_type = 'html' if is_html else 'plain'
+        msg.attach(MIMEText(body, content_type))
+
+        with smtplib.SMTP(SMTP_SERVER, SMTP_PORT) as server:
+            server.starttls()
+            server.login(SMTP_USER, SMTP_PASS)
+            server.sendmail(SMTP_USER, recipients, msg.as_string())
+
+        print(f"Email sent: {subject}")
+        return True
+    except Exception as e:
+        print(f"Failed to send email: {e}")
+        return False
 
 
 @marketing_bp.route('/')
@@ -198,30 +229,13 @@ def demo_request():
         </html>
         """
 
-        # Send emails (wrapped in try/except so form submission succeeds even if email fails)
+        # Send emails
         try:
-            # Send to sales team
-            if SMTP_USER:  # Only send if SMTP is configured
-                send_notification(
-                    subject=sales_subject,
-                    body=sales_body,
-                    recipients=[SALES_EMAIL],
-                    is_html=True
-                )
-
-                # Send confirmation to prospect
-                send_notification(
-                    subject=prospect_subject,
-                    body=prospect_body,
-                    recipients=[data['email']],
-                    is_html=True
-                )
-                print(f"Demo request emails sent for {data['first_name']} {data['last_name']} at {data['company']}")
-            else:
-                print(f"SMTP not configured - Demo request logged but emails not sent")
-                print(f"Demo request from: {data['first_name']} {data['last_name']} ({data['email']}) at {data['company']}")
+            send_email(sales_subject, sales_body, [SALES_EMAIL])
+            send_email(prospect_subject, prospect_body, [data['email']])
+            print(f"Demo request processed for {data['first_name']} {data['last_name']} at {data['company']}")
         except Exception as email_error:
-            print(f"Failed to send demo request emails: {str(email_error)}")
+            print(f"Email sending failed: {str(email_error)}")
             # Continue - don't fail the form submission just because email failed
 
         # Return success response
@@ -246,17 +260,16 @@ def demo_request():
             return redirect(url_for('marketing.contact'))
 
 
-# Optional: API endpoint for newsletter signup
 @marketing_bp.route('/newsletter', methods=['POST'])
 def newsletter_signup():
     """Handle newsletter signup"""
     try:
-        email = request.form.get('email') or request.json.get('email')
+        email = request.form.get('email') or (request.json.get('email') if request.is_json else None)
 
         if not email:
             return jsonify({'success': False, 'message': 'Email is required'}), 400
 
-        # TODO: Add to mailing list service (e.g., Mailchimp, SendGrid)
+        # Log the signup (in production, integrate with email service like Mailchimp)
         print(f"Newsletter signup: {email}")
 
         return jsonify({
