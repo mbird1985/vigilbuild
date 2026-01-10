@@ -15,19 +15,14 @@ marketing_bp = Blueprint('marketing', __name__)
 
 def get_email_config():
     """Get email configuration from environment variables at runtime"""
-    # Hardcoded for testing - TODO: revert to environment variables after testing
-    smtp_user = 'mcrichcreek@vigilbuild.com'
-    smtp_pass = 'zxlfkthkqbclxjlh'
-
-    print(f"DEBUG - Using hardcoded credentials for user: {smtp_user}")
-
+    # Use EMAIL_PASSWORD instead of SMTP_PASS (DigitalOcean was filtering SMTP_PASS)
     return {
-        'smtp_server': 'smtp.gmail.com',
-        'smtp_port': 587,
-        'smtp_user': smtp_user,
-        'smtp_pass': smtp_pass,
-        'marketing_email': 'info@vigilbuild.com',
-        'sales_email': 'info@vigilbuild.com',
+        'smtp_server': os.getenv('SMTP_SERVER', 'smtp.gmail.com'),
+        'smtp_port': int(os.getenv('SMTP_PORT', '587')),
+        'smtp_user': os.getenv('SMTP_USER', ''),
+        'smtp_pass': os.getenv('EMAIL_PASSWORD', ''),
+        'marketing_email': os.getenv('MARKETING_EMAIL', 'info@vigilbuild.com'),
+        'sales_email': os.getenv('SALES_EMAIL', 'info@vigilbuild.com'),
     }
 
 
