@@ -13,34 +13,40 @@ import os
 
 marketing_bp = Blueprint('marketing', __name__)
 
-# Email configuration from environment variables
-SMTP_SERVER = os.getenv('SMTP_SERVER', 'smtp.gmail.com')
-SMTP_PORT = int(os.getenv('SMTP_PORT', '587'))
-SMTP_USER = os.getenv('SMTP_USER', '')
-SMTP_PASS = os.getenv('SMTP_PASS', '')
-MARKETING_EMAIL = os.getenv('MARKETING_EMAIL', 'info@vigilbuild.com')
-SALES_EMAIL = os.getenv('SALES_EMAIL', 'info@vigilbuild.com')
+def get_email_config():
+    """Get email configuration from environment variables at runtime"""
+    return {
+        'smtp_server': os.getenv('SMTP_SERVER', 'smtp.gmail.com'),
+        'smtp_port': int(os.getenv('SMTP_PORT', '587')),
+        'smtp_user': os.getenv('SMTP_USER', ''),
+        'smtp_pass': os.getenv('SMTP_PASS', ''),
+        'marketing_email': os.getenv('MARKETING_EMAIL', 'info@vigilbuild.com'),
+        'sales_email': os.getenv('SALES_EMAIL', 'info@vigilbuild.com'),
+    }
 
 
 def send_email(subject, body, recipients, is_html=True):
     """Send email using SMTP"""
-    if not SMTP_USER or not SMTP_PASS:
+    config = get_email_config()
+
+    if not config['smtp_user'] or not config['smtp_pass']:
         print(f"SMTP not configured - Email not sent: {subject}")
+        print(f"SMTP_USER set: {bool(config['smtp_user'])}, SMTP_PASS set: {bool(config['smtp_pass'])}")
         return False
 
     try:
         msg = MIMEMultipart('alternative')
         msg['Subject'] = subject
-        msg['From'] = SMTP_USER
+        msg['From'] = config['smtp_user']
         msg['To'] = ', '.join(recipients)
 
         content_type = 'html' if is_html else 'plain'
         msg.attach(MIMEText(body, content_type))
 
-        with smtplib.SMTP(SMTP_SERVER, SMTP_PORT) as server:
+        with smtplib.SMTP(config['smtp_server'], config['smtp_port']) as server:
             server.starttls()
-            server.login(SMTP_USER, SMTP_PASS)
-            server.sendmail(SMTP_USER, recipients, msg.as_string())
+            server.login(config['smtp_user'], config['smtp_pass'])
+            server.sendmail(config['smtp_user'], recipients, msg.as_string())
 
         print(f"Email sent: {subject}")
         return True
@@ -231,7 +237,8 @@ def demo_request():
 
         # Send emails
         try:
-            send_email(sales_subject, sales_body, [SALES_EMAIL])
+            config = get_email_config()
+            send_email(sales_subject, sales_body, [config['sales_email']])
             send_email(prospect_subject, prospect_body, [data['email']])
             print(f"Demo request processed for {data['first_name']} {data['last_name']} at {data['company']}")
         except Exception as email_error:
