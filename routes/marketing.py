@@ -15,11 +15,18 @@ marketing_bp = Blueprint('marketing', __name__)
 
 def get_email_config():
     """Get email configuration from environment variables at runtime"""
+    # Debug: Print all environment variables that start with SMTP
+    smtp_vars = {k: v for k, v in os.environ.items() if 'SMTP' in k.upper()}
+    print(f"DEBUG - SMTP environment variables found: {list(smtp_vars.keys())}")
+
+    smtp_pass = os.getenv('SMTP_PASS', '')
+    print(f"DEBUG - SMTP_PASS raw value length: {len(smtp_pass) if smtp_pass else 0}")
+
     return {
         'smtp_server': os.getenv('SMTP_SERVER', 'smtp.gmail.com'),
         'smtp_port': int(os.getenv('SMTP_PORT', '587')),
         'smtp_user': os.getenv('SMTP_USER', ''),
-        'smtp_pass': os.getenv('SMTP_PASS', ''),
+        'smtp_pass': smtp_pass,
         'marketing_email': os.getenv('MARKETING_EMAIL', 'info@vigilbuild.com'),
         'sales_email': os.getenv('SALES_EMAIL', 'info@vigilbuild.com'),
     }
