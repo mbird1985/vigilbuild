@@ -251,8 +251,11 @@ def demo_request():
             print(f"Email sending failed: {str(email_error)}")
             # Continue - don't fail the form submission just because email failed
 
-        # Return success response
-        if request.is_json:
+        # Return success response - always return JSON for fetch requests
+        # Check if request wants JSON (from fetch/AJAX)
+        wants_json = request.is_json or request.headers.get('Accept', '').startswith('*/*') or 'fetch' in request.headers.get('Sec-Fetch-Mode', '')
+
+        if wants_json:
             return jsonify({
                 'success': True,
                 'message': 'Thank you for your interest! Our team will contact you within 24 hours.'
@@ -263,7 +266,8 @@ def demo_request():
 
     except Exception as e:
         print(f"Error processing demo request: {str(e)}")
-        if request.is_json:
+        wants_json = request.is_json or request.headers.get('Accept', '').startswith('*/*') or 'fetch' in request.headers.get('Sec-Fetch-Mode', '')
+        if wants_json:
             return jsonify({
                 'success': False,
                 'message': 'An error occurred. Please try again.'
