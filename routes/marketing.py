@@ -15,17 +15,19 @@ marketing_bp = Blueprint('marketing', __name__)
 
 def get_email_config():
     """Get email configuration from environment variables at runtime"""
-    # Try both variable names (EMAIL_PASSWORD as workaround for SMTP_PASS)
-    smtp_pass = os.getenv('EMAIL_PASSWORD', '') or os.getenv('SMTP_PASS', '')
-    print(f"DEBUG - EMAIL_PASSWORD length: {len(os.getenv('EMAIL_PASSWORD', ''))}, SMTP_PASS length: {len(os.getenv('SMTP_PASS', ''))}")
+    # Hardcoded for testing - TODO: revert to environment variables after testing
+    smtp_user = 'mcrichcreek@vigilbuild.com'
+    smtp_pass = 'zxlfkthkqbclxjlh'
+
+    print(f"DEBUG - Using hardcoded credentials for user: {smtp_user}")
 
     return {
-        'smtp_server': os.getenv('SMTP_SERVER', 'smtp.gmail.com'),
-        'smtp_port': int(os.getenv('SMTP_PORT', '587')),
-        'smtp_user': os.getenv('SMTP_USER', ''),
+        'smtp_server': 'smtp.gmail.com',
+        'smtp_port': 587,
+        'smtp_user': smtp_user,
         'smtp_pass': smtp_pass,
-        'marketing_email': os.getenv('MARKETING_EMAIL', 'info@vigilbuild.com'),
-        'sales_email': os.getenv('SALES_EMAIL', 'info@vigilbuild.com'),
+        'marketing_email': 'info@vigilbuild.com',
+        'sales_email': 'info@vigilbuild.com',
     }
 
 
