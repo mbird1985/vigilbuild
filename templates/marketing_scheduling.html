@@ -1,0 +1,515 @@
+{% extends "marketing_base.html" %}
+
+{% block title %}Smart Job Scheduling Software - Vigil Build{% endblock %}
+{% block meta_description %}AI-powered job scheduling that prevents conflicts, integrates weather data, and automates crew dispatching. Optimize resource utilization and reduce scheduling time by 75%.{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="bg-gradient-hero text-white py-20 md:py-32">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid md:grid-cols-2 gap-12 items-center">
+            <div class="fade-in-up">
+                <div class="inline-flex items-center px-4 py-2 bg-blue-500/20 rounded-full mb-6">
+                    <span class="w-2 h-2 bg-green-400 rounded-full mr-2 animate-pulse"></span>
+                    <span class="text-blue-200 text-sm font-medium">AI-Powered Scheduling</span>
+                </div>
+                <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
+                    Scheduling That
+                    <span class="text-blue-400">Thinks Ahead</span>
+                </h1>
+                <p class="text-xl text-gray-300 mb-8 leading-relaxed">
+                    AI detects conflicts before they happen, integrates real-time weather data,
+                    and automatically optimizes crew assignments. Schedule smarter, not harder.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <a href="/marketing/contact" class="inline-flex items-center justify-center px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-all shadow-lg hover:shadow-xl">
+                        See Smart Scheduling
+                        <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+                        </svg>
+                    </a>
+                    <a href="#features" class="inline-flex items-center justify-center px-8 py-4 glass text-white rounded-lg font-semibold hover:bg-white/20 transition-all">
+                        Explore Features
+                    </a>
+                </div>
+            </div>
+            <div class="relative">
+                <!-- Schedule Calendar Visualization -->
+                <div class="glass rounded-2xl p-6 shadow-2xl">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-semibold">January 2026</h3>
+                        <div class="flex space-x-2">
+                            <span class="px-3 py-1 bg-green-500/20 text-green-300 rounded-full text-xs">4 Jobs</span>
+                            <span class="px-3 py-1 bg-yellow-500/20 text-yellow-300 rounded-full text-xs">1 Alert</span>
+                        </div>
+                    </div>
+                    <!-- Mini Calendar View -->
+                    <div class="space-y-3">
+                        <div class="bg-white/10 rounded-lg p-3 flex items-center justify-between">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 bg-blue-500/30 rounded-lg flex items-center justify-center mr-3">
+                                    <span class="text-sm font-bold">15</span>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-medium">Transformer Install - Oak St</p>
+                                    <p class="text-xs text-gray-400">Crew A • 8:00 AM - 4:00 PM</p>
+                                </div>
+                            </div>
+                            <span class="px-2 py-1 bg-green-500/20 text-green-300 rounded text-xs">Scheduled</span>
+                        </div>
+                        <div class="bg-white/10 rounded-lg p-3 flex items-center justify-between">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 bg-blue-500/30 rounded-lg flex items-center justify-center mr-3">
+                                    <span class="text-sm font-bold">16</span>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-medium">Line Maintenance - Industrial</p>
+                                    <p class="text-xs text-gray-400">Crew B • 7:00 AM - 3:00 PM</p>
+                                </div>
+                            </div>
+                            <span class="px-2 py-1 bg-green-500/20 text-green-300 rounded text-xs">Scheduled</span>
+                        </div>
+                        <!-- Weather Alert -->
+                        <div class="bg-yellow-500/20 rounded-lg p-3 border border-yellow-400/30">
+                            <div class="flex items-center mb-2">
+                                <svg class="w-5 h-5 text-yellow-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                                </svg>
+                                <span class="text-yellow-300 font-medium text-sm">Weather Alert</span>
+                            </div>
+                            <p class="text-xs text-gray-300">High winds (25 mph) forecast for Jan 17. Consider rescheduling outdoor work.</p>
+                        </div>
+                        <div class="bg-white/10 rounded-lg p-3 flex items-center justify-between">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 bg-blue-500/30 rounded-lg flex items-center justify-center mr-3">
+                                    <span class="text-sm font-bold">18</span>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-medium">Pole Replacement - 5th Ave</p>
+                                    <p class="text-xs text-gray-400">Crew A • 6:00 AM - 2:00 PM</p>
+                                </div>
+                            </div>
+                            <span class="px-2 py-1 bg-blue-500/20 text-blue-300 rounded text-xs">Pending</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Stats Section -->
+<section class="py-16 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+            <div class="text-center">
+                <div class="stat-number text-4xl md:text-5xl font-bold">75%</div>
+                <p class="text-gray-600 mt-2">Less Scheduling Time</p>
+            </div>
+            <div class="text-center">
+                <div class="stat-number text-4xl md:text-5xl font-bold">0</div>
+                <p class="text-gray-600 mt-2">Resource Conflicts</p>
+            </div>
+            <div class="text-center">
+                <div class="stat-number text-4xl md:text-5xl font-bold">23%</div>
+                <p class="text-gray-600 mt-2">Higher Crew Utilization</p>
+            </div>
+            <div class="text-center">
+                <div class="stat-number text-4xl md:text-5xl font-bold">100%</div>
+                <p class="text-gray-600 mt-2">Weather-Aware Scheduling</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section id="features" class="py-20 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+            <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+                Intelligent Scheduling That Works for You
+            </h2>
+            <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                Stop juggling spreadsheets and phone calls. Our AI handles the complexity
+                so dispatchers can focus on keeping crews productive.
+            </p>
+        </div>
+
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <!-- AI Conflict Detection -->
+            <div class="feature-card bg-white rounded-xl p-8 shadow-lg">
+                <div class="icon-container w-14 h-14 rounded-xl flex items-center justify-center mb-6">
+                    <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 mb-3">AI Conflict Detection</h3>
+                <p class="text-gray-600 mb-4">
+                    Instantly identifies scheduling conflicts before they become problems.
+                    Double-booked crews, overlapping equipment assignments, and location clashes
+                    are automatically flagged.
+                </p>
+                <ul class="space-y-2 text-sm text-gray-600">
+                    <li class="flex items-center">
+                        <svg class="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                        </svg>
+                        Real-time conflict checking
+                    </li>
+                    <li class="flex items-center">
+                        <svg class="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                        </svg>
+                        Resolution suggestions
+                    </li>
+                    <li class="flex items-center">
+                        <svg class="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                        </svg>
+                        Multi-resource analysis
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Weather Integration -->
+            <div class="feature-card bg-white rounded-xl p-8 shadow-lg">
+                <div class="icon-container w-14 h-14 rounded-xl flex items-center justify-center mb-6">
+                    <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"/>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 mb-3">Weather-Smart Scheduling</h3>
+                <p class="text-gray-600 mb-4">
+                    Live weather integration alerts you to unsafe conditions. High winds,
+                    lightning, and extreme temperatures automatically trigger safety notifications.
+                </p>
+                <ul class="space-y-2 text-sm text-gray-600">
+                    <li class="flex items-center">
+                        <svg class="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                        </svg>
+                        Real-time weather data
+                    </li>
+                    <li class="flex items-center">
+                        <svg class="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                        </svg>
+                        Safety threshold alerts
+                    </li>
+                    <li class="flex items-center">
+                        <svg class="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                        </svg>
+                        Reschedule suggestions
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Drag-and-Drop Calendar -->
+            <div class="feature-card bg-white rounded-xl p-8 shadow-lg">
+                <div class="icon-container w-14 h-14 rounded-xl flex items-center justify-center mb-6">
+                    <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 mb-3">Drag-and-Drop Calendar</h3>
+                <p class="text-gray-600 mb-4">
+                    Intuitive calendar interface with drag-and-drop scheduling. Move jobs
+                    between days or reassign crews with a simple drag.
+                </p>
+                <ul class="space-y-2 text-sm text-gray-600">
+                    <li class="flex items-center">
+                        <svg class="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                        </svg>
+                        Day/week/month views
+                    </li>
+                    <li class="flex items-center">
+                        <svg class="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                        </svg>
+                        Instant reschedule
+                    </li>
+                    <li class="flex items-center">
+                        <svg class="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                        </svg>
+                        Color-coded by type
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Automated Dispatching -->
+            <div class="feature-card bg-white rounded-xl p-8 shadow-lg">
+                <div class="icon-container w-14 h-14 rounded-xl flex items-center justify-center mb-6">
+                    <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 mb-3">Automated Dispatching</h3>
+                <p class="text-gray-600 mb-4">
+                    AI automatically assigns the right crew based on skills, location,
+                    certifications, and availability. Notifications sent instantly.
+                </p>
+                <ul class="space-y-2 text-sm text-gray-600">
+                    <li class="flex items-center">
+                        <svg class="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                        </svg>
+                        Skills-based matching
+                    </li>
+                    <li class="flex items-center">
+                        <svg class="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                        </svg>
+                        Proximity optimization
+                    </li>
+                    <li class="flex items-center">
+                        <svg class="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                        </svg>
+                        Mobile notifications
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Job Management Integration -->
+            <div class="feature-card bg-white rounded-xl p-8 shadow-lg">
+                <div class="icon-container w-14 h-14 rounded-xl flex items-center justify-center mb-6">
+                    <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 mb-3">Full Job Integration</h3>
+                <p class="text-gray-600 mb-4">
+                    Schedules sync with job records, cost estimates, and customer information.
+                    Everything in one place for dispatchers and crews.
+                </p>
+                <ul class="space-y-2 text-sm text-gray-600">
+                    <li class="flex items-center">
+                        <svg class="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                        </svg>
+                        Job details on schedule
+                    </li>
+                    <li class="flex items-center">
+                        <svg class="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                        </svg>
+                        Cost tracking
+                    </li>
+                    <li class="flex items-center">
+                        <svg class="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                        </svg>
+                        Location mapping
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Compliance Tracking -->
+            <div class="feature-card bg-white rounded-xl p-8 shadow-lg">
+                <div class="icon-container w-14 h-14 rounded-xl flex items-center justify-center mb-6">
+                    <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 mb-3">Safety Compliance</h3>
+                <p class="text-gray-600 mb-4">
+                    Automatically verifies crew certifications and training before assignment.
+                    Ensures only qualified personnel are scheduled for specialized work.
+                </p>
+                <ul class="space-y-2 text-sm text-gray-600">
+                    <li class="flex items-center">
+                        <svg class="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                        </svg>
+                        Certification verification
+                    </li>
+                    <li class="flex items-center">
+                        <svg class="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                        </svg>
+                        Training expiration alerts
+                    </li>
+                    <li class="flex items-center">
+                        <svg class="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                        </svg>
+                        Audit trail
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Automation Section -->
+<section class="py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid md:grid-cols-2 gap-12 items-center">
+            <div>
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
+                    Automations That Save Hours Every Day
+                </h2>
+                <p class="text-xl text-gray-600 mb-8">
+                    Set up rules once, and the system handles the rest. From automatic notifications
+                    to smart crew assignments, scheduling runs itself.
+                </p>
+                <div class="space-y-6">
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0 w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mr-4">
+                            <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-gray-900 mb-1">Automated Notifications</h3>
+                            <p class="text-gray-600">Crews automatically notified of new assignments, schedule changes, and weather alerts via email, SMS, or push notification.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0 w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mr-4">
+                            <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-gray-900 mb-1">Auto-Status Updates</h3>
+                            <p class="text-gray-600">Job status automatically updates based on schedule events. Start a job? It moves to "In Progress". Complete it? Marked "Done".</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0 w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mr-4">
+                            <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-gray-900 mb-1">Municipality Coordination</h3>
+                            <p class="text-gray-600">Automatically notify city contacts when work affects traffic or public areas. Compliance with notification requirements built-in.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-gray-50 rounded-2xl p-8">
+                <h3 class="text-xl font-bold text-gray-900 mb-6">Time Saved Daily</h3>
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between py-3 border-b border-gray-200">
+                        <div class="flex items-center">
+                            <svg class="w-5 h-5 text-blue-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            <span class="text-gray-600">Conflict resolution</span>
+                        </div>
+                        <span class="text-lg font-bold text-green-600">45 min</span>
+                    </div>
+                    <div class="flex items-center justify-between py-3 border-b border-gray-200">
+                        <div class="flex items-center">
+                            <svg class="w-5 h-5 text-blue-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            <span class="text-gray-600">Crew notifications</span>
+                        </div>
+                        <span class="text-lg font-bold text-green-600">30 min</span>
+                    </div>
+                    <div class="flex items-center justify-between py-3 border-b border-gray-200">
+                        <div class="flex items-center">
+                            <svg class="w-5 h-5 text-blue-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            <span class="text-gray-600">Weather checking</span>
+                        </div>
+                        <span class="text-lg font-bold text-green-600">20 min</span>
+                    </div>
+                    <div class="flex items-center justify-between py-3 border-b border-gray-200">
+                        <div class="flex items-center">
+                            <svg class="w-5 h-5 text-blue-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            <span class="text-gray-600">Certification checks</span>
+                        </div>
+                        <span class="text-lg font-bold text-green-600">25 min</span>
+                    </div>
+                    <div class="flex items-center justify-between pt-4">
+                        <span class="text-lg font-bold text-gray-900">Total Daily Savings</span>
+                        <span class="text-2xl font-bold stat-number">2 hours</span>
+                    </div>
+                </div>
+                <p class="text-sm text-gray-500 mt-4">*Based on average dispatcher workflow before/after implementation</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Safety Section -->
+<section class="py-20 bg-gray-900 text-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+            <h2 class="text-3xl md:text-4xl font-bold mb-4">
+                Safety First, Always
+            </h2>
+            <p class="text-xl text-gray-400 max-w-3xl mx-auto">
+                Our scheduling system is built with safety as the foundation. Weather monitoring,
+                certification verification, and compliance tracking work together to protect your crews.
+            </p>
+        </div>
+
+        <div class="grid md:grid-cols-3 gap-8">
+            <div class="bg-gray-800 rounded-xl p-6 text-center">
+                <div class="w-16 h-16 bg-yellow-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg class="w-8 h-8 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold mb-2">Weather Alerts</h3>
+                <p class="text-gray-400">High wind (>15 mph), lightning, and extreme temperature alerts automatically notify dispatchers and crews.</p>
+            </div>
+
+            <div class="bg-gray-800 rounded-xl p-6 text-center">
+                <div class="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg class="w-8 h-8 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold mb-2">Certification Checks</h3>
+                <p class="text-gray-400">Only certified personnel assigned to specialized jobs. Expired certifications blocked automatically.</p>
+            </div>
+
+            <div class="bg-gray-800 rounded-xl p-6 text-center">
+                <div class="w-16 h-16 bg-blue-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg class="w-8 h-8 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold mb-2">Audit Trail</h3>
+                <p class="text-gray-400">Complete history of all scheduling decisions for compliance reporting and incident investigation.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="bg-gradient-vb py-20">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h2 class="text-3xl md:text-4xl font-bold text-white mb-6">
+            Schedule Smarter Starting Today
+        </h2>
+        <p class="text-xl text-gray-300 mb-8">
+            See how intelligent scheduling can eliminate conflicts, improve crew utilization,
+            and keep everyone safe. Get a personalized demo.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+            <a href="/marketing/contact" class="inline-flex items-center justify-center px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-all shadow-lg hover:shadow-xl">
+                Request Demo
+                <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+                </svg>
+            </a>
+            <a href="/marketing/features" class="inline-flex items-center justify-center px-8 py-4 glass text-white rounded-lg font-semibold hover:bg-white/20 transition-all">
+                See All Features
+            </a>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,506 @@
+{% extends "marketing_base.html" %}
+
+{% block title %}Project Management Software - Vigil Build{% endblock %}
+{% block meta_description %}AI-powered project management for construction and utilities. Critical path analysis, automated task scheduling, workload optimization, and real-time collaboration tools.{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="bg-gradient-hero text-white py-20 md:py-32">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid md:grid-cols-2 gap-12 items-center">
+            <div class="fade-in-up">
+                <div class="inline-flex items-center px-4 py-2 bg-blue-500/20 rounded-full mb-6">
+                    <span class="w-2 h-2 bg-green-400 rounded-full mr-2 animate-pulse"></span>
+                    <span class="text-blue-200 text-sm font-medium">Smart Automation</span>
+                </div>
+                <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
+                    Projects That
+                    <span class="text-blue-400">Manage Themselves</span>
+                </h1>
+                <p class="text-xl text-gray-300 mb-8 leading-relaxed">
+                    AI-powered project boards with automated task scheduling, critical path analysis,
+                    and intelligent workload balancing. Deliver projects on time, every time.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <a href="/marketing/contact" class="inline-flex items-center justify-center px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-all shadow-lg hover:shadow-xl">
+                        See AI Planning
+                        <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+                        </svg>
+                    </a>
+                    <a href="#features" class="inline-flex items-center justify-center px-8 py-4 glass text-white rounded-lg font-semibold hover:bg-white/20 transition-all">
+                        Explore Features
+                    </a>
+                </div>
+            </div>
+            <div class="relative">
+                <!-- Project Board Visualization -->
+                <div class="glass rounded-2xl p-6 shadow-2xl">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-semibold">Substation Upgrade - Phase 2</h3>
+                        <span class="px-3 py-1 bg-blue-500/20 text-blue-300 rounded-full text-sm">In Progress</span>
+                    </div>
+                    <!-- Mini Kanban -->
+                    <div class="grid grid-cols-3 gap-3 mb-4">
+                        <div class="bg-white/10 rounded-lg p-3">
+                            <div class="text-xs text-gray-400 mb-2">To Do</div>
+                            <div class="space-y-2">
+                                <div class="bg-white/10 rounded p-2 text-xs">Final inspection</div>
+                                <div class="bg-white/10 rounded p-2 text-xs">Documentation</div>
+                            </div>
+                        </div>
+                        <div class="bg-white/10 rounded-lg p-3">
+                            <div class="text-xs text-yellow-400 mb-2">In Progress</div>
+                            <div class="space-y-2">
+                                <div class="bg-yellow-500/20 border border-yellow-400/30 rounded p-2 text-xs">Transformer install</div>
+                                <div class="bg-yellow-500/20 border border-yellow-400/30 rounded p-2 text-xs">Cable routing</div>
+                            </div>
+                        </div>
+                        <div class="bg-white/10 rounded-lg p-3">
+                            <div class="text-xs text-green-400 mb-2">Done</div>
+                            <div class="space-y-2">
+                                <div class="bg-green-500/20 rounded p-2 text-xs">Site prep</div>
+                                <div class="bg-green-500/20 rounded p-2 text-xs">Foundation</div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- AI Insight -->
+                    <div class="bg-blue-500/20 rounded-lg p-4 border border-blue-400/30">
+                        <div class="flex items-center mb-2">
+                            <svg class="w-5 h-5 text-blue-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+                            </svg>
+                            <span class="text-blue-300 font-medium text-sm">AI Insight</span>
+                        </div>
+                        <p class="text-xs text-gray-300">Critical path analysis shows 2-day buffer available. Consider reassigning resources from Phase 3 prep.</p>
+                    </div>
+                    <!-- Progress Bar -->
+                    <div class="mt-4">
+                        <div class="flex justify-between text-sm mb-1">
+                            <span class="text-gray-300">Overall Progress</span>
+                            <span class="text-green-400">68%</span>
+                        </div>
+                        <div class="w-full bg-gray-700 rounded-full h-2">
+                            <div class="bg-gradient-to-r from-blue-500 to-green-400 h-2 rounded-full" style="width: 68%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Stats Section -->
+<section class="py-16 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+            <div class="text-center">
+                <div class="stat-number text-4xl md:text-5xl font-bold">35%</div>
+                <p class="text-gray-600 mt-2">Faster Project Delivery</p>
+            </div>
+            <div class="text-center">
+                <div class="stat-number text-4xl md:text-5xl font-bold">92%</div>
+                <p class="text-gray-600 mt-2">On-Time Completion Rate</p>
+            </div>
+            <div class="text-center">
+                <div class="stat-number text-4xl md:text-5xl font-bold">60%</div>
+                <p class="text-gray-600 mt-2">Less Planning Overhead</p>
+            </div>
+            <div class="text-center">
+                <div class="stat-number text-4xl md:text-5xl font-bold">4.8x</div>
+                <p class="text-gray-600 mt-2">Team Productivity Gain</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section id="features" class="py-20 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+            <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+                Intelligent Project Management
+            </h2>
+            <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                Built specifically for construction and utility projects. Our AI understands your workflows
+                and optimizes every aspect of project delivery.
+            </p>
+        </div>
+
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <!-- Smart Boards -->
+            <div class="feature-card bg-white rounded-xl p-8 shadow-lg">
+                <div class="icon-container w-14 h-14 rounded-xl flex items-center justify-center mb-6">
+                    <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2"/>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 mb-3">AI-Powered Project Boards</h3>
+                <p class="text-gray-600 mb-4">
+                    Kanban boards that adapt to your workflow. AI suggests task prioritization,
+                    identifies bottlenecks, and recommends resource reallocation in real-time.
+                </p>
+                <ul class="space-y-2 text-sm text-gray-600">
+                    <li class="flex items-center">
+                        <svg class="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                        </svg>
+                        Drag-and-drop simplicity
+                    </li>
+                    <li class="flex items-center">
+                        <svg class="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                        </svg>
+                        Custom workflows
+                    </li>
+                    <li class="flex items-center">
+                        <svg class="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                        </svg>
+                        Real-time collaboration
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Critical Path Analysis -->
+            <div class="feature-card bg-white rounded-xl p-8 shadow-lg">
+                <div class="icon-container w-14 h-14 rounded-xl flex items-center justify-center mb-6">
+                    <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 mb-3">Critical Path Analysis</h3>
+                <p class="text-gray-600 mb-4">
+                    Automatic identification of critical path tasks. The system continuously
+                    recalculates as work progresses, alerting you to potential delays.
+                </p>
+                <ul class="space-y-2 text-sm text-gray-600">
+                    <li class="flex items-center">
+                        <svg class="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                        </svg>
+                        Dynamic recalculation
+                    </li>
+                    <li class="flex items-center">
+                        <svg class="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                        </svg>
+                        Slack time visibility
+                    </li>
+                    <li class="flex items-center">
+                        <svg class="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                        </svg>
+                        Delay impact analysis
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Automated Task Scheduling -->
+            <div class="feature-card bg-white rounded-xl p-8 shadow-lg">
+                <div class="icon-container w-14 h-14 rounded-xl flex items-center justify-center mb-6">
+                    <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 mb-3">Automated Task Scheduling</h3>
+                <p class="text-gray-600 mb-4">
+                    AI creates optimal schedules based on dependencies, resource availability,
+                    and historical project data. Automatically adjusts when things change.
+                </p>
+                <ul class="space-y-2 text-sm text-gray-600">
+                    <li class="flex items-center">
+                        <svg class="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                        </svg>
+                        Dependency management
+                    </li>
+                    <li class="flex items-center">
+                        <svg class="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                        </svg>
+                        Auto-rescheduling
+                    </li>
+                    <li class="flex items-center">
+                        <svg class="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                        </svg>
+                        What-if scenarios
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Workload Optimization -->
+            <div class="feature-card bg-white rounded-xl p-8 shadow-lg">
+                <div class="icon-container w-14 h-14 rounded-xl flex items-center justify-center mb-6">
+                    <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 mb-3">Workload Optimization</h3>
+                <p class="text-gray-600 mb-4">
+                    Visual workload management shows team capacity at a glance. AI prevents
+                    overallocation and suggests optimal resource distribution.
+                </p>
+                <ul class="space-y-2 text-sm text-gray-600">
+                    <li class="flex items-center">
+                        <svg class="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                        </svg>
+                        Capacity planning
+                    </li>
+                    <li class="flex items-center">
+                        <svg class="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                        </svg>
+                        Overallocation alerts
+                    </li>
+                    <li class="flex items-center">
+                        <svg class="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                        </svg>
+                        Skills matching
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Risk Management -->
+            <div class="feature-card bg-white rounded-xl p-8 shadow-lg">
+                <div class="icon-container w-14 h-14 rounded-xl flex items-center justify-center mb-6">
+                    <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 mb-3">Proactive Risk Management</h3>
+                <p class="text-gray-600 mb-4">
+                    Identify, assess, and track project risks. AI suggests mitigations based on
+                    similar projects and monitors risk indicators throughout execution.
+                </p>
+                <ul class="space-y-2 text-sm text-gray-600">
+                    <li class="flex items-center">
+                        <svg class="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                        </svg>
+                        Risk scoring matrix
+                    </li>
+                    <li class="flex items-center">
+                        <svg class="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                        </svg>
+                        Mitigation tracking
+                    </li>
+                    <li class="flex items-center">
+                        <svg class="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                        </svg>
+                        AI risk suggestions
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Time Tracking -->
+            <div class="feature-card bg-white rounded-xl p-8 shadow-lg">
+                <div class="icon-container w-14 h-14 rounded-xl flex items-center justify-center mb-6">
+                    <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 mb-3">Integrated Time Tracking</h3>
+                <p class="text-gray-600 mb-4">
+                    Track estimated vs. actual hours at the task level. Compare against historical
+                    data to improve future estimates and identify efficiency opportunities.
+                </p>
+                <ul class="space-y-2 text-sm text-gray-600">
+                    <li class="flex items-center">
+                        <svg class="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                        </svg>
+                        Mobile time entry
+                    </li>
+                    <li class="flex items-center">
+                        <svg class="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                        </svg>
+                        Variance analysis
+                    </li>
+                    <li class="flex items-center">
+                        <svg class="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                        </svg>
+                        Billing integration
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Views Section -->
+<section class="py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+            <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+                Multiple Views for Every Need
+            </h2>
+            <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                From high-level planning to daily task management, switch views instantly
+                to see your projects from every angle.
+            </p>
+        </div>
+
+        <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div class="bg-gray-50 rounded-xl p-6 text-center hover:shadow-lg transition-shadow">
+                <div class="w-16 h-16 bg-blue-100 rounded-xl flex items-center justify-center mx-auto mb-4">
+                    <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7"/>
+                    </svg>
+                </div>
+                <h3 class="text-lg font-bold text-gray-900 mb-2">Kanban Board</h3>
+                <p class="text-gray-600 text-sm">Drag-and-drop task management for agile workflows</p>
+            </div>
+
+            <div class="bg-gray-50 rounded-xl p-6 text-center hover:shadow-lg transition-shadow">
+                <div class="w-16 h-16 bg-green-100 rounded-xl flex items-center justify-center mx-auto mb-4">
+                    <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                    </svg>
+                </div>
+                <h3 class="text-lg font-bold text-gray-900 mb-2">Gantt Chart</h3>
+                <p class="text-gray-600 text-sm">Timeline view with dependencies and milestones</p>
+            </div>
+
+            <div class="bg-gray-50 rounded-xl p-6 text-center hover:shadow-lg transition-shadow">
+                <div class="w-16 h-16 bg-purple-100 rounded-xl flex items-center justify-center mx-auto mb-4">
+                    <svg class="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                    </svg>
+                </div>
+                <h3 class="text-lg font-bold text-gray-900 mb-2">Calendar View</h3>
+                <p class="text-gray-600 text-sm">See tasks on a familiar calendar interface</p>
+            </div>
+
+            <div class="bg-gray-50 rounded-xl p-6 text-center hover:shadow-lg transition-shadow">
+                <div class="w-16 h-16 bg-orange-100 rounded-xl flex items-center justify-center mx-auto mb-4">
+                    <svg class="w-8 h-8 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
+                    </svg>
+                </div>
+                <h3 class="text-lg font-bold text-gray-900 mb-2">Workload View</h3>
+                <p class="text-gray-600 text-sm">Team capacity and utilization at a glance</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Automation Section -->
+<section class="py-20 bg-gray-900 text-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid md:grid-cols-2 gap-12 items-center">
+            <div>
+                <h2 class="text-3xl md:text-4xl font-bold mb-6">
+                    Automation That Works 24/7
+                </h2>
+                <p class="text-xl text-gray-400 mb-8">
+                    Set up powerful automations that handle routine tasks while you focus on
+                    what matters. If-this-then-that logic for construction workflows.
+                </p>
+                <div class="space-y-4">
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0 w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center mr-4 mt-1">
+                            <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold mb-1">Status-Based Triggers</h3>
+                            <p class="text-gray-400">When a task moves to "Done", automatically notify the next assignee</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0 w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center mr-4 mt-1">
+                            <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold mb-1">Date-Based Actions</h3>
+                            <p class="text-gray-400">Send reminder 3 days before due date if task isn't started</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0 w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center mr-4 mt-1">
+                            <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold mb-1">Cross-Module Integration</h3>
+                            <p class="text-gray-400">When task completes, create maintenance work order automatically</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-gray-800 rounded-2xl p-6">
+                <div class="border border-gray-700 rounded-lg p-4 mb-4">
+                    <div class="flex items-center text-sm text-gray-400 mb-3">
+                        <span class="text-blue-400 font-medium">WHEN</span>
+                        <span class="mx-2">→</span>
+                        <span>Task status changes to "Complete"</span>
+                    </div>
+                    <div class="flex items-center text-sm text-gray-400 mb-3">
+                        <span class="text-green-400 font-medium">AND</span>
+                        <span class="mx-2">→</span>
+                        <span>Task is on critical path</span>
+                    </div>
+                    <div class="flex items-center text-sm text-gray-400">
+                        <span class="text-orange-400 font-medium">THEN</span>
+                        <span class="mx-2">→</span>
+                        <span>Notify project manager via email</span>
+                    </div>
+                </div>
+                <div class="border border-gray-700 rounded-lg p-4">
+                    <div class="flex items-center text-sm text-gray-400 mb-3">
+                        <span class="text-blue-400 font-medium">WHEN</span>
+                        <span class="mx-2">→</span>
+                        <span>New item created from form</span>
+                    </div>
+                    <div class="flex items-center text-sm text-gray-400 mb-3">
+                        <span class="text-green-400 font-medium">AND</span>
+                        <span class="mx-2">→</span>
+                        <span>Priority is "High"</span>
+                    </div>
+                    <div class="flex items-center text-sm text-gray-400">
+                        <span class="text-orange-400 font-medium">THEN</span>
+                        <span class="mx-2">→</span>
+                        <span>Auto-assign to senior lead</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="bg-gradient-vb py-20">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h2 class="text-3xl md:text-4xl font-bold text-white mb-6">
+            Deliver Projects Faster with Less Effort
+        </h2>
+        <p class="text-xl text-gray-300 mb-8">
+            See how AI-powered project management can transform your delivery.
+            Schedule a personalized demo with our team.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+            <a href="/marketing/contact" class="inline-flex items-center justify-center px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-all shadow-lg hover:shadow-xl">
+                Request Demo
+                <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+                </svg>
+            </a>
+            <a href="/marketing/features" class="inline-flex items-center justify-center px-8 py-4 glass text-white rounded-lg font-semibold hover:bg-white/20 transition-all">
+                See All Features
+            </a>
+        </div>
+    </div>
+</section>
+{% endblock %}

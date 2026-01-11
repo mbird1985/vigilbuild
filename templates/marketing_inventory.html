@@ -1,0 +1,438 @@
+{% extends "marketing_base.html" %}
+
+{% block title %}Smart Inventory Management - Vigil Build{% endblock %}
+{% block meta_description %}AI-powered inventory management that eliminates stockouts and reduces carrying costs by 30%. Automated reordering, demand forecasting, and real-time tracking across all locations.{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="bg-gradient-hero text-white py-20 md:py-32">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid md:grid-cols-2 gap-12 items-center">
+            <div class="fade-in-up">
+                <div class="inline-flex items-center px-4 py-2 bg-blue-500/20 rounded-full mb-6">
+                    <span class="w-2 h-2 bg-green-400 rounded-full mr-2 animate-pulse"></span>
+                    <span class="text-blue-200 text-sm font-medium">AI-Driven Forecasting</span>
+                </div>
+                <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
+                    Smart Inventory That
+                    <span class="text-blue-400">Orders Itself</span>
+                </h1>
+                <p class="text-xl text-gray-300 mb-8 leading-relaxed">
+                    Our AI analyzes usage patterns, job schedules, and seasonal trends to predict demand
+                    and automatically reorder supplies. Never run out of critical parts again.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <a href="/marketing/contact" class="inline-flex items-center justify-center px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-all shadow-lg hover:shadow-xl">
+                        See AI Forecasting
+                        <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+                        </svg>
+                    </a>
+                    <a href="#features" class="inline-flex items-center justify-center px-8 py-4 glass text-white rounded-lg font-semibold hover:bg-white/20 transition-all">
+                        Explore Features
+                    </a>
+                </div>
+            </div>
+            <div class="relative">
+                <!-- Inventory Dashboard Visualization -->
+                <div class="glass rounded-2xl p-6 shadow-2xl">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-semibold">AI Inventory Insights</h3>
+                        <span class="px-3 py-1 bg-green-500/20 text-green-300 rounded-full text-sm">Real-time</span>
+                    </div>
+                    <div class="space-y-4">
+                        <!-- Auto-reorder Alert -->
+                        <div class="bg-blue-500/20 rounded-lg p-4 border border-blue-400/30">
+                            <div class="flex items-center mb-2">
+                                <svg class="w-5 h-5 text-blue-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                                </svg>
+                                <span class="text-blue-300 font-medium">Auto-Reorder Triggered</span>
+                            </div>
+                            <p class="text-sm text-gray-300">Wire connectors (SKU-2847) - 500 units ordered from approved supplier</p>
+                        </div>
+                        <!-- Stock Levels -->
+                        <div class="bg-white/10 rounded-lg p-4">
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-gray-300">Transformers (10kVA)</span>
+                                <span class="text-green-400 font-semibold">24 units</span>
+                            </div>
+                            <div class="w-full bg-gray-700 rounded-full h-2">
+                                <div class="bg-green-400 h-2 rounded-full" style="width: 80%"></div>
+                            </div>
+                            <p class="text-xs text-gray-400 mt-2">Optimal stock level maintained</p>
+                        </div>
+                        <div class="bg-white/10 rounded-lg p-4">
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-gray-300">Safety Gloves (Class 2)</span>
+                                <span class="text-yellow-400 font-semibold">12 pairs</span>
+                            </div>
+                            <div class="w-full bg-gray-700 rounded-full h-2">
+                                <div class="bg-yellow-400 h-2 rounded-full" style="width: 40%"></div>
+                            </div>
+                            <p class="text-xs text-yellow-300 mt-2">AI forecasts: Order in 5 days</p>
+                        </div>
+                        <div class="bg-white/10 rounded-lg p-4">
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-gray-300">Utility Poles (40ft)</span>
+                                <span class="text-green-400 font-semibold">156 units</span>
+                            </div>
+                            <div class="w-full bg-gray-700 rounded-full h-2">
+                                <div class="bg-green-400 h-2 rounded-full" style="width: 95%"></div>
+                            </div>
+                            <p class="text-xs text-gray-400 mt-2">Stocked for upcoming projects</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Stats Section -->
+<section class="py-16 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+            <div class="text-center">
+                <div class="stat-number text-4xl md:text-5xl font-bold">30%</div>
+                <p class="text-gray-600 mt-2">Reduction in Carrying Costs</p>
+            </div>
+            <div class="text-center">
+                <div class="stat-number text-4xl md:text-5xl font-bold">99.7%</div>
+                <p class="text-gray-600 mt-2">Parts Availability</p>
+            </div>
+            <div class="text-center">
+                <div class="stat-number text-4xl md:text-5xl font-bold">85%</div>
+                <p class="text-gray-600 mt-2">Less Manual Ordering</p>
+            </div>
+            <div class="text-center">
+                <div class="stat-number text-4xl md:text-5xl font-bold">4.2x</div>
+                <p class="text-gray-600 mt-2">Faster Inventory Turns</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section id="features" class="py-20 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+            <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+                Inventory Intelligence That Works for You
+            </h2>
+            <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                Stop wasting time counting stock and chasing orders. Our AI handles the logistics
+                so your team can focus on getting the job done.
+            </p>
+        </div>
+
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <!-- AI Demand Forecasting -->
+            <div class="feature-card bg-white rounded-xl p-8 shadow-lg">
+                <div class="icon-container w-14 h-14 rounded-xl flex items-center justify-center mb-6">
+                    <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 mb-3">AI Demand Forecasting</h3>
+                <p class="text-gray-600 mb-4">
+                    Machine learning models analyze historical usage, scheduled jobs, seasonal patterns,
+                    and project pipelines to predict exactly what you'll need and when.
+                </p>
+                <ul class="space-y-2 text-sm text-gray-600">
+                    <li class="flex items-center">
+                        <svg class="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                        </svg>
+                        Job-based demand analysis
+                    </li>
+                    <li class="flex items-center">
+                        <svg class="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                        </svg>
+                        Seasonal trend detection
+                    </li>
+                    <li class="flex items-center">
+                        <svg class="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                        </svg>
+                        90%+ accuracy rate
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Automated Reordering -->
+            <div class="feature-card bg-white rounded-xl p-8 shadow-lg">
+                <div class="icon-container w-14 h-14 rounded-xl flex items-center justify-center mb-6">
+                    <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 mb-3">Automated Reordering</h3>
+                <p class="text-gray-600 mb-4">
+                    Set it and forget it. The system automatically generates purchase orders when
+                    stock hits optimal reorder points, using your approved suppliers and pricing.
+                </p>
+                <ul class="space-y-2 text-sm text-gray-600">
+                    <li class="flex items-center">
+                        <svg class="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                        </svg>
+                        Smart reorder points
+                    </li>
+                    <li class="flex items-center">
+                        <svg class="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                        </svg>
+                        Supplier management
+                    </li>
+                    <li class="flex items-center">
+                        <svg class="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                        </svg>
+                        Approval workflows
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Multi-Location Tracking -->
+            <div class="feature-card bg-white rounded-xl p-8 shadow-lg">
+                <div class="icon-container w-14 h-14 rounded-xl flex items-center justify-center mb-6">
+                    <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 mb-3">Multi-Location Tracking</h3>
+                <p class="text-gray-600 mb-4">
+                    Track inventory across warehouses, trucks, job sites, and substations.
+                    Know exactly where every item is at any moment.
+                </p>
+                <ul class="space-y-2 text-sm text-gray-600">
+                    <li class="flex items-center">
+                        <svg class="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                        </svg>
+                        Warehouse management
+                    </li>
+                    <li class="flex items-center">
+                        <svg class="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                        </svg>
+                        Truck inventory
+                    </li>
+                    <li class="flex items-center">
+                        <svg class="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                        </svg>
+                        Inter-location transfers
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Category-Specific Management -->
+            <div class="feature-card bg-white rounded-xl p-8 shadow-lg">
+                <div class="icon-container w-14 h-14 rounded-xl flex items-center justify-center mb-6">
+                    <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 mb-3">Industry-Specific Categories</h3>
+                <p class="text-gray-600 mb-4">
+                    Pre-configured categories for power distribution: electrical, hardware, safety,
+                    fasteners, and more. Each with relevant specifications and attributes.
+                </p>
+                <ul class="space-y-2 text-sm text-gray-600">
+                    <li class="flex items-center">
+                        <svg class="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                        </svg>
+                        Electrical specs (voltage, amperage)
+                    </li>
+                    <li class="flex items-center">
+                        <svg class="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                        </svg>
+                        Safety certifications
+                    </li>
+                    <li class="flex items-center">
+                        <svg class="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                        </svg>
+                        Material grades
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Barcode & QR Scanning -->
+            <div class="feature-card bg-white rounded-xl p-8 shadow-lg">
+                <div class="icon-container w-14 h-14 rounded-xl flex items-center justify-center mb-6">
+                    <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h2M4 12h2m14 0h2M6 20h2M8 8h2v4m0-4V4m8 0v4"/>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 mb-3">Barcode & QR Scanning</h3>
+                <p class="text-gray-600 mb-4">
+                    Speed up receiving, picking, and cycle counts with mobile scanning.
+                    Works with any smartphone - no special hardware required.
+                </p>
+                <ul class="space-y-2 text-sm text-gray-600">
+                    <li class="flex items-center">
+                        <svg class="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                        </svg>
+                        Mobile-first design
+                    </li>
+                    <li class="flex items-center">
+                        <svg class="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                        </svg>
+                        Batch scanning
+                    </li>
+                    <li class="flex items-center">
+                        <svg class="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                        </svg>
+                        Offline capability
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Reporting & Analytics -->
+            <div class="feature-card bg-white rounded-xl p-8 shadow-lg">
+                <div class="icon-container w-14 h-14 rounded-xl flex items-center justify-center mb-6">
+                    <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 mb-3">Reporting & Analytics</h3>
+                <p class="text-gray-600 mb-4">
+                    Comprehensive reports on inventory value, turnover, usage trends, and cost analysis.
+                    Export to Excel or integrate with your accounting system.
+                </p>
+                <ul class="space-y-2 text-sm text-gray-600">
+                    <li class="flex items-center">
+                        <svg class="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                        </svg>
+                        Inventory valuation
+                    </li>
+                    <li class="flex items-center">
+                        <svg class="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                        </svg>
+                        Usage analytics
+                    </li>
+                    <li class="flex items-center">
+                        <svg class="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                        </svg>
+                        Cost optimization
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Cost Savings Section -->
+<section class="py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid md:grid-cols-2 gap-12 items-center">
+            <div>
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
+                    Real Cost Savings, Real Results
+                </h2>
+                <p class="text-xl text-gray-600 mb-8">
+                    Our customers see measurable ROI within the first quarter. Here's how:
+                </p>
+                <div class="space-y-6">
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0 w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mr-4">
+                            <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-gray-900 mb-1">Eliminate Overstock</h3>
+                            <p class="text-gray-600">AI-optimized reorder points reduce excess inventory by 30%, freeing up working capital.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0 w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mr-4">
+                            <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-gray-900 mb-1">Prevent Stockouts</h3>
+                            <p class="text-gray-600">Never lose jobs due to missing parts. 99.7% parts availability keeps crews productive.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0 w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mr-4">
+                            <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-gray-900 mb-1">Save Admin Time</h3>
+                            <p class="text-gray-600">Automated ordering saves 10+ hours per week of manual purchasing and tracking work.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-gray-50 rounded-2xl p-8">
+                <h3 class="text-2xl font-bold text-gray-900 mb-6">Typical Annual Savings</h3>
+                <div class="space-y-4">
+                    <div class="flex justify-between items-center py-3 border-b border-gray-200">
+                        <span class="text-gray-600">Reduced carrying costs</span>
+                        <span class="text-2xl font-bold text-green-600">$180K</span>
+                    </div>
+                    <div class="flex justify-between items-center py-3 border-b border-gray-200">
+                        <span class="text-gray-600">Eliminated stockouts</span>
+                        <span class="text-2xl font-bold text-green-600">$95K</span>
+                    </div>
+                    <div class="flex justify-between items-center py-3 border-b border-gray-200">
+                        <span class="text-gray-600">Admin time saved</span>
+                        <span class="text-2xl font-bold text-green-600">$52K</span>
+                    </div>
+                    <div class="flex justify-between items-center py-3 border-b border-gray-200">
+                        <span class="text-gray-600">Better supplier pricing</span>
+                        <span class="text-2xl font-bold text-green-600">$73K</span>
+                    </div>
+                    <div class="flex justify-between items-center pt-4">
+                        <span class="text-lg font-bold text-gray-900">Total Annual Savings</span>
+                        <span class="text-3xl font-bold stat-number">$400K</span>
+                    </div>
+                </div>
+                <p class="text-sm text-gray-500 mt-4">*Based on mid-size utility contractor with $5M annual inventory</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="bg-gradient-vb py-20">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h2 class="text-3xl md:text-4xl font-bold text-white mb-6">
+            Ready to Transform Your Inventory?
+        </h2>
+        <p class="text-xl text-gray-300 mb-8">
+            See how AI-powered inventory management can eliminate stockouts and reduce costs.
+            Get a personalized demo tailored to your operations.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+            <a href="/marketing/contact" class="inline-flex items-center justify-center px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-all shadow-lg hover:shadow-xl">
+                Request Demo
+                <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+                </svg>
+            </a>
+            <a href="/marketing/features" class="inline-flex items-center justify-center px-8 py-4 glass text-white rounded-lg font-semibold hover:bg-white/20 transition-all">
+                See All Features
+            </a>
+        </div>
+    </div>
+</section>
+{% endblock %}

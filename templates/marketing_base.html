@@ -277,7 +277,23 @@
                 <!-- Desktop Navigation -->
                 <div class="hidden md:flex items-center space-x-8">
                     <a href="/marketing" class="nav-link font-medium transition-colors duration-300">Home</a>
-                    <a href="/marketing/features" class="nav-link font-medium transition-colors duration-300">Features</a>
+                    <div class="relative group">
+                        <a href="/marketing/features" class="nav-link font-medium transition-colors duration-300 flex items-center">
+                            Features
+                            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                            </svg>
+                        </a>
+                        <div class="absolute left-0 mt-2 w-56 bg-white rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                            <div class="py-2">
+                                <a href="/marketing/features" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600">All Features</a>
+                                <a href="/marketing/features/maintenance" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600">Predictive Maintenance</a>
+                                <a href="/marketing/features/inventory" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600">Smart Inventory</a>
+                                <a href="/marketing/features/project-management" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600">Project Management</a>
+                                <a href="/marketing/features/scheduling" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600">Job Scheduling</a>
+                            </div>
+                        </div>
+                    </div>
                     <a href="/marketing/about" class="nav-link font-medium transition-colors duration-300">Why Vigil Build</a>
                     <a href="/marketing/contact" class="nav-link font-medium transition-colors duration-300">Contact</a>
                     <a href="/marketing/contact" class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg font-medium transition-colors shadow-md hover:shadow-lg">
@@ -297,7 +313,11 @@
             <div id="mobile-menu" class="mobile-menu md:hidden">
                 <div class="mobile-menu-container py-4 space-y-3 border-t transition-colors duration-300">
                     <a href="/marketing" class="mobile-nav-link block px-4 py-2 rounded-lg transition-colors duration-300">Home</a>
-                    <a href="/marketing/features" class="mobile-nav-link block px-4 py-2 rounded-lg transition-colors duration-300">Features</a>
+                    <a href="/marketing/features" class="mobile-nav-link block px-4 py-2 rounded-lg transition-colors duration-300 font-medium">Features</a>
+                    <a href="/marketing/features/maintenance" class="mobile-nav-link block px-4 py-2 pl-8 rounded-lg transition-colors duration-300 text-sm">Predictive Maintenance</a>
+                    <a href="/marketing/features/inventory" class="mobile-nav-link block px-4 py-2 pl-8 rounded-lg transition-colors duration-300 text-sm">Smart Inventory</a>
+                    <a href="/marketing/features/project-management" class="mobile-nav-link block px-4 py-2 pl-8 rounded-lg transition-colors duration-300 text-sm">Project Management</a>
+                    <a href="/marketing/features/scheduling" class="mobile-nav-link block px-4 py-2 pl-8 rounded-lg transition-colors duration-300 text-sm">Job Scheduling</a>
                     <a href="/marketing/about" class="mobile-nav-link block px-4 py-2 rounded-lg transition-colors duration-300">Why Vigil Build</a>
                     <a href="/marketing/contact" class="mobile-nav-link block px-4 py-2 rounded-lg transition-colors duration-300">Contact</a>
                     <a href="/marketing/contact" class="block mx-4 text-center bg-blue-600 text-white px-5 py-2 rounded-lg font-medium">
@@ -340,11 +360,11 @@
                 <div>
                     <h4 class="text-lg font-semibold mb-4">Product</h4>
                     <ul class="space-y-2">
-                        <li><a href="/marketing/features" class="text-gray-300 hover:text-white transition-colors">Features</a></li>
-                        <li><a href="/marketing/features#equipment" class="text-gray-300 hover:text-white transition-colors">Equipment Management</a></li>
-                        <li><a href="/marketing/features#inventory" class="text-gray-300 hover:text-white transition-colors">Inventory Tracking</a></li>
-                        <li><a href="/marketing/features#scheduling" class="text-gray-300 hover:text-white transition-colors">Scheduling</a></li>
-                        <li><a href="/marketing/features#projects" class="text-gray-300 hover:text-white transition-colors">Project Management</a></li>
+                        <li><a href="/marketing/features" class="text-gray-300 hover:text-white transition-colors">All Features</a></li>
+                        <li><a href="/marketing/features/maintenance" class="text-gray-300 hover:text-white transition-colors">Predictive Maintenance</a></li>
+                        <li><a href="/marketing/features/inventory" class="text-gray-300 hover:text-white transition-colors">Smart Inventory</a></li>
+                        <li><a href="/marketing/features/project-management" class="text-gray-300 hover:text-white transition-colors">Project Management</a></li>
+                        <li><a href="/marketing/features/scheduling" class="text-gray-300 hover:text-white transition-colors">Job Scheduling</a></li>
                     </ul>
                 </div>
 

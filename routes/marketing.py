@@ -272,6 +272,30 @@ def demo_request():
             return redirect(url_for('marketing.contact'))
 
 
+@marketing_bp.route('/features/maintenance')
+def features_maintenance():
+    """Dedicated page for Maintenance module features"""
+    return render_template('marketing_maintenance.html', current_year=datetime.now().year)
+
+
+@marketing_bp.route('/features/inventory')
+def features_inventory():
+    """Dedicated page for Inventory module features"""
+    return render_template('marketing_inventory.html', current_year=datetime.now().year)
+
+
+@marketing_bp.route('/features/project-management')
+def features_project_management():
+    """Dedicated page for Project Management module features"""
+    return render_template('marketing_pm.html', current_year=datetime.now().year)
+
+
+@marketing_bp.route('/features/scheduling')
+def features_scheduling():
+    """Dedicated page for Job Scheduling module features"""
+    return render_template('marketing_scheduling.html', current_year=datetime.now().year)
+
+
 @marketing_bp.route('/newsletter', methods=['POST'])
 def newsletter_signup():
     """Handle newsletter signup"""
