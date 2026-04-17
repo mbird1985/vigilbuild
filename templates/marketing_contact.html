@@ -76,6 +76,9 @@
                             <option value="">Select your industry</option>
                             <option value="power_distribution">Power Distribution / Electric Utility</option>
                             <option value="municipality">Municipality / Public Works</option>
+                            <option value="town_government">Town / City Government</option>
+                            <option value="public_works">Public Works Department</option>
+                            <option value="water_utility">Water / Sewer Utility</option>
                             <option value="contractor">General Contractor</option>
                             <option value="electrical_contractor">Electrical Contractor</option>
                             <option value="telecom">Telecommunications</option>
@@ -124,6 +127,14 @@
                                 <input type="checkbox" name="interests" value="reporting" class="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500">
                                 <span class="ml-2 text-sm text-gray-600">Reporting & Analytics</span>
                             </label>
+                            <label class="flex items-center">
+                                <input type="checkbox" name="interests" value="citizen_portal" class="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500">
+                                <span class="ml-2 text-sm text-gray-600">Citizen Request Portal</span>
+                            </label>
+                            <label class="flex items-center">
+                                <input type="checkbox" name="interests" value="mobile_app" class="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500">
+                                <span class="ml-2 text-sm text-gray-600">Mobile App</span>
+                            </label>
                         </div>
                     </div>
 
@@ -133,6 +144,14 @@
                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all resize-none"
                                   placeholder="What problems are you trying to solve? What tools are you currently using?"></textarea>
                     </div>
+
+                    <!-- Bot protection -->
+                    <div style="position:absolute;left:-9999px;top:-9999px;" aria-hidden="true">
+                        <label for="website_url">Leave this empty</label>
+                        <input type="text" id="website_url" name="website_url" tabindex="-1" autocomplete="off">
+                    </div>
+                    <input type="hidden" id="vb_ts" name="vb_ts" value="">
+                    <input type="hidden" id="vb_token" name="vb_token" value="">
 
                     <button type="submit"
                             class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-4 px-6 rounded-xl transition-all shadow-lg hover:shadow-xl">
@@ -310,6 +329,21 @@
 
 {% block extra_scripts %}
 <script>
+    // Bot protection
+    (function() {
+        var ts = Math.floor(Date.now() / 1000);
+        document.getElementById('vb_ts').value = ts;
+        // Simple JS challenge - bots without JS can't compute this
+        var salt = 'vb2026secure';
+        var raw = salt + ts.toString();
+        var hash = 0;
+        for (var i = 0; i < raw.length; i++) {
+            hash = ((hash << 5) - hash) + raw.charCodeAt(i);
+            hash = hash & hash; // Convert to 32bit integer
+        }
+        document.getElementById('vb_token').value = Math.abs(hash).toString(36);
+    })();
+
     document.getElementById('demo-request-form').addEventListener('submit', function(e) {
         e.preventDefault();
 

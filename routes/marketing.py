@@ -7,6 +7,7 @@ These pages are publicly accessible (no authentication required)
 from flask import Blueprint, render_template, request, jsonify, flash, redirect, url_for
 from datetime import datetime
 import smtplib
+import time
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import os
@@ -56,6 +57,58 @@ def send_email(subject, body, recipients, is_html=True):
         return False
 
 
+def base36_encode(number):
+    """Encode a positive integer as base36 string (matching JS toString(36))."""
+    if number == 0:
+        return '0'
+    chars = '0123456789abcdefghijklmnopqrstuvwxyz'
+    result = ''
+    while number > 0:
+        result = chars[number % 36] + result
+        number //= 36
+    return result
+
+
+def verify_bot_protection(form_data):
+    """Multi-layer bot detection. Returns (is_human, reason)."""
+    # Layer 1: Honeypot
+    if form_data.get('website_url', '').strip():
+        return False, 'honeypot'
+
+    # Layer 2: Timestamp check
+    ts_str = form_data.get('vb_ts', '')
+    if not ts_str:
+        return False, 'no_timestamp'
+    try:
+        ts = int(ts_str)
+        elapsed = int(time.time()) - ts
+        if elapsed < 3:
+            return False, 'too_fast'
+        if elapsed > 7200:  # 2 hours
+            return False, 'expired'
+    except (ValueError, TypeError):
+        return False, 'bad_timestamp'
+
+    # Layer 3: JS challenge token
+    token = form_data.get('vb_token', '')
+    if not token:
+        return False, 'no_token'
+    # Reproduce the JS hash
+    salt = 'vb2026secure'
+    raw = salt + ts_str
+    h = 0
+    for ch in raw:
+        h = ((h << 5) - h) + ord(ch)
+        h = h & 0xFFFFFFFF  # 32-bit
+        if h >= 0x80000000:
+            h -= 0x100000000
+    expected = base36_encode(abs(h))
+    if token != expected:
+        return False, 'bad_token'
+
+    return True, 'passed'
+
+
 @marketing_bp.route('/')
 def home():
     """Marketing home/landing page"""
@@ -84,6 +137,13 @@ def contact():
 def demo_request():
     """Handle demo request form submission"""
     try:
+        # Bot protection check
+        is_human, reason = verify_bot_protection(request.form)
+        if not is_human:
+            print(f"Bot detected ({reason}) from {request.remote_addr}")
+            # Return success to not reveal detection (bots would adapt)
+            return jsonify({'success': True, 'message': 'Thank you for your interest! Our team will contact you within 24 hours.'})
+
         # Get form data
         data = {
             'first_name': request.form.get('first_name'),
