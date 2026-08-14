@@ -117,8 +117,8 @@ def home():
 
 @marketing_bp.route('/features')
 def features():
-    """Features page showcasing all modules"""
-    return render_template('marketing_features.html', current_year=datetime.now().year)
+    """Old features page — its content now lives in the division sections"""
+    return redirect(url_for('marketing.home') + '#business')
 
 
 @marketing_bp.route('/about')
@@ -174,13 +174,13 @@ def demo_request():
 
         # Industry display names
         industry_names = {
-            'power_distribution': 'Power Distribution / Electric Utility',
-            'municipality': 'Municipality / Public Works',
-            'contractor': 'General Contractor',
-            'electrical_contractor': 'Electrical Contractor',
-            'telecom': 'Telecommunications',
-            'oil_gas': 'Oil & Gas',
-            'other': 'Other'
+            'municipality': 'Municipality / Government',
+            'power_distribution': 'Utility / Infrastructure',
+            'contractor': 'Construction / Contractor',
+            'professional_services': 'Professional Services',
+            'healthcare': 'Healthcare',
+            'nonprofit': 'Nonprofit',
+            'other': 'Other Business'
         }
         industry_display = industry_names.get(data['industry'], data['industry'])
 
@@ -335,25 +335,25 @@ def demo_request():
 @marketing_bp.route('/features/maintenance')
 def features_maintenance():
     """Dedicated page for Maintenance module features"""
-    return render_template('marketing_maintenance.html', current_year=datetime.now().year)
+    return redirect(url_for('marketing.home') + '#business')
 
 
 @marketing_bp.route('/features/inventory')
 def features_inventory():
     """Dedicated page for Inventory module features"""
-    return render_template('marketing_inventory.html', current_year=datetime.now().year)
+    return redirect(url_for('marketing.home') + '#business')
 
 
 @marketing_bp.route('/features/project-management')
 def features_project_management():
     """Dedicated page for Project Management module features"""
-    return render_template('marketing_pm.html', current_year=datetime.now().year)
+    return redirect(url_for('marketing.home') + '#business')
 
 
 @marketing_bp.route('/features/scheduling')
 def features_scheduling():
     """Dedicated page for Job Scheduling module features"""
-    return render_template('marketing_scheduling.html', current_year=datetime.now().year)
+    return redirect(url_for('marketing.home') + '#business')
 
 
 @marketing_bp.route('/newsletter', methods=['POST'])
