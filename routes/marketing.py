@@ -115,10 +115,22 @@ def home():
     return render_template('marketing_home.html', current_year=datetime.now().year)
 
 
+@marketing_bp.route('/government')
+def government():
+    """Government Management division page"""
+    return render_template('marketing_government.html', current_year=datetime.now().year)
+
+
+@marketing_bp.route('/business')
+def business():
+    """Business Solutions division page"""
+    return render_template('marketing_business.html', current_year=datetime.now().year)
+
+
 @marketing_bp.route('/features')
 def features():
-    """Old features page — its content now lives in the division sections"""
-    return redirect(url_for('marketing.home') + '#business')
+    """Old features page — its content now lives on the division pages"""
+    return redirect(url_for('marketing.business'))
 
 
 @marketing_bp.route('/about')
@@ -270,10 +282,10 @@ def demo_request():
                         <li>We'll focus on the features most relevant to your operations</li>
                     </ul>
 
-                    <p>In the meantime, feel free to explore our website to learn more about our features:</p>
+                    <p>In the meantime, feel free to explore what we build for governments and businesses:</p>
 
                     <div style="text-align: center; margin: 30px 0;">
-                        <a href="https://vigilbuild.com/marketing/features" style="display: inline-block; background: #2563eb; color: white; padding: 12px 30px; border-radius: 6px; text-decoration: none; font-weight: bold;">Explore Features</a>
+                        <a href="https://vigilbuild.com/marketing" style="display: inline-block; background: #2563eb; color: white; padding: 12px 30px; border-radius: 6px; text-decoration: none; font-weight: bold;">Explore VigilBuild</a>
                     </div>
 
                     <p>If you have any immediate questions, don't hesitate to reach out to us at <a href="mailto:info@vigilbuild.com">info@vigilbuild.com</a>.</p>
@@ -335,25 +347,25 @@ def demo_request():
 @marketing_bp.route('/features/maintenance')
 def features_maintenance():
     """Dedicated page for Maintenance module features"""
-    return redirect(url_for('marketing.home') + '#business')
+    return redirect(url_for('marketing.business'))
 
 
 @marketing_bp.route('/features/inventory')
 def features_inventory():
     """Dedicated page for Inventory module features"""
-    return redirect(url_for('marketing.home') + '#business')
+    return redirect(url_for('marketing.business'))
 
 
 @marketing_bp.route('/features/project-management')
 def features_project_management():
     """Dedicated page for Project Management module features"""
-    return redirect(url_for('marketing.home') + '#business')
+    return redirect(url_for('marketing.business'))
 
 
 @marketing_bp.route('/features/scheduling')
 def features_scheduling():
     """Dedicated page for Job Scheduling module features"""
-    return redirect(url_for('marketing.home') + '#business')
+    return redirect(url_for('marketing.business'))
 
 
 @marketing_bp.route('/newsletter', methods=['POST'])

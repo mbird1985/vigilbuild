@@ -156,6 +156,49 @@
             background-clip: text;
         }
 
+        /* Real product screenshots: browser + phone frames */
+        .browser-shot {
+            border-radius: 0.9rem;
+            overflow: hidden;
+            box-shadow: 0 25px 60px rgba(2, 6, 23, 0.35);
+            border: 1px solid rgba(148, 163, 184, 0.35);
+            background: #0f172a;
+        }
+        .browser-shot .bar {
+            display: flex; align-items: center; gap: 6px;
+            padding: 10px 14px; background: #0f172a;
+        }
+        .browser-shot .bar span { width: 11px; height: 11px; border-radius: 9999px; display: block; }
+        .browser-shot .bar .url {
+            flex: 1; height: 18px; margin-left: 10px; border-radius: 9px;
+            background: #1e293b; color: #94a3b8; font-size: 10px; line-height: 18px;
+            padding: 0 12px; width: auto;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        .browser-shot img { display: block; width: 100%; height: auto; }
+        .phone-shot {
+            border-radius: 2rem;
+            border: 10px solid #0f172a;
+            overflow: hidden;
+            box-shadow: 0 25px 60px rgba(2, 6, 23, 0.35);
+            background: #0f172a;
+            max-width: 290px;
+        }
+        .phone-shot img { display: block; width: 100%; height: auto; }
+        .phone-shot.phone-sm { max-width: 190px; border-width: 7px; border-radius: 1.5rem; }
+        .problem-tag {
+            display: inline-block; font-size: 0.75rem; font-weight: 700;
+            letter-spacing: 0.06em; text-transform: uppercase;
+            color: #b91c1c; background: #fee2e2; border-radius: 9999px;
+            padding: 4px 12px;
+        }
+        .solution-tag {
+            display: inline-block; font-size: 0.75rem; font-weight: 700;
+            letter-spacing: 0.06em; text-transform: uppercase;
+            color: #166534; background: #dcfce7; border-radius: 9999px;
+            padding: 4px 12px;
+        }
+
         /* Dynamic navbar styles */
         .navbar {
             transition: background-color 0.3s ease, box-shadow 0.3s ease;
@@ -277,8 +320,8 @@
                 <!-- Desktop Navigation -->
                 <div class="hidden md:flex items-center space-x-8">
                     <a href="/marketing" class="nav-link font-medium transition-colors duration-300">Home</a>
-                    <a href="/marketing#government" class="nav-link font-medium transition-colors duration-300">Government</a>
-                    <a href="/marketing#business" class="nav-link font-medium transition-colors duration-300">Business</a>
+                    <a href="/marketing/government" class="nav-link font-medium transition-colors duration-300">Government</a>
+                    <a href="/marketing/business" class="nav-link font-medium transition-colors duration-300">Business</a>
                     <a href="/marketing/about" class="nav-link font-medium transition-colors duration-300">Why VigilBuild</a>
                     <a href="/marketing/contact" class="nav-link font-medium transition-colors duration-300">Contact</a>
                     <a href="/marketing/contact" class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg font-medium transition-colors shadow-md hover:shadow-lg">
@@ -298,8 +341,8 @@
             <div id="mobile-menu" class="mobile-menu md:hidden">
                 <div class="mobile-menu-container py-4 space-y-3 border-t transition-colors duration-300">
                     <a href="/marketing" class="mobile-nav-link block px-4 py-2 rounded-lg transition-colors duration-300">Home</a>
-                    <a href="/marketing#government" class="mobile-nav-link block px-4 py-2 rounded-lg transition-colors duration-300">Government Division</a>
-                    <a href="/marketing#business" class="mobile-nav-link block px-4 py-2 rounded-lg transition-colors duration-300">Business Division</a>
+                    <a href="/marketing/government" class="mobile-nav-link block px-4 py-2 rounded-lg transition-colors duration-300">Government Division</a>
+                    <a href="/marketing/business" class="mobile-nav-link block px-4 py-2 rounded-lg transition-colors duration-300">Business Division</a>
                     <a href="/marketing/about" class="mobile-nav-link block px-4 py-2 rounded-lg transition-colors duration-300">Why VigilBuild</a>
                     <a href="/marketing/contact" class="mobile-nav-link block px-4 py-2 rounded-lg transition-colors duration-300">Contact</a>
                     <a href="/marketing/contact" class="block mx-4 text-center bg-blue-600 text-white px-5 py-2 rounded-lg font-medium">
@@ -343,8 +386,8 @@
                 <div>
                     <h4 class="text-lg font-semibold mb-4">Divisions</h4>
                     <ul class="space-y-2">
-                        <li><a href="/marketing#government" class="text-gray-300 hover:text-white transition-colors">Government Management</a></li>
-                        <li><a href="/marketing#business" class="text-gray-300 hover:text-white transition-colors">Business Solutions</a></li>
+                        <li><a href="/marketing/government" class="text-gray-300 hover:text-white transition-colors">Government Management</a></li>
+                        <li><a href="/marketing/business" class="text-gray-300 hover:text-white transition-colors">Business Solutions</a></li>
                         <li><a href="https://aguada.vigilbuild.com" class="text-gray-300 hover:text-white transition-colors">Live demo — Aguada</a></li>
                         <li><a href="https://moca.vigilbuild.com" class="text-gray-300 hover:text-white transition-colors">Live demo — Moca</a></li>
                     </ul>
