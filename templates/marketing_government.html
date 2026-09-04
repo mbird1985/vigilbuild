@@ -1,115 +1,102 @@
 {% extends "marketing_base.html" %}
+{% from "marketing_icons.html" import icon %}
 
 {% block title %}Government Management Division — VigilBuild{% endblock %}
-{% block meta_description %}The complete digital municipality: public website, citizen app, and management platform — updated by your own staff. Real screenshots, real portals, free 6-month pilot.{% endblock %}
+{% block meta_description %}The complete digital municipality: public website, citizen app, and management platform — updated by your own staff. Real screenshots, live portals, free 6-month pilot.{% endblock %}
 {% block og_title %}VigilBuild Government Management — The Complete Digital Municipality{% endblock %}
 {% block og_description %}Website + citizen app + back office in one system, in Spanish and English. See real screenshots and live municipal portals.{% endblock %}
 
+{% macro browser(src, url, alt, lazy=true) -%}
+<div class="browser-shot">
+    <div class="bar">
+        <span style="background:#ef4444"></span><span style="background:#f59e0b"></span><span style="background:#22c55e"></span>
+        <div class="url">{{ url }}</div>
+    </div>
+    <img src="/static/img/platform/{{ src }}" {% if lazy %}loading="lazy"{% endif %} width="2160" height="1350" alt="{{ alt }}">
+</div>
+{%- endmacro %}
+
 {% block content %}
 <!-- ================================ HERO ================================ -->
-<section class="bg-gradient-hero relative overflow-hidden">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24">
-        <div class="grid lg:grid-cols-2 gap-12 items-center">
-            <div class="stagger-children">
-                <p class="text-blue-300 font-semibold tracking-wide uppercase text-sm mb-4">🏛️ Government Management Division</p>
-                <h1 class="text-4xl lg:text-5xl font-extrabold text-white leading-tight mb-6">
-                    The complete digital municipality.
-                </h1>
-                <p class="text-lg text-gray-300 mb-4 max-w-xl">
-                    A public website, a citizen app, and the management platform behind them —
-                    one system, in Spanish and English, hosted and maintained by us.
-                </p>
-                <p class="text-lg text-gray-300 mb-8 max-w-xl">
-                    And here's the part that matters: <span class="text-white font-semibold">your own
-                    employees run it.</span> They post the news, publish the events, answer the reports —
-                    from the same screens you'll see below. No webmaster, no waiting.
-                </p>
-                <div class="flex flex-wrap gap-4">
-                    <a href="/marketing/contact" class="bg-blue-600 hover:bg-blue-700 text-white px-7 py-3.5 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all pulse-slow">
-                        Start a free 6-month pilot →
-                    </a>
-                    <a href="#proof" class="glass hover:bg-white/20 text-white px-7 py-3.5 rounded-xl font-semibold transition-all">
-                        Open the live portals
-                    </a>
+<section class="section-dark relative overflow-hidden">
+    <div class="absolute inset-0 grid-lines" aria-hidden="true"></div>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-20 lg:pt-24 lg:pb-28 relative">
+        <div class="grid lg:grid-cols-12 gap-12 items-center">
+            <div class="lg:col-span-6">
+                <p class="eyebrow eyebrow-dark mb-5">Government Management Division</p>
+                <h1 class="display text-5xl lg:text-6xl text-white mb-6">The complete digital municipality.</h1>
+                <p class="lead text-slate-300 mb-4 max-w-xl">A public website, a citizen app, and the management
+                platform behind them — one system, in Spanish and English, hosted and maintained by us.</p>
+                <p class="lead text-slate-300 mb-9 max-w-xl">And the part that matters: <span class="text-white font-semibold">your own
+                employees run it.</span> They post the news, publish the events, answer the reports — from the
+                screens you'll see below. No webmaster, no waiting.</p>
+                <div class="flex flex-wrap gap-3">
+                    <a href="/marketing/contact" class="btn-primary">Start a free 6-month pilot {{ icon("arrow", "w-5 h-5") }}</a>
+                    <a href="#proof" class="btn-ghost">{{ icon("external", "w-5 h-5") }} Open the live portals</a>
                 </div>
-                <p class="text-gray-400 mt-6 text-sm">Every image on this page is a real screenshot of the working platform — not a mockup.</p>
+                <p class="text-slate-400 mt-7 text-sm">Every image on this page is a real screenshot of the working platform — not a mockup.</p>
             </div>
-            <div class="hidden lg:block">
-                <div class="browser-shot">
-                    <div class="bar">
-                        <span style="background:#ef4444"></span><span style="background:#f59e0b"></span><span style="background:#22c55e"></span>
-                        <div class="url">demo.vigilbuild.com — Inicio</div>
-                    </div>
-                    <img src="/static/img/platform/admin-dashboard-maria.webp" width="2160" height="1350"
-                         alt="Real VigilBuild dashboard: María from Finance sees her pending approvals and this month's income and spending">
-                </div>
-                <p class="text-gray-400 text-xs mt-3 text-center">María from Finance signs in: her approvals, her numbers — and only the sections her role allows.</p>
+            <div class="lg:col-span-6 hidden lg:block reveal">
+                {{ browser("admin-dashboard-maria.webp", "demo.vigilbuild.com — Inicio", "Real VigilBuild dashboard: María from Finance sees her module group, pending approvals, and live finance and budget widgets", lazy=false) }}
+                <p class="text-slate-400 text-xs mt-3 text-center">María from Finance signs in: her approvals, her numbers — and only the modules her role allows.</p>
             </div>
         </div>
     </div>
 </section>
 
 <!-- ====================== ONE SYSTEM, THREE FACES ====================== -->
-<section class="bg-white py-16">
+<section class="bg-white py-16 lg:py-20">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center max-w-3xl mx-auto mb-12">
-            <h2 class="text-3xl lg:text-4xl font-extrabold text-gray-900 mb-4">One system. Three faces.</h2>
-            <p class="text-lg text-gray-600">Your staff works in the management portal. What they publish
-            appears on the website and in the citizen app — instantly, in both languages.</p>
+        <div class="text-center max-w-3xl mx-auto mb-12 reveal">
+            <p class="eyebrow eyebrow-light mb-3">How it fits together</p>
+            <h2 class="section-title text-3xl lg:text-4xl text-slate-900 mb-4">One system. Three faces.</h2>
+            <p class="lead text-slate-600">Your staff works in the management portal. What they publish appears on
+            the website and in the citizen app — instantly, in both languages.</p>
         </div>
-        <div class="grid md:grid-cols-3 gap-6 stagger-children">
-            <div class="bg-gray-50 rounded-2xl p-6 border border-gray-100 text-center">
-                <div class="text-4xl mb-3">🖥️</div>
-                <h3 class="font-bold text-lg text-gray-900 mb-2">The public website</h3>
-                <p class="text-gray-600 text-sm">Services, government, tourism, transparency, emergencies —
-                a modern bilingual site your residents actually use.</p>
+        <div class="grid md:grid-cols-3 gap-5">
+            <div class="card p-7 reveal">
+                <div class="icon-tile mb-4">{{ icon("globe", "w-6 h-6") }}</div>
+                <h3 class="font-bold text-lg text-slate-900 mb-2">The public website</h3>
+                <p class="text-slate-600 text-sm leading-relaxed">Services, government, tourism, transparency,
+                emergencies — a modern bilingual site your residents actually use.</p>
             </div>
-            <div class="bg-gray-50 rounded-2xl p-6 border border-gray-100 text-center">
-                <div class="text-4xl mb-3">📱</div>
-                <h3 class="font-bold text-lg text-gray-900 mb-2">The citizen app</h3>
-                <p class="text-gray-600 text-sm">Report problems with photo and location, file official
+            <div class="card p-7 reveal">
+                <div class="icon-tile mb-4">{{ icon("smartphone", "w-6 h-6") }}</div>
+                <h3 class="font-bold text-lg text-slate-900 mb-2">The citizen app</h3>
+                <p class="text-slate-600 text-sm leading-relaxed">Report problems with photo and location, file official
                 forms with a legal e-signature, get alerts — from any phone.</p>
             </div>
-            <div class="bg-gray-50 rounded-2xl p-6 border border-gray-100 text-center">
-                <div class="text-4xl mb-3">⚙️</div>
-                <h3 class="font-bold text-lg text-gray-900 mb-2">The management portal</h3>
-                <p class="text-gray-600 text-sm">Where your team lives: documents, crews, money, grants,
-                content, and audits — with permissions per role.</p>
+            <div class="card p-7 reveal">
+                <div class="icon-tile mb-4">{{ icon("settings", "w-6 h-6") }}</div>
+                <h3 class="font-bold text-lg text-slate-900 mb-2">The management portal</h3>
+                <p class="text-slate-600 text-sm leading-relaxed">Where your team lives: documents, crews, money, grants,
+                content, and audits — grouped by module, with permissions per role.</p>
             </div>
         </div>
     </div>
 </section>
 
 <!-- ============ BLOCK 1: WEBSITE UPDATED BY YOUR OWN STAFF ============ -->
-<section class="bg-gray-50 py-16 lg:py-20">
+<section class="py-16 lg:py-20">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="grid lg:grid-cols-2 gap-12 items-center">
-            <div>
-                <span class="problem-tag mb-4">The problem</span>
-                <h2 class="text-3xl font-extrabold text-gray-900 mt-3 mb-4">The website is outdated the month after it launches.</h2>
-                <p class="text-gray-600 mb-4">Most municipal websites depend on an outside webmaster.
-                Posting one announcement means an email, a wait, and often a bill — so the site
-                quietly dies, and residents stop checking it.</p>
-                <span class="solution-tag mb-2">What VigilBuild does</span>
-                <p class="text-gray-700 mt-3 mb-6">Your secretary opens <em>Contenido → Noticias</em>,
-                types the announcement, clicks <strong>Publicar</strong> — and it's on the website and
-                the app before she stands up. News, events, meeting notices, emergency alerts: your
-                team publishes everything, with zero technical steps.</p>
-                <div class="bg-white rounded-xl border border-gray-200 p-4 text-sm text-gray-600">
-                    💡 The screenshot on the right is the actual publishing screen — if your staff can
-                    fill a form, they can run the town's website.
+            <div class="reveal">
+                <span class="problem-tag">The problem</span>
+                <h2 class="section-title text-3xl text-slate-900 mt-3 mb-4">The website is outdated the month after it launches.</h2>
+                <p class="text-slate-600 mb-4">Most municipal websites depend on an outside webmaster. Posting one
+                announcement means an email, a wait, and often a bill — so the site quietly dies, and residents stop checking it.</p>
+                <span class="solution-tag">What VigilBuild does</span>
+                <p class="text-slate-700 mt-3 mb-6">Your secretary opens <em>Participación → Noticias</em>, types the
+                announcement, clicks <strong>Publicar</strong> — and it's on the website and the app before she stands up.
+                News, events, meeting notices, emergency alerts: your team publishes everything, with zero technical steps.</p>
+                <div class="card p-4 text-sm text-slate-600 flex items-start gap-3">
+                    <span class="icon-tile-soft !w-9 !h-9 shrink-0">{{ icon("sparkles", "w-4 h-4") }}</span>
+                    <span>The screenshot is the actual publishing screen — if your staff can fill a form, they can run the town's website.</span>
                 </div>
             </div>
-            <div class="space-y-4">
-                <div class="browser-shot">
-                    <div class="bar">
-                        <span style="background:#ef4444"></span><span style="background:#f59e0b"></span><span style="background:#22c55e"></span>
-                        <div class="url">Management portal — Noticias y comunicados</div>
-                    </div>
-                    <img src="/static/img/platform/admin-news.webp" loading="lazy" width="2160" height="1350"
-                         alt="The news publishing screen in the management portal: write a title and text, click publish, and it appears on the portal and app">
-                </div>
-                <p class="text-gray-500 text-xs text-center">Staff side: write it, publish it. The subtitle on the page says it all — “appears on the portal and in the app.”</p>
+            <div class="reveal">
+                {{ browser("admin-news.webp", "Management portal — Participación · Noticias", "The news publishing screen: write a title and text, click publish, and it appears on the portal and app") }}
+                <p class="text-slate-500 text-xs text-center mt-3">Staff side: write it, publish it. The page itself says “appears on the portal and in the app.”</p>
             </div>
         </div>
     </div>
@@ -119,67 +106,55 @@
 <section class="bg-white py-16 lg:py-20">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="grid lg:grid-cols-2 gap-12 items-center">
-            <div class="order-2 lg:order-1 flex items-center justify-center gap-6 flex-wrap">
-                <div class="browser-shot flex-1 min-w-[300px]">
-                    <div class="bar">
-                        <span style="background:#ef4444"></span><span style="background:#f59e0b"></span><span style="background:#22c55e"></span>
-                        <div class="url">Management portal — Eventos</div>
-                    </div>
-                    <img src="/static/img/platform/admin-calendar.webp" loading="lazy" width="2160" height="1350"
-                         alt="Events calendar in the management portal: month view with events color-coded by venue and a legend of locations">
+            <div class="order-2 lg:order-1 flex items-center justify-center gap-6 flex-wrap reveal">
+                <div class="flex-1 min-w-[300px]">
+                    {{ browser("admin-calendar.webp", "Management portal — Eventos", "Events calendar in the management portal: month view with events color-coded by venue and a venue legend") }}
                 </div>
                 <div class="phone-shot phone-sm shrink-0">
                     <img src="/static/img/platform/portal-eventos-grid-mobile.webp" loading="lazy" width="780" height="1560"
-                         alt="The same events calendar as residents see it on their phones, with month, week and day views">
+                         alt="The same events calendar as residents see it on their phones">
                 </div>
             </div>
-            <div class="order-1 lg:order-2">
+            <div class="order-1 lg:order-2 reveal">
                 <span class="problem-tag">The problem</span>
-                <h2 class="text-3xl font-extrabold text-gray-900 mt-3 mb-4">The town holds events nobody hears about.</h2>
-                <p class="text-gray-600 mb-4">The festival gets a banner, everything else gets a flyer at
-                city hall. Attendance suffers, and residents feel like nothing happens in town.</p>
+                <h2 class="section-title text-3xl text-slate-900 mt-3 mb-4">The town holds events nobody hears about.</h2>
+                <p class="text-slate-600 mb-4">The festival gets a banner, everything else gets a flyer at city hall.
+                Attendance suffers, and residents feel like nothing happens in town.</p>
                 <span class="solution-tag">What VigilBuild does</span>
-                <p class="text-gray-700 mt-3 mb-4">A real events calendar — month, week, and day views,
-                color-coded by venue, with a detail page for every event. Staff add an event once in the
-                portal; residents see it on the website, the app, and their phone's calendar view. Day
-                view sorts by time, so festival weekends stay organized.</p>
-                <p class="text-gray-700">Events, news, and alerts on every screen is how a municipality
-                <strong>earns attention back</strong> — and attention is what civic engagement is made of.</p>
+                <p class="text-slate-700 mt-3 mb-4">A real events calendar — month, week, and day views, color-coded by
+                venue, with a detail page for every event. Staff add an event once; residents see it on the website, the
+                app, and their phone. Day view sorts by time, so festival weekends stay organized.</p>
+                <p class="text-slate-700">Events, news, and alerts on every screen is how a municipality <strong>earns
+                attention back</strong> — and attention is what civic engagement is made of.</p>
             </div>
         </div>
     </div>
 </section>
 
 <!-- ================== BLOCK 3: CITIZEN REPORTS + MAP ================== -->
-<section class="bg-gray-50 py-16 lg:py-20">
+<section class="py-16 lg:py-20">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="grid lg:grid-cols-2 gap-12 items-center">
-            <div>
+            <div class="reveal">
                 <span class="problem-tag">The problem</span>
-                <h2 class="text-3xl font-extrabold text-gray-900 mt-3 mb-4">Complaints arrive by phone call — and disappear.</h2>
-                <p class="text-gray-600 mb-4">A pothole gets reported five times to three different
-                offices. Nobody knows it's the same pothole, nobody closes the loop, and five residents
-                conclude the municipality doesn't listen.</p>
+                <h2 class="section-title text-3xl text-slate-900 mt-3 mb-4">Complaints arrive by phone call — and disappear.</h2>
+                <p class="text-slate-600 mb-4">A pothole gets reported five times to three different offices. Nobody knows
+                it's the same pothole, nobody closes the loop, and five residents conclude the municipality doesn't listen.</p>
                 <span class="solution-tag">What VigilBuild does</span>
-                <p class="text-gray-700 mt-3 mb-4">Residents report from their phone with a photo and GPS
-                location. The platform <strong>groups duplicate reports into one issue</strong>, puts it
-                on the map with a count — “4 residents reported this” — and crews work the biggest
-                problems first. When it's fixed, every reporter gets notified automatically.</p>
-                <p class="text-gray-700 mb-6">That closed loop — <em>report → see it worked on → get told
-                it's done</em> — is what turns frustrated callers into engaged residents.</p>
+                <p class="text-slate-700 mt-3 mb-4">Residents report from their phone with a photo and GPS location. The
+                platform <strong>groups duplicate reports into one issue</strong>, puts it on the map with a count —
+                “4 residents reported this” — and crews work the biggest problems first. When it's fixed, every reporter
+                is notified automatically.</p>
+                <p class="text-slate-700">That closed loop — <em>report → see it worked on → get told it's done</em> — is what
+                turns frustrated callers into engaged residents.</p>
             </div>
-            <div class="flex items-center justify-center gap-6 flex-wrap">
+            <div class="flex items-center justify-center gap-6 flex-wrap reveal">
                 <div class="phone-shot phone-sm shrink-0">
                     <img src="/static/img/platform/portal-report-form-mobile.webp" loading="lazy" width="780" height="1560"
-                         alt="Citizen report form on a phone: problem type, description, location with GPS button, and camera buttons to attach a photo">
+                         alt="Citizen report form on a phone: problem type, description, GPS location, and camera buttons">
                 </div>
-                <div class="browser-shot flex-1 min-w-[300px]">
-                    <div class="bar">
-                        <span style="background:#ef4444"></span><span style="background:#f59e0b"></span><span style="background:#22c55e"></span>
-                        <div class="url">Management portal — Mapa del municipio</div>
-                    </div>
-                    <img src="/static/img/platform/admin-map.webp" loading="lazy" width="2160" height="1350"
-                         alt="Municipal map in the management portal showing citizen-reported issues as numbered dots colored by status">
+                <div class="flex-1 min-w-[300px]">
+                    {{ browser("admin-map.webp", "Management portal — Mapa del municipio", "Municipal map showing citizen-reported issues as numbered dots colored by status") }}
                 </div>
             </div>
         </div>
@@ -190,62 +165,55 @@
 <section class="bg-white py-16 lg:py-20">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="grid lg:grid-cols-2 gap-12 items-center">
-            <div class="order-2 lg:order-1">
-                <div class="browser-shot">
-                    <div class="bar">
-                        <span style="background:#ef4444"></span><span style="background:#f59e0b"></span><span style="background:#22c55e"></span>
-                        <div class="url">Management portal — Finanzas</div>
-                    </div>
-                    <img src="/static/img/platform/admin-finance.webp" loading="lazy" width="2160" height="1350"
-                         alt="Finance dashboard: monthly income, spending and balance cards, a 12-month income versus spending chart, and top categories">
-                </div>
-                <p class="text-gray-500 text-xs mt-3 text-center">Income vs. spending, by month, category, and department — one click from a printable report.</p>
+            <div class="order-2 lg:order-1 reveal">
+                {{ browser("admin-finance.webp", "Management portal — Finanzas", "Finance dashboard: monthly income, spending and balance cards, a 12-month chart, and top categories") }}
+                <p class="text-slate-500 text-xs mt-3 text-center">Income vs. spending by month, category, and department — one click from a printable report.</p>
             </div>
-            <div class="order-1 lg:order-2">
+            <div class="order-1 lg:order-2 reveal">
                 <span class="problem-tag">The problem</span>
-                <h2 class="text-3xl font-extrabold text-gray-900 mt-3 mb-4">The money lives in a spreadsheet only one person understands.</h2>
-                <p class="text-gray-600 mb-4">The mayor asks “how are we doing this month?” and the
-                answer takes three days and a printed table nobody can read.</p>
+                <h2 class="section-title text-3xl text-slate-900 mt-3 mb-4">The money lives in a spreadsheet only one person understands.</h2>
+                <p class="text-slate-600 mb-4">The mayor asks “how are we doing this month?” and the answer takes three
+                days and a printed table nobody can read.</p>
                 <span class="solution-tag">What VigilBuild does</span>
-                <p class="text-gray-700 mt-3 mb-4">Finance keeps working in Excel — they just upload the
-                sheet. The platform turns it into <strong>live dashboards</strong>: income vs. spending
-                by month, top categories, per-department breakdowns, and a printable financial report for
-                any period. Leaders love dashboards because dashboards answer questions instantly.</p>
-                <p class="text-gray-700">No new accounting system, no retraining — the spreadsheet your
-                office already produces becomes the chart your mayor actually reads.</p>
+                <p class="text-slate-700 mt-3 mb-4">Finance keeps working in Excel — they just upload the sheet. The platform
+                turns it into <strong>live dashboards</strong>: income vs. spending by month, top categories, per-department
+                breakdowns, and a printable financial report for any period.</p>
+                <p class="text-slate-700">No new accounting system, no retraining — the spreadsheet your office already
+                produces becomes the chart your mayor actually reads.</p>
             </div>
         </div>
     </div>
 </section>
 
 <!-- ======================== BLOCK 5: GRANTS ======================== -->
-<section class="bg-gray-50 py-16 lg:py-20">
+<section class="py-16 lg:py-20">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="grid lg:grid-cols-2 gap-12 items-center">
-            <div>
+            <div class="reveal">
                 <span class="problem-tag">The problem</span>
-                <h2 class="text-3xl font-extrabold text-gray-900 mt-3 mb-4">Federal money is left on the table.</h2>
-                <p class="text-gray-600 mb-4">FEMA, HUD, DOE, DRD — every program has application windows
-                and reporting deadlines. Miss one and the municipality loses money it had already won.</p>
+                <h2 class="section-title text-3xl text-slate-900 mt-3 mb-4">Federal money is left on the table.</h2>
+                <p class="text-slate-600 mb-4">FEMA, HUD, DOE, DRD — every program has application windows and reporting
+                deadlines. Miss one and the municipality loses money it had already won.</p>
                 <span class="solution-tag">What VigilBuild does</span>
-                <p class="text-gray-700 mt-3 mb-6">Every grant in one tracker: status from
-                <em>identified</em> to <em>closed</em>, awarded vs. drawn amounts, and both deadlines —
-                application and next report — <strong>highlighted in amber 30 days out and red when
-                overdue</strong>. The screen below is the real tracker.</p>
-                <div class="bg-white rounded-xl border border-gray-200 p-4 text-sm text-gray-600">
-                    💰 In the demo data alone: $480,000 awarded, $285,000 still to draw down — visible at a glance.
+                <p class="text-slate-700 mt-3 mb-6">Every grant in one tracker — status from <em>identified</em> to <em>closed</em>,
+                awarded vs. drawn amounts, deadlines <strong>highlighted in amber 30 days out and red when overdue</strong>.
+                We load the municipality's real federal awards from USAspending.gov, each one linked back to its federal
+                record — so the mayor sees their own money, verified against the source.</p>
+                <div class="card p-4 text-sm text-slate-600 flex items-start gap-3">
+                    <span class="icon-tile-soft !w-9 !h-9 shrink-0">{{ icon("coins", "w-4 h-4") }}</span>
+                    <span>For one pilot town alone, USAspending shows over $77 million in federal subawards — every one of them worth tracking.</span>
                 </div>
             </div>
-            <div>
+            <div class="reveal">
                 <div class="browser-shot">
                     <div class="bar">
                         <span style="background:#ef4444"></span><span style="background:#f59e0b"></span><span style="background:#22c55e"></span>
                         <div class="url">Management portal — Subvenciones y Fondos Federales</div>
                     </div>
                     <img src="/static/img/platform/admin-grants-clip.webp" loading="lazy" width="1697" height="411"
-                         alt="Grants tracker table: each grant with agency, status chip, awarded and drawn amounts, and deadline dates highlighted in amber">
+                         alt="Grants tracker: real federal awards linked to USAspending.gov, with status chips, amounts, and deadline warnings">
                 </div>
-                <p class="text-gray-500 text-xs mt-3 text-center">Deadlines you can see coming — amber at 30 days, red when overdue.</p>
+                <p class="text-slate-500 text-xs mt-3 text-center">Deadlines you can see coming — and every award linked to its USAspending.gov page.</p>
             </div>
         </div>
     </div>
@@ -255,95 +223,78 @@
 <section class="bg-white py-16 lg:py-20">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="grid lg:grid-cols-2 gap-12 items-center">
-            <div class="order-2 lg:order-1">
-                <div class="browser-shot">
-                    <div class="bar">
-                        <span style="background:#ef4444"></span><span style="background:#f59e0b"></span><span style="background:#22c55e"></span>
-                        <div class="url">Management portal — Auditoría de documentos</div>
-                    </div>
-                    <img src="/static/img/platform/admin-audit.webp" loading="lazy" width="2160" height="1350"
-                         alt="Immutable document audit log: every submission, e-signature with IP, approval and notification with timestamp, person and reason — exportable to CSV">
-                </div>
-                <p class="text-gray-500 text-xs mt-3 text-center">Every action logged: who, when, why — with e-signature records and one-click CSV export for auditors.</p>
+            <div class="order-2 lg:order-1 reveal">
+                {{ browser("admin-audit.webp", "Management portal — Auditoría de documentos", "Immutable document audit log: every submission, e-signature, approval and notification with timestamp, person and reason — exportable to CSV") }}
+                <p class="text-slate-500 text-xs mt-3 text-center">Every action logged: who, when, why — with e-signature records and one-click CSV export for auditors.</p>
             </div>
-            <div class="order-1 lg:order-2">
+            <div class="order-1 lg:order-2 reveal">
                 <span class="problem-tag">The problem</span>
-                <h2 class="text-3xl font-extrabold text-gray-900 mt-3 mb-4">Paper archives, lost files — and audit season panic.</h2>
-                <p class="text-gray-600 mb-4">Residents lose a morning in line to file one form. The form
-                then walks desk to desk, and when the Contraloría asks “who approved this and when?”,
-                the answer is a week of digging through cabinets.</p>
+                <h2 class="section-title text-3xl text-slate-900 mt-3 mb-4">Paper archives, lost files — and audit season panic.</h2>
+                <p class="text-slate-600 mb-4">Residents lose a morning in line to file one form. The form then walks desk
+                to desk, and when the Contraloría asks “who approved this and when?”, the answer is a week of digging
+                through cabinets.</p>
                 <span class="solution-tag">What VigilBuild does</span>
-                <p class="text-gray-700 mt-3 mb-4">We digitize your documentation end to end. Your
-                <strong>exact official forms</strong> go online — residents complete and legally e-sign
-                them from a phone, and every approval step happens on screen. Existing paper archives get
-                scanned and loaded into the same <strong>secure, searchable database</strong>.</p>
-                <p class="text-gray-700">Every action writes itself into an immutable audit log — person,
-                timestamp, decision notes, and a digital fingerprint (SHA-256) per document. When
-                auditors come, you export the log. <strong>The documentation audits ask for now exists
-                as a by-product of daily work.</strong></p>
+                <p class="text-slate-700 mt-3 mb-4">We digitize your documentation end to end. Your <strong>exact official
+                forms</strong> go online — residents complete and legally e-sign them from a phone, and every approval step
+                happens on screen. Existing paper archives get scanned and loaded into the same <strong>secure, searchable
+                database</strong>.</p>
+                <p class="text-slate-700">Every action writes itself into an immutable audit log — person, timestamp, decision
+                notes, and a digital fingerprint per document. When auditors come, you export the log. <strong>The
+                documentation audits ask for now exists as a by-product of daily work.</strong></p>
             </div>
         </div>
     </div>
 </section>
 
 <!-- ===================== BLOCK 7: HURRICANE MODE ===================== -->
-<section class="bg-gray-50 py-16 lg:py-20">
+<section class="py-16 lg:py-20">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="grid lg:grid-cols-2 gap-12 items-center">
-            <div>
+            <div class="reveal">
                 <span class="problem-tag">The problem</span>
-                <h2 class="text-3xl font-extrabold text-gray-900 mt-3 mb-4">When the storm comes, the plan is in someone's head.</h2>
-                <p class="text-gray-600 mb-4">Every June the same scramble: who checks the generators,
-                who stocks the shelters, what got done last year. If that person is on vacation, the
-                plan is too.</p>
+                <h2 class="section-title text-3xl text-slate-900 mt-3 mb-4">When the storm comes, the plan is in someone's head.</h2>
+                <p class="text-slate-600 mb-4">Every June the same scramble: who checks the generators, who stocks the
+                shelters, what got done last year. If that person is on vacation, the plan is too.</p>
                 <span class="solution-tag">What VigilBuild does</span>
-                <p class="text-gray-700 mt-3 mb-4"><strong>Modo Huracán</strong>: the season checklist —
-                before, during, and after — assigned by department, with a progress bar the mayor can
-                read in one glance and a record of who completed what, when. Next season, one click
-                resets it.</p>
-                <p class="text-gray-700">Paired with emergency alerts pushed to residents' phones through
-                the same platform.</p>
+                <p class="text-slate-700 mt-3 mb-4"><strong>Modo Huracán</strong>: the season checklist — before, during, and
+                after — assigned by department, with a progress bar the mayor can read in one glance and a record of who
+                completed what, when. Next season, one click resets it.</p>
+                <p class="text-slate-700">Paired with emergency alerts pushed to residents' phones through the same platform.</p>
             </div>
-            <div>
-                <div class="browser-shot">
-                    <div class="bar">
-                        <span style="background:#ef4444"></span><span style="background:#f59e0b"></span><span style="background:#22c55e"></span>
-                        <div class="url">Management portal — Modo Huracán</div>
-                    </div>
-                    <img src="/static/img/platform/admin-storm.webp" loading="lazy" width="2160" height="1350"
-                         alt="Hurricane Mode checklist: before, during and after tasks by department with a 30 percent progress bar and completion attribution">
-                </div>
+            <div class="reveal">
+                {{ browser("admin-storm.webp", "Management portal — Modo Huracán", "Hurricane Mode checklist: before, during and after tasks by department with a progress bar and completion attribution") }}
             </div>
         </div>
     </div>
 </section>
 
 <!-- ==================== ENGAGEMENT / TAX DOLLARS ==================== -->
-<section class="bg-gradient-vb py-16 lg:py-20 text-white">
+<section class="section-dark text-white py-16 lg:py-20">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="max-w-3xl mb-10">
-            <h2 class="text-3xl lg:text-4xl font-extrabold mb-4">Show residents what their tax dollars are doing.</h2>
-            <p class="text-lg text-gray-300">Engagement isn't a slogan — it's residents seeing their
-            government work. The platform makes that visible automatically.</p>
+        <div class="max-w-3xl mb-10 reveal">
+            <p class="eyebrow eyebrow-dark mb-3">Civic engagement</p>
+            <h2 class="section-title text-3xl lg:text-4xl mb-4">Show residents what their tax dollars are doing.</h2>
+            <p class="lead text-slate-300">Engagement isn't a slogan — it's residents seeing their government work.
+            The platform makes that visible automatically.</p>
         </div>
-        <div class="grid md:grid-cols-3 gap-6 stagger-children">
-            <div class="glass rounded-2xl p-6">
-                <h3 class="font-bold text-lg mb-2">🔍 Transparency on autopilot</h3>
-                <p class="text-gray-300 text-sm">Budgets, contracts, and reports published from the back
-                office appear on the public Transparency page by themselves — supporting Law 141-2019
-                obligations without extra work.</p>
+        <div class="grid md:grid-cols-3 gap-5">
+            <div class="card-dark p-6 reveal">
+                <div class="icon-tile mb-4">{{ icon("filesearch", "w-6 h-6") }}</div>
+                <h3 class="font-bold text-lg mb-2">Transparency on autopilot</h3>
+                <p class="text-slate-300 text-sm leading-relaxed">Budgets, contracts, and reports published from the back
+                office appear on the public Transparency page by themselves — supporting Law 141-2019 obligations.</p>
             </div>
-            <div class="glass rounded-2xl p-6">
-                <h3 class="font-bold text-lg mb-2">✅ A closed loop on every report</h3>
-                <p class="text-gray-300 text-sm">“We received it. A crew is on it. It's fixed.” Residents
-                who get answers report more, complain less, and trust more — that's engagement you can
-                measure.</p>
+            <div class="card-dark p-6 reveal">
+                <div class="icon-tile mb-4">{{ icon("check", "w-6 h-6") }}</div>
+                <h3 class="font-bold text-lg mb-2">A closed loop on every report</h3>
+                <p class="text-slate-300 text-sm leading-relaxed">“We received it. A crew is on it. It's fixed.” Residents who
+                get answers report more, complain less, and trust more — engagement you can measure.</p>
             </div>
-            <div class="glass rounded-2xl p-6">
-                <h3 class="font-bold text-lg mb-2">🎯 A results page built in</h3>
-                <p class="text-gray-300 text-sm">Documents processed, reports resolved, hours saved — the
-                platform counts its own impact, print-ready for the mayor's report or the municipal
-                assembly.</p>
+            <div class="card-dark p-6 reveal">
+                <div class="icon-tile mb-4">{{ icon("gauge", "w-6 h-6") }}</div>
+                <h3 class="font-bold text-lg mb-2">A results page built in</h3>
+                <p class="text-slate-300 text-sm leading-relaxed">Documents processed, reports resolved, hours saved — the
+                platform counts its own impact, print-ready for the mayor's report or the municipal assembly.</p>
             </div>
         </div>
     </div>
@@ -352,99 +303,97 @@
 <!-- ========================= THE NUMBERS ========================= -->
 <section class="bg-white py-16 lg:py-20">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center max-w-3xl mx-auto mb-4">
-            <h2 class="text-3xl lg:text-4xl font-extrabold text-gray-900 mb-4">What this is worth</h2>
-            <p class="text-lg text-gray-600">Honest estimates with the math shown — and during a pilot,
-            we replace estimates with your municipality's own measured numbers.</p>
+        <div class="text-center max-w-3xl mx-auto mb-10 reveal">
+            <p class="eyebrow eyebrow-light mb-3">Estimates, with the math shown</p>
+            <h2 class="section-title text-3xl lg:text-4xl text-slate-900 mb-4">What this is worth</h2>
+            <p class="lead text-slate-600">During a pilot, we replace estimates with your municipality's own measured numbers.</p>
         </div>
-        <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mt-10 stagger-children">
-            <div class="bg-gray-50 rounded-2xl p-6 border border-gray-100">
-                <p class="stat-number text-4xl font-extrabold mb-2">60+ hrs</p>
-                <h3 class="font-bold text-gray-900 mb-1">Staff time back, monthly</h3>
-                <p class="text-gray-500 text-sm">~15 min of manual intake, routing and filing per document
-                × 500 documents/month — automating even half frees 60+ hours (≈ $900/mo in clerical cost).</p>
+        <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-5">
+            <div class="card p-6 reveal">
+                <p class="stat-number text-4xl font-extrabold tracking-tight mb-2">60+ hrs</p>
+                <h3 class="font-bold text-slate-900 mb-1">Staff time back, monthly</h3>
+                <p class="text-slate-500 text-sm">~15 min of manual intake, routing and filing per document × 500 documents/month —
+                automating even half frees 60+ hours (≈ $900/mo in clerical cost).</p>
             </div>
-            <div class="bg-gray-50 rounded-2xl p-6 border border-gray-100">
-                <p class="stat-number text-4xl font-extrabold mb-2">$16.90 → $0.40</p>
-                <h3 class="font-bold text-gray-900 mb-1">Cost per transaction</h3>
-                <p class="text-gray-500 text-sm">Average cost of an in-person government transaction vs. a
-                digital one (Deloitte study). Every trámite that moves online keeps that difference.</p>
+            <div class="card p-6 reveal">
+                <p class="stat-number text-4xl font-extrabold tracking-tight mb-2">$16.90 → $0.40</p>
+                <h3 class="font-bold text-slate-900 mb-1">Cost per transaction</h3>
+                <p class="text-slate-500 text-sm">Average cost of an in-person government transaction vs. a digital one (Deloitte
+                study). Every trámite that moves online keeps that difference.</p>
             </div>
-            <div class="bg-gray-50 rounded-2xl p-6 border border-gray-100">
-                <p class="stat-number text-4xl font-extrabold mb-2">45–60 min</p>
-                <h3 class="font-bold text-gray-900 mb-1">Saved per resident, per trámite</h3>
-                <p class="text-gray-500 text-sm">A trip to the alcaldía — travel, line, counter — replaced
-                by five minutes on a phone, including instantly downloading the signed official copy.</p>
+            <div class="card p-6 reveal">
+                <p class="stat-number text-4xl font-extrabold tracking-tight mb-2">45–60 min</p>
+                <h3 class="font-bold text-slate-900 mb-1">Saved per resident, per trámite</h3>
+                <p class="text-slate-500 text-sm">A trip to the alcaldía — travel, line, counter — replaced by five minutes on a phone,
+                including instantly downloading the signed official copy.</p>
             </div>
-            <div class="bg-gray-50 rounded-2xl p-6 border border-gray-100">
-                <p class="stat-number text-4xl font-extrabold mb-2">up to +89%</p>
-                <h3 class="font-bold text-gray-900 mb-1">More citizen participation</h3>
-                <p class="text-gray-500 text-sm">Industry benchmark for 311-style phone reporting
-                (CivicPlus/SeeClickFix claim). Our clustering turns that volume into priorities, not noise.</p>
+            <div class="card p-6 reveal">
+                <p class="stat-number text-4xl font-extrabold tracking-tight mb-2">up to +89%</p>
+                <h3 class="font-bold text-slate-900 mb-1">More citizen participation</h3>
+                <p class="text-slate-500 text-sm">Industry benchmark for 311-style phone reporting (CivicPlus/SeeClickFix claim).
+                Our clustering turns that volume into priorities, not noise.</p>
             </div>
         </div>
-        <p class="text-center text-gray-500 text-sm mt-8">Software cost? Typically <strong>20–35% of a
-        multi-vendor stack</strong> — one price for website + app + management platform, instead of a
-        separate website vendor, 311 vendor, and back-office suite.</p>
+        <p class="text-center text-slate-500 text-sm mt-8">Software cost? Typically <strong>20–35% of a multi-vendor stack</strong> —
+        one price for website + app + management platform, instead of a separate website vendor, 311 vendor, and back-office suite.</p>
     </div>
 </section>
 
 <!-- ========================= MODULAR PRICING ========================= -->
-<section id="pricing" class="bg-gray-50 py-16 lg:py-20 scroll-mt-16">
+<section id="pricing" class="py-16 lg:py-20 scroll-mt-16">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center max-w-3xl mx-auto mb-12">
-            <h2 class="text-3xl lg:text-4xl font-extrabold text-gray-900 mb-4">Simple, modular pricing</h2>
-            <p class="text-lg text-gray-600">Start with the base platform. Add modules when you want them —
-            each one is already built and running in the live demo, so you see exactly what you're buying.</p>
+        <div class="text-center max-w-3xl mx-auto mb-12 reveal">
+            <p class="eyebrow eyebrow-light mb-3">Pricing</p>
+            <h2 class="section-title text-3xl lg:text-4xl text-slate-900 mb-4">Simple, modular pricing</h2>
+            <p class="lead text-slate-600">Start with the base platform. Add modules when you want them — each one is
+            already built and running in the live demo, so you see exactly what you're buying.</p>
         </div>
         <div class="grid lg:grid-cols-2 gap-8 max-w-5xl mx-auto items-stretch">
-            <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-8 flex flex-col">
-                <p class="text-blue-600 font-semibold tracking-wide uppercase text-xs mb-2">Base platform</p>
-                <h3 class="text-2xl font-bold text-gray-900 mb-1">Municipio Digital</h3>
-                <p class="text-gray-500 text-sm mb-5">Everything in the demo above, hosted and supported</p>
-                <ul class="space-y-2 text-sm text-gray-600 mb-6">
-                    <li>✅ Public website + citizen app, bilingual</li>
-                    <li>✅ Official forms with legal e-signature + audit trail</li>
-                    <li>✅ Citizen reports with photo/GPS, auto-grouped, on the map</li>
-                    <li>✅ News, events calendar, alerts — published by your staff</li>
-                    <li>✅ Finance dashboards from your Excel + printable reports</li>
-                    <li>✅ Grants tracker with deadline warnings</li>
-                    <li>✅ Transparency page on autopilot + Hurricane Mode</li>
-                    <li>✅ Role-based permissions, training, hosting, support</li>
+            <div class="card p-8 flex flex-col reveal">
+                <p class="eyebrow eyebrow-light mb-2">Base platform</p>
+                <h3 class="text-2xl font-bold tracking-tight text-slate-900 mb-1">Municipio Digital</h3>
+                <p class="text-slate-500 text-sm mb-6">Everything in the demo above, hosted and supported</p>
+                <ul class="space-y-2.5 text-sm text-slate-600 mb-6">
+                    {% for item in [
+                        "Public website + citizen app, bilingual",
+                        "Official forms with legal e-signature + audit trail",
+                        "Citizen reports with photo/GPS, auto-grouped, on the map",
+                        "News, events calendar, alerts — published by your staff",
+                        "Finance dashboards from your Excel + printable reports",
+                        "Grants tracker with real federal awards and deadline warnings",
+                        "Transparency page on autopilot + Hurricane Mode",
+                        "Role-based permissions, training, hosting, support"] %}
+                    <li class="flex items-start gap-2"><span class="text-brand-600 mt-0.5">{{ icon("check", "w-4 h-4") }}</span><span>{{ item }}</span></li>
+                    {% endfor %}
                 </ul>
-                <div class="mt-auto border-t border-gray-100 pt-5">
-                    <p class="text-3xl font-extrabold text-gray-900">Free for 6 months</p>
-                    <p class="text-gray-500 text-sm mt-1">then a founding rate from <span class="font-semibold text-gray-800">$600/month</span> — locked for the first 10 municipalities</p>
+                <div class="mt-auto border-t border-slate-100 pt-5">
+                    <p class="text-3xl font-extrabold tracking-tight text-slate-900">Free for 6 months</p>
+                    <p class="text-slate-500 text-sm mt-1">then a founding rate from <span class="font-semibold text-slate-800">$600/month</span> — locked for the first 10 municipalities</p>
                 </div>
             </div>
-            <div class="bg-white rounded-2xl border-2 border-blue-500 shadow-md p-8 flex flex-col relative">
-                <span class="absolute -top-3 left-8 bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded-full">ADD-ON</span>
-                <p class="text-blue-600 font-semibold tracking-wide uppercase text-xs mb-2">Optional module package</p>
-                <h3 class="text-2xl font-bold text-gray-900 mb-1">Finanzas Plus</h3>
-                <p class="text-gray-500 text-sm mb-5">The compliance suite — works <em>with</em> your accounting system, not against it</p>
-                <ul class="space-y-3 text-sm text-gray-600 mb-6">
-                    <li><span class="font-semibold text-gray-900">🧮 Presupuesto</span> — budget vs. actual by department, with pace alerts before an account overruns</li>
-                    <li><span class="font-semibold text-gray-900">🛒 Compras</span> — requisition → three quotes → PO → received, every step documented for auditors</li>
-                    <li><span class="font-semibold text-gray-900">🏷️ Activos</span> — the municipal property registry with photos, book value, and one-click CSV export</li>
+            <div class="card p-8 flex flex-col relative !border-brand-500 reveal" style="box-shadow: 0 20px 50px -20px rgba(59,109,246,0.45);">
+                <span class="absolute -top-3 left-8 pill text-white" style="background: linear-gradient(135deg,#3b6df6,#6d28d9);">Add-on</span>
+                <p class="eyebrow eyebrow-light mb-2">Optional module package</p>
+                <h3 class="text-2xl font-bold tracking-tight text-slate-900 mb-1">Finanzas Plus</h3>
+                <p class="text-slate-500 text-sm mb-6">The compliance suite — works <em>with</em> your accounting system, not against it</p>
+                <ul class="space-y-3 text-sm text-slate-600 mb-5">
+                    <li class="flex items-start gap-3"><span class="icon-tile-soft !w-8 !h-8 shrink-0">{{ icon("chart", "w-4 h-4") }}</span><span><span class="font-semibold text-slate-900">Presupuesto</span> — budget vs. actual by department, with pace alerts before an account overruns</span></li>
+                    <li class="flex items-start gap-3"><span class="icon-tile-soft !w-8 !h-8 shrink-0">{{ icon("workflow", "w-4 h-4") }}</span><span><span class="font-semibold text-slate-900">Compras</span> — requisition → three quotes → PO → received, every step documented for auditors</span></li>
+                    <li class="flex items-start gap-3"><span class="icon-tile-soft !w-8 !h-8 shrink-0">{{ icon("layers", "w-4 h-4") }}</span><span><span class="font-semibold text-slate-900">Activos</span> — the municipal property registry with photos, book value, and one-click CSV export</span></li>
                 </ul>
-                <p class="text-gray-500 text-xs mb-4">Your general ledger and payroll stay in the accounting system you already use — we import and export, you keep your auditors happy.</p>
-                <div class="browser-shot mb-5">
-                    <div class="bar">
-                        <span style="background:#ef4444"></span><span style="background:#f59e0b"></span><span style="background:#22c55e"></span>
-                        <div class="url">Management portal — Presupuesto</div>
-                    </div>
-                    <img src="/static/img/platform/admin-budget.webp" loading="lazy" width="2160" height="1350"
-                         alt="Budget module: per-department budget versus actual with traffic-light pace alerts — one department flagged amber, one red">
+                <p class="text-slate-500 text-xs mb-4">Your general ledger and payroll stay in the accounting system you already use — we import and export, you keep your auditors happy.</p>
+                <div class="mb-5">
+                    {{ browser("admin-budget.webp", "Management portal — Presupuesto", "Budget module: per-department budget versus actual with traffic-light pace alerts") }}
                 </div>
-                <div class="mt-auto border-t border-gray-100 pt-5">
-                    <p class="text-3xl font-extrabold text-gray-900">+$600<span class="text-lg font-semibold text-gray-500">/month</span></p>
-                    <p class="text-gray-500 text-sm mt-1">for all three — or <span class="font-semibold text-gray-800">$250/month</span> per individual module</p>
+                <div class="mt-auto border-t border-slate-100 pt-5">
+                    <p class="text-3xl font-extrabold tracking-tight text-slate-900">+$600<span class="text-lg font-semibold text-slate-500">/month</span></p>
+                    <p class="text-slate-500 text-sm mt-1">for all three — or <span class="font-semibold text-slate-800">$250/month</span> per individual module</p>
                 </div>
             </div>
         </div>
-        <p class="text-center text-gray-500 text-sm mt-8 max-w-3xl mx-auto">For scale: budgeting-and-procurement
-        suites alone typically run <span class="font-semibold">$20,000–$40,000+ per year</span> from mainland vendors —
-        before adding a website vendor and a 311 vendor. The full VigilBuild stack with Finanzas Plus stays under half of that.</p>
+        <p class="text-center text-slate-500 text-sm mt-8 max-w-3xl mx-auto">For scale: budgeting-and-procurement suites alone typically run
+        <span class="font-semibold">$20,000–$40,000+ per year</span> from mainland vendors — before adding a website vendor and a 311 vendor.
+        The full VigilBuild stack with Finanzas Plus stays under half of that.</p>
     </div>
 </section>
 
@@ -452,70 +401,48 @@
 <section id="proof" class="bg-white py-16 lg:py-20 scroll-mt-16">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="grid lg:grid-cols-2 gap-12 items-center">
-            <div>
-                <h2 class="text-3xl lg:text-4xl font-extrabold text-gray-900 mb-4">Don't take our word for it — click around.</h2>
-                <p class="text-lg text-gray-600 mb-6">These are live municipal portals we built and host
-                today. Open them on your phone — the app install button is on each site. The Moca site
-                was built <strong>in a single day</strong>; that's the speed your municipality gets.</p>
+            <div class="reveal">
+                <p class="eyebrow eyebrow-light mb-3">Proof beats promises</p>
+                <h2 class="section-title text-3xl lg:text-4xl text-slate-900 mb-4">Don't take our word for it — click around.</h2>
+                <p class="lead text-slate-600 mb-6">These are live municipal portals we built and host today. Open them on
+                your phone — the app install button is on each site. The Moca site was built <strong>in a single day</strong>;
+                that's the speed your municipality gets.</p>
                 <div class="space-y-3">
-                    <a href="https://aguada.vigilbuild.com" class="bg-white border border-gray-200 hover:border-blue-400 rounded-xl px-5 py-4 flex items-center justify-between font-semibold text-gray-800 transition-colors shadow-sm">
-                        <span>🌊 Aguada — full portal + citizen app</span><span>→</span>
+                    {% for name, url, note in [("Aguada", "https://aguada.vigilbuild.com", "full portal + citizen app"), ("Moca", "https://moca.vigilbuild.com", "built in a single day"), ("Añasco", "https://anasco.vigilbuild.com", "bilingual site + services")] %}
+                    <a href="{{ url }}" class="card px-5 py-4 flex items-center justify-between font-semibold text-slate-800">
+                        <span class="flex items-center gap-3"><span class="icon-tile-soft !w-9 !h-9">{{ icon("mappin", "w-4 h-4") }}</span>{{ name }} — <span class="font-normal text-slate-500">{{ note }}</span></span>
+                        <span class="text-brand-600">{{ icon("external", "w-4 h-4") }}</span>
                     </a>
-                    <a href="https://moca.vigilbuild.com" class="bg-white border border-gray-200 hover:border-blue-400 rounded-xl px-5 py-4 flex items-center justify-between font-semibold text-gray-800 transition-colors shadow-sm">
-                        <span>🧵 Moca — built in a single day</span><span>→</span>
-                    </a>
-                    <a href="https://anasco.vigilbuild.com" class="bg-white border border-gray-200 hover:border-blue-400 rounded-xl px-5 py-4 flex items-center justify-between font-semibold text-gray-800 transition-colors shadow-sm">
-                        <span>🏞️ Añasco — bilingual site + services</span><span>→</span>
-                    </a>
+                    {% endfor %}
                 </div>
             </div>
-            <div>
-                <div class="browser-shot">
-                    <div class="bar">
-                        <span style="background:#ef4444"></span><span style="background:#f59e0b"></span><span style="background:#22c55e"></span>
-                        <div class="url">aguada.vigilbuild.com</div>
-                    </div>
-                    <img src="/static/img/platform/portal-home.webp" loading="lazy" width="2160" height="1350"
-                         alt="Live Aguada municipal portal home page: bilingual navigation, app download button, and quick access to services, emergencies and tourism">
-                </div>
-                <p class="text-gray-500 text-xs mt-3 text-center">aguada.vigilbuild.com — live right now, powered by the management portal above.</p>
+            <div class="reveal">
+                {{ browser("portal-home.webp", "aguada.vigilbuild.com", "Live Aguada municipal portal home page: bilingual navigation, app download button, and quick access to services, emergencies and tourism") }}
+                <p class="text-slate-500 text-xs mt-3 text-center">aguada.vigilbuild.com — live right now, powered by the management portal above.</p>
             </div>
         </div>
     </div>
 </section>
 
 <!-- ========================= PILOT + CTA ========================= -->
-<section class="bg-gradient-hero py-16 lg:py-20">
+<section class="section-dark py-16 lg:py-20">
     <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center mb-10">
-            <h2 class="text-3xl lg:text-4xl font-extrabold text-white mb-4">The pilot is free for six months. Really.</h2>
-            <p class="text-lg text-gray-300 max-w-3xl mx-auto">We build your website, your app, and your
-            management portal, train your staff in your office (in Spanish or English), and run it all —
-            at no cost, with no obligation. At the end you'll have measured results, not promises.
-            Then we talk.</p>
+        <div class="text-center mb-10 reveal">
+            <h2 class="section-title text-3xl lg:text-5xl text-white mb-4">The pilot is free for six months. Really.</h2>
+            <p class="lead text-slate-300 max-w-3xl mx-auto">We build your website, your app, and your management portal,
+            train your staff in your office (in Spanish or English), and run it all — at no cost, with no obligation.
+            At the end you'll have measured results, not promises. Then we talk.</p>
         </div>
-        <div class="grid md:grid-cols-4 gap-4 mb-10 stagger-children">
-            <div class="glass rounded-xl p-5 text-center">
-                <p class="text-2xl mb-1">🌐</p>
-                <p class="text-white text-sm font-semibold">Website + app + platform, hosted</p>
+        <div class="grid md:grid-cols-4 gap-4 mb-10">
+            {% for ic, txt in [("globe", "Website + app + platform, hosted"), ("users", "Training in your office, until it sticks"), ("gauge", "Results measured inside the product"), ("unlock", "Your data is yours — always exportable")] %}
+            <div class="card-dark p-5 text-center reveal">
+                <div class="icon-tile mx-auto mb-3">{{ icon(ic, "w-6 h-6") }}</div>
+                <p class="text-white text-sm font-semibold">{{ txt }}</p>
             </div>
-            <div class="glass rounded-xl p-5 text-center">
-                <p class="text-2xl mb-1">🧑‍🏫</p>
-                <p class="text-white text-sm font-semibold">Training in your office, until it sticks</p>
-            </div>
-            <div class="glass rounded-xl p-5 text-center">
-                <p class="text-2xl mb-1">📈</p>
-                <p class="text-white text-sm font-semibold">Results measured inside the product</p>
-            </div>
-            <div class="glass rounded-xl p-5 text-center">
-                <p class="text-2xl mb-1">🔓</p>
-                <p class="text-white text-sm font-semibold">Your data is yours — always exportable</p>
-            </div>
+            {% endfor %}
         </div>
-        <div class="text-center">
-            <a href="/marketing/contact" class="inline-block bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-xl font-bold text-lg shadow-xl transition-all pulse-slow">
-                Request a Demo →
-            </a>
+        <div class="text-center reveal">
+            <a href="/marketing/contact" class="btn-primary text-lg !px-8 !py-4">Request a demo {{ icon("arrow", "w-5 h-5") }}</a>
         </div>
     </div>
 </section>

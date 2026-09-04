@@ -1,101 +1,87 @@
 {% extends "marketing_base.html" %}
+{% from "marketing_icons.html" import icon %}
 
 {% block title %}Why VigilBuild — Software for Government & Business{% endblock %}
 {% block meta_description %}Why organizations choose VigilBuild: founder-led delivery, systems built inside your operation, measurable results, and your data always yours.{% endblock %}
 
 {% block content %}
-<!-- Hero -->
-<section class="bg-gradient-hero py-20">
-    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <h1 class="text-4xl lg:text-5xl font-extrabold text-white mb-6">Why VigilBuild</h1>
-        <p class="text-xl text-gray-300">We started by building operations software for infrastructure crews —
-        the people who fix what everyone else depends on. That work taught us one thing: the best systems are
-        built <span class="text-white font-semibold">inside</span> the operation, next to the people who use
-        them. Today we do exactly that, for governments and for businesses.</p>
+<section class="section-dark relative overflow-hidden">
+    <div class="absolute inset-0 grid-lines" aria-hidden="true"></div>
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-24 text-center relative">
+        <p class="eyebrow eyebrow-dark mb-5">Why VigilBuild</p>
+        <h1 class="display text-5xl lg:text-6xl text-white mb-6">Built inside the operation, next to the people who use it.</h1>
+        <p class="lead text-slate-300">We started by building operations software for infrastructure crews — the people who
+        fix what everyone else depends on. That work taught us one thing: the best systems are built
+        <span class="text-white font-semibold">inside</span> the operation. Today we do exactly that, for governments and
+        for businesses.</p>
     </div>
 </section>
 
-<!-- The two divisions -->
-<section class="bg-white py-16">
+<section class="bg-white py-16 lg:py-20">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="grid md:grid-cols-2 gap-8">
-            <div class="bg-gray-50 rounded-2xl p-8 border border-gray-100">
-                <div class="icon-container w-14 h-14 rounded-xl grid place-items-center text-2xl mb-5">🏛️</div>
-                <h2 class="text-2xl font-bold text-gray-900 mb-3">Government Management</h2>
-                <p class="text-gray-600">A complete municipal platform — public website, citizen app, and the
-                back office that runs documents, crews, money, grants, and emergencies. Bilingual, hosted, and
-                offered to municipalities as a <span class="font-semibold text-gray-900">free six-month
-                pilot</span>: use it for real, measure the results, and only then talk price.</p>
-                <a href="/marketing/government" class="inline-block mt-4 text-blue-600 font-semibold">See the division →</a>
+            <div class="card p-8 reveal">
+                <div class="icon-tile mb-5">{{ icon("landmark", "w-6 h-6") }}</div>
+                <h2 class="text-2xl font-bold tracking-tight text-slate-900 mb-3">Government Management</h2>
+                <p class="text-slate-600">A complete municipal platform — public website, citizen app, and the back office that
+                runs documents, crews, money, grants, and emergencies. Bilingual, hosted, and offered to municipalities as a
+                <span class="font-semibold text-slate-900">free six-month pilot</span>: use it for real, measure the results,
+                and only then talk price.</p>
+                <a href="/marketing/government" class="inline-flex items-center gap-2 mt-5 text-brand-600 font-semibold">See the division {{ icon("arrow", "w-4 h-4") }}</a>
             </div>
-            <div class="bg-gray-50 rounded-2xl p-8 border border-gray-100">
-                <div class="icon-container w-14 h-14 rounded-xl grid place-items-center text-2xl mb-5">🏢</div>
-                <h2 class="text-2xl font-bold text-gray-900 mb-3">Business Solutions</h2>
-                <p class="text-gray-600">Custom management software and consulting for private companies —
-                work orders, inventory, billing, digitized documents with e-signatures, automated processes,
-                and practical AI. Built around your workflow, integrated with the tools you already pay for.</p>
-                <a href="/marketing/business" class="inline-block mt-4 text-blue-600 font-semibold">See the division →</a>
+            <div class="card p-8 reveal">
+                <div class="icon-tile mb-5">{{ icon("building", "w-6 h-6") }}</div>
+                <h2 class="text-2xl font-bold tracking-tight text-slate-900 mb-3">Business Solutions</h2>
+                <p class="text-slate-600">Custom management software and consulting for private companies — work orders, inventory,
+                billing, digitized documents with e-signatures, automated processes, and practical AI. Built around your workflow,
+                integrated with the tools you already pay for.</p>
+                <a href="/marketing/business" class="inline-flex items-center gap-2 mt-5 text-brand-600 font-semibold">See the division {{ icon("arrow", "w-4 h-4") }}</a>
             </div>
         </div>
     </div>
 </section>
 
-<!-- Principles -->
-<section class="bg-gray-50 py-16">
+<section class="py-16 lg:py-20">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 class="text-3xl font-extrabold text-gray-900 text-center mb-12">What working with us feels like</h2>
-        <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6 stagger-children">
-            <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-                <div class="text-3xl mb-3">🧑‍💻</div>
-                <h3 class="font-bold text-gray-900 mb-2">Founder-led, always</h3>
-                <p class="text-gray-600 text-sm">You talk to the person who builds your system — in meetings,
-                on the phone, and when something needs fixing at 7 AM. No account managers, no ticket queues.</p>
+        <div class="max-w-3xl mb-12 reveal">
+            <p class="eyebrow eyebrow-light mb-3">Principles</p>
+            <h2 class="section-title text-3xl lg:text-4xl text-slate-900">What working with us feels like</h2>
+        </div>
+        <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-5">
+            {% for ic, title, body in [
+                ("users", "Founder-led, always", "You talk to the person who builds your system — in meetings, on the phone, and when something needs fixing at 7 AM. No account managers, no ticket queues."),
+                ("languages", "Plain language", "If your team can use WhatsApp, they can use what we build. Training happens in your office, in English or Spanish, until it sticks."),
+                ("gauge", "Measured results", "Every system we deliver includes its own results page — hours saved, cases processed, response times — pulled straight from your data, ready to print."),
+                ("unlock", "Your data is yours", "Standard exports, no lock-in clauses, and if we ever part ways you keep everything. We'd rather earn the renewal than write it into a contract.")] %}
+            <div class="card p-6 reveal">
+                <div class="icon-tile-soft mb-4">{{ icon(ic, "w-6 h-6") }}</div>
+                <h3 class="font-bold text-slate-900 mb-2">{{ title }}</h3>
+                <p class="text-slate-600 text-sm">{{ body }}</p>
             </div>
-            <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-                <div class="text-3xl mb-3">🗣️</div>
-                <h3 class="font-bold text-gray-900 mb-2">Plain language</h3>
-                <p class="text-gray-600 text-sm">If your team can use WhatsApp, they can use what we build.
-                Training happens in your office, in English or Spanish, until it sticks.</p>
-            </div>
-            <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-                <div class="text-3xl mb-3">📈</div>
-                <h3 class="font-bold text-gray-900 mb-2">Measured results</h3>
-                <p class="text-gray-600 text-sm">Every system we deliver includes its own results page —
-                hours saved, cases processed, response times — pulled straight from your data, ready to print.</p>
-            </div>
-            <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-                <div class="text-3xl mb-3">🔓</div>
-                <h3 class="font-bold text-gray-900 mb-2">Your data is yours</h3>
-                <p class="text-gray-600 text-sm">Standard exports, no lock-in clauses, and if we ever part ways
-                you keep everything. We'd rather earn the renewal than write it into a contract.</p>
-            </div>
+            {% endfor %}
         </div>
     </div>
 </section>
 
-<!-- Proof -->
-<section class="bg-white py-16">
-    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <h2 class="text-3xl font-extrabold text-gray-900 mb-4">Proof beats promises</h2>
-        <p class="text-lg text-gray-600 mb-8">Three live municipal portals — sites, citizen apps, and the
-        management platform behind them — built and hosted by VigilBuild. Open them right now:</p>
+<section class="bg-white py-16 lg:py-20">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center reveal">
+        <p class="eyebrow eyebrow-light mb-3">Proof beats promises</p>
+        <h2 class="section-title text-3xl lg:text-4xl text-slate-900 mb-4">Three live municipal portals. Open them now.</h2>
+        <p class="lead text-slate-600 mb-8">Sites, citizen apps, and the management platform behind them — built and hosted by VigilBuild.</p>
         <div class="flex flex-wrap justify-center gap-4">
-            <a href="https://aguada.vigilbuild.com" class="bg-gray-50 hover:bg-blue-50 border border-gray-200 rounded-xl px-6 py-3 font-semibold text-gray-800 transition-colors">aguada.vigilbuild.com</a>
-            <a href="https://anasco.vigilbuild.com" class="bg-gray-50 hover:bg-blue-50 border border-gray-200 rounded-xl px-6 py-3 font-semibold text-gray-800 transition-colors">anasco.vigilbuild.com</a>
-            <a href="https://moca.vigilbuild.com" class="bg-gray-50 hover:bg-blue-50 border border-gray-200 rounded-xl px-6 py-3 font-semibold text-gray-800 transition-colors">moca.vigilbuild.com</a>
+            {% for name, url in [("aguada.vigilbuild.com", "https://aguada.vigilbuild.com"), ("anasco.vigilbuild.com", "https://anasco.vigilbuild.com"), ("moca.vigilbuild.com", "https://moca.vigilbuild.com")] %}
+            <a href="{{ url }}" class="btn-outline">{{ icon("external", "w-4 h-4") }} {{ name }}</a>
+            {% endfor %}
         </div>
     </div>
 </section>
 
-<!-- CTA -->
-<section class="bg-gradient-vb py-16">
-    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <h2 class="text-3xl font-extrabold text-white mb-4">Thirty minutes. That's the ask.</h2>
-        <p class="text-gray-300 mb-8">Bring us the process that slows you down the most. We'll tell you honestly
-        whether software fixes it — and show you what that would look like.</p>
-        <a href="/marketing/contact" class="inline-block bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-xl font-bold text-lg shadow-xl transition-all">
-            Request a Demo →
-        </a>
+<section class="section-dark py-16 lg:py-20">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center reveal">
+        <h2 class="section-title text-3xl lg:text-4xl text-white mb-4">Thirty minutes. That's the ask.</h2>
+        <p class="lead text-slate-300 mb-8">Bring us the process that slows you down the most. We'll tell you honestly whether
+        software fixes it — and show you what that would look like.</p>
+        <a href="/marketing/contact" class="btn-primary text-lg !px-8 !py-4">Request a demo {{ icon("arrow", "w-5 h-5") }}</a>
     </div>
 </section>
 {% endblock %}

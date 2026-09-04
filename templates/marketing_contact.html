@@ -1,79 +1,81 @@
 {% extends "marketing_base.html" %}
+{% from "marketing_icons.html" import icon %}
 
 {% block title %}Contact VigilBuild — Request a Demo{% endblock %}
 {% block meta_description %}Request a demo of VigilBuild's government platform or business solutions. Free 6-month pilots for municipalities. English / Español.{% endblock %}
 
 {% block content %}
-<!-- Hero -->
-<section class="bg-gradient-hero py-16">
-    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <h1 class="text-4xl lg:text-5xl font-extrabold text-white mb-4">Let's talk about your operation.</h1>
-        <p class="text-xl text-gray-300">Thirty minutes, in English o en español. Government demos come with a
+<section class="section-dark relative overflow-hidden">
+    <div class="absolute inset-0 grid-lines" aria-hidden="true"></div>
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-20 text-center relative">
+        <p class="eyebrow eyebrow-dark mb-5">Contact</p>
+        <h1 class="display text-4xl lg:text-6xl text-white mb-5">Let's talk about your operation.</h1>
+        <p class="lead text-slate-300">Thirty minutes, in English o en español. Government demos come with a
         <span class="text-white font-semibold">free 6-month pilot</span> — no cost, no obligation.</p>
     </div>
 </section>
 
-<section class="bg-gray-50 py-16">
+<section class="py-16 lg:py-20">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="grid lg:grid-cols-5 gap-10">
             <!-- Form -->
             <div class="lg:col-span-3">
-                <div class="bg-white rounded-2xl shadow-xl p-8">
+                <div class="bg-white rounded-2xl shadow-xl p-8 border border-slate-200/70">
                     <!-- Success message (shown after submit) -->
                     <div id="form-success" class="hidden text-center py-10">
-                        <div class="text-5xl mb-4">✅</div>
-                        <h2 class="text-2xl font-bold text-gray-900 mb-2">Thank you!</h2>
-                        <p class="text-gray-600">We received your request and will contact you within 24 hours.
-                        If it's urgent, email <a href="mailto:info@vigilbuild.com" class="text-blue-600 underline">info@vigilbuild.com</a>.</p>
+                        <div class="icon-tile mx-auto mb-4">{{ icon("check", "w-6 h-6") }}</div>
+                        <h2 class="text-2xl font-bold tracking-tight text-slate-900 mb-2">Thank you!</h2>
+                        <p class="text-slate-600">We received your request and will contact you within 24 hours.
+                        If it's urgent, email <a href="mailto:info@vigilbuild.com" class="text-brand-600 underline">info@vigilbuild.com</a>.</p>
                     </div>
 
                     <form id="demo-request-form" action="/marketing/demo-request" method="POST" class="space-y-6">
-                        <h2 class="text-2xl font-bold text-gray-900">Request a demo</h2>
+                        <h2 class="text-2xl font-bold tracking-tight text-slate-900">Request a demo</h2>
 
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div>
-                                <label for="first_name" class="block text-sm font-medium text-gray-700 mb-1">First name *</label>
+                                <label for="first_name" class="block text-sm font-medium text-slate-700 mb-1">First name *</label>
                                 <input type="text" id="first_name" name="first_name" required
-                                       class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                       class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-brand-500 focus:border-brand-500">
                             </div>
                             <div>
-                                <label for="last_name" class="block text-sm font-medium text-gray-700 mb-1">Last name *</label>
+                                <label for="last_name" class="block text-sm font-medium text-slate-700 mb-1">Last name *</label>
                                 <input type="text" id="last_name" name="last_name" required
-                                       class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                       class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-brand-500 focus:border-brand-500">
                             </div>
                         </div>
 
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div>
-                                <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email *</label>
+                                <label for="email" class="block text-sm font-medium text-slate-700 mb-1">Email *</label>
                                 <input type="email" id="email" name="email" required
-                                       class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                       class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-brand-500 focus:border-brand-500">
                             </div>
                             <div>
-                                <label for="phone" class="block text-sm font-medium text-gray-700 mb-1">Phone / WhatsApp</label>
+                                <label for="phone" class="block text-sm font-medium text-slate-700 mb-1">Phone / WhatsApp</label>
                                 <input type="tel" id="phone" name="phone"
-                                       class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                       class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-brand-500 focus:border-brand-500">
                             </div>
                         </div>
 
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div>
-                                <label for="company" class="block text-sm font-medium text-gray-700 mb-1">Organization *</label>
+                                <label for="company" class="block text-sm font-medium text-slate-700 mb-1">Organization *</label>
                                 <input type="text" id="company" name="company" required placeholder="Municipality or company name"
-                                       class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                       class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-brand-500 focus:border-brand-500">
                             </div>
                             <div>
-                                <label for="job_title" class="block text-sm font-medium text-gray-700 mb-1">Role / title</label>
+                                <label for="job_title" class="block text-sm font-medium text-slate-700 mb-1">Role / title</label>
                                 <input type="text" id="job_title" name="job_title"
-                                       class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                       class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-brand-500 focus:border-brand-500">
                             </div>
                         </div>
 
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div>
-                                <label for="industry" class="block text-sm font-medium text-gray-700 mb-1">Which are you? *</label>
+                                <label for="industry" class="block text-sm font-medium text-slate-700 mb-1">Which are you? *</label>
                                 <select id="industry" name="industry" required
-                                        class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white">
+                                        class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 bg-white">
                                     <option value="">Select one</option>
                                     <option value="municipality">Municipality / Government</option>
                                     <option value="power_distribution">Utility / Infrastructure</option>
@@ -85,9 +87,9 @@
                                 </select>
                             </div>
                             <div>
-                                <label for="company_size" class="block text-sm font-medium text-gray-700 mb-1">Team size</label>
+                                <label for="company_size" class="block text-sm font-medium text-slate-700 mb-1">Team size</label>
                                 <select id="company_size" name="company_size"
-                                        class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white">
+                                        class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 bg-white">
                                     <option value="">Select</option>
                                     <option value="1-10">1–10</option>
                                     <option value="11-50">11–50</option>
@@ -99,39 +101,39 @@
                         </div>
 
                         <div>
-                            <span class="block text-sm font-medium text-gray-700 mb-2">What interests you?</span>
+                            <span class="block text-sm font-medium text-slate-700 mb-2">What interests you?</span>
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                                <label class="flex items-center gap-2 text-gray-700 text-sm">
-                                    <input type="checkbox" name="interests" value="government_platform" class="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500">
+                                <label class="flex items-center gap-2 text-slate-700 text-sm">
+                                    <input type="checkbox" name="interests" value="government_platform" class="w-4 h-4 text-brand-600 rounded border-slate-300 focus:ring-brand-500">
                                     Municipal platform (site + app + back office)
                                 </label>
-                                <label class="flex items-center gap-2 text-gray-700 text-sm">
-                                    <input type="checkbox" name="interests" value="document_digitization" class="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500">
+                                <label class="flex items-center gap-2 text-slate-700 text-sm">
+                                    <input type="checkbox" name="interests" value="document_digitization" class="w-4 h-4 text-brand-600 rounded border-slate-300 focus:ring-brand-500">
                                     Document digitization + e-signatures
                                 </label>
-                                <label class="flex items-center gap-2 text-gray-700 text-sm">
-                                    <input type="checkbox" name="interests" value="custom_software" class="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500">
+                                <label class="flex items-center gap-2 text-slate-700 text-sm">
+                                    <input type="checkbox" name="interests" value="custom_software" class="w-4 h-4 text-brand-600 rounded border-slate-300 focus:ring-brand-500">
                                     Custom management software
                                 </label>
-                                <label class="flex items-center gap-2 text-gray-700 text-sm">
-                                    <input type="checkbox" name="interests" value="automation_ai" class="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500">
+                                <label class="flex items-center gap-2 text-slate-700 text-sm">
+                                    <input type="checkbox" name="interests" value="automation_ai" class="w-4 h-4 text-brand-600 rounded border-slate-300 focus:ring-brand-500">
                                     Process automation &amp; AI
                                 </label>
-                                <label class="flex items-center gap-2 text-gray-700 text-sm">
-                                    <input type="checkbox" name="interests" value="dashboards" class="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500">
+                                <label class="flex items-center gap-2 text-slate-700 text-sm">
+                                    <input type="checkbox" name="interests" value="dashboards" class="w-4 h-4 text-brand-600 rounded border-slate-300 focus:ring-brand-500">
                                     Dashboards &amp; reporting
                                 </label>
-                                <label class="flex items-center gap-2 text-gray-700 text-sm">
-                                    <input type="checkbox" name="interests" value="grants" class="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500">
+                                <label class="flex items-center gap-2 text-slate-700 text-sm">
+                                    <input type="checkbox" name="interests" value="grants" class="w-4 h-4 text-brand-600 rounded border-slate-300 focus:ring-brand-500">
                                     Grants / federal funds tracking
                                 </label>
                             </div>
                         </div>
 
                         <div>
-                            <label for="message" class="block text-sm font-medium text-gray-700 mb-1">What slows your operation down?</label>
+                            <label for="message" class="block text-sm font-medium text-slate-700 mb-1">What slows your operation down?</label>
                             <textarea id="message" name="message" rows="4" placeholder="Tell us in a sentence or two — English o español."
-                                      class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"></textarea>
+                                      class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-brand-500 focus:border-brand-500"></textarea>
                         </div>
 
                         <!-- Honeypot + bot-protection fields (do not remove) -->
@@ -142,44 +144,52 @@
                         <input type="hidden" id="vb_ts" name="vb_ts" value="">
                         <input type="hidden" id="vb_token" name="vb_token" value="">
 
-                        <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-4 rounded-xl font-bold text-lg shadow-lg transition-all">
-                            Request Demo →
+                        <button type="submit" class="btn-primary w-full justify-center text-lg !py-4">
+                            Request demo {{ icon("arrow", "w-5 h-5") }}
                         </button>
-                        <p class="text-xs text-gray-400 text-center">We reply within 24 hours. No newsletters, no spam.</p>
+                        <p class="text-xs text-slate-400 text-center">We reply within 24 hours. No newsletters, no spam.</p>
                     </form>
                 </div>
             </div>
 
             <!-- Side info -->
-            <div class="lg:col-span-2 space-y-6">
-                <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-                    <h3 class="font-bold text-lg text-gray-900 mb-2">🏛️ Municipalities</h3>
-                    <p class="text-gray-600 text-sm mb-3">Every government engagement starts with a
-                    <span class="font-semibold text-gray-900">free 6-month pilot</span>: website, citizen app,
+            <div class="lg:col-span-2 space-y-5">
+                <div class="card p-6">
+                    <div class="flex items-center gap-3 mb-3">
+                        <span class="icon-tile-soft !w-10 !h-10">{{ icon("landmark", "w-5 h-5") }}</span>
+                        <h3 class="font-bold text-lg text-slate-900">Municipalities</h3>
+                    </div>
+                    <p class="text-slate-600 text-sm mb-3">Every government engagement starts with a
+                    <span class="font-semibold text-slate-900">free 6-month pilot</span>: website, citizen app,
                     and management platform — hosting, training, and support included. Your data is always yours.</p>
-                    <p class="text-gray-600 text-sm">Want to see it first? Open a live portal:
-                        <a href="https://aguada.vigilbuild.com" class="text-blue-600 underline">Aguada</a> ·
-                        <a href="https://anasco.vigilbuild.com" class="text-blue-600 underline">Añasco</a> ·
-                        <a href="https://moca.vigilbuild.com" class="text-blue-600 underline">Moca</a>
+                    <p class="text-slate-600 text-sm">Want to see it first? Open a live portal:
+                        <a href="https://aguada.vigilbuild.com" class="text-brand-600 underline">Aguada</a> ·
+                        <a href="https://anasco.vigilbuild.com" class="text-brand-600 underline">Añasco</a> ·
+                        <a href="https://moca.vigilbuild.com" class="text-brand-600 underline">Moca</a>
                     </p>
                 </div>
-                <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-                    <h3 class="font-bold text-lg text-gray-900 mb-2">🏢 Businesses</h3>
-                    <p class="text-gray-600 text-sm">Bring the process that hurts — invoicing, work orders,
-                    approvals, inventory. We'll scope a fixed first phase you can evaluate in weeks, not
-                    quarters.</p>
+                <div class="card p-6">
+                    <div class="flex items-center gap-3 mb-3">
+                        <span class="icon-tile-soft !w-10 !h-10">{{ icon("building", "w-5 h-5") }}</span>
+                        <h3 class="font-bold text-lg text-slate-900">Businesses</h3>
+                    </div>
+                    <p class="text-slate-600 text-sm">Bring the process that hurts — invoicing, work orders, approvals,
+                    inventory. We'll scope a fixed first phase you can evaluate in weeks, not quarters.</p>
                 </div>
-                <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-                    <h3 class="font-bold text-lg text-gray-900 mb-2">📬 Direct line</h3>
-                    <p class="text-gray-600 text-sm">Email <a href="mailto:info@vigilbuild.com" class="text-blue-600 underline">info@vigilbuild.com</a>
+                <div class="card p-6">
+                    <div class="flex items-center gap-3 mb-3">
+                        <span class="icon-tile-soft !w-10 !h-10">{{ icon("mail", "w-5 h-5") }}</span>
+                        <h3 class="font-bold text-lg text-slate-900">Direct line</h3>
+                    </div>
+                    <p class="text-slate-600 text-sm">Email <a href="mailto:info@vigilbuild.com" class="text-brand-600 underline">info@vigilbuild.com</a>
                     and it lands with the founder — not a queue. Respondemos en español el mismo día.</p>
                 </div>
-                <div class="bg-gradient-vb rounded-2xl p-6 text-white">
-                    <h3 class="font-bold text-lg mb-2">What happens after you submit</h3>
-                    <ol class="text-sm text-gray-300 space-y-1 list-decimal list-inside">
-                        <li>We reply within 24 hours to schedule.</li>
-                        <li>A 30-minute demo focused on your situation.</li>
-                        <li>A written plan — scope, timeline, and price (or the free pilot terms).</li>
+                <div class="section-dark rounded-2xl p-6 text-white">
+                    <h3 class="font-bold text-lg mb-3">What happens after you submit</h3>
+                    <ol class="text-sm text-slate-300 space-y-2">
+                        <li class="flex gap-3"><span class="text-brand-400 font-bold">1</span> We reply within 24 hours to schedule.</li>
+                        <li class="flex gap-3"><span class="text-brand-400 font-bold">2</span> A 30-minute demo focused on your situation.</li>
+                        <li class="flex gap-3"><span class="text-brand-400 font-bold">3</span> A written plan — scope, timeline, and price (or the free pilot terms).</li>
                     </ol>
                 </div>
             </div>
